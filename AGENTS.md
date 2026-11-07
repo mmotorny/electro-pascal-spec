@@ -39,6 +39,16 @@ build it.
   needs them.
 - Don't use Borland, Turbo Pascal, Turbo Vision or MS-DOS in project names or
   branding, only to say what the spec describes.
+- Nothing dirty is ever committed. Dirty means derived from Borland's code or
+  text beyond observable behaviour: disassembly, decoded help text, token
+  dumps with internal codes, coverage data. It lives only in the gitignored
+  `dirty/` folder and in Bazel outputs, and nothing committed depends on it.
+- Dirty-room work (disassembly, the token capture tool) is done by a separate
+  agent. Clean-room work (`spec/`) never reads `dirty/` or disassembly output.
+  Only token dumps that use the spec's token names, and `TPC` verdicts, cross
+  over.
+- Reading the manuals and the IDE help is allowed in the clean room, as long
+  as the spec is written in our own words (see above).
 - Put only Borland's own files from the BP disks into the reference install.
   Leave out anything else a copy may contain, such as third-party tools or
   replacement libraries.
