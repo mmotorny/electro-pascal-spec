@@ -1,0 +1,5 @@
+# An exponent that would exceed 9999: the last digit is left over.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(1e-1000) INTEGER(0)
+tpc: error 85 at 1:29
+---
+program P; const C = 1e-10000; begin Write(C) end.

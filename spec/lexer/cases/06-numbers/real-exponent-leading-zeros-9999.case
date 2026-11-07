@@ -1,0 +1,6 @@
+# Leading zeros in a 9999 exponent.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(1e-0009999) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
+tpc: ok
+output: ' 0.0000000000E+00'
+---
+program P; const C = 1e-0009999; begin Write(C) end.

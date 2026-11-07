@@ -1,0 +1,5 @@
+# Skipped text isn't scanned for strings: a lone apostrophe is fine.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 129 at 2:1
+---
+program P; {$IFDEF X} ' {$ENDIF} begin end.

@@ -1,0 +1,5 @@
+# A switch list ending with a comma.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 1:17
+---
+program P; {$R+,} begin end.

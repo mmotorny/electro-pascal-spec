@@ -1,0 +1,6 @@
+# #2147483647 is allowed: its low 8 bits are 255.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#255) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
+tpc: ok
+output: #255
+---
+program P; const S = #2147483647; begin Write(S) end.

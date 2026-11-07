@@ -1,0 +1,5 @@
+# A switch-only letter followed by a blank.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 1:14
+---
+program P; {$T } begin end.

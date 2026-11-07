@@ -1,0 +1,6 @@
+# An exponent with five digits: only four are read.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(1e00001) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
+tpc: ok
+output: ' 1.0000000000E+01'
+---
+program P; const C = 1e00001; begin Write(C) end.

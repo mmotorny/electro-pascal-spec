@@ -1,0 +1,5 @@
+# A parameter directive naming a missing file.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 15 at 1:27
+---
+program P; {$I NOFILE.INC} begin end.

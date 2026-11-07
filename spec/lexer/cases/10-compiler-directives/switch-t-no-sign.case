@@ -1,0 +1,5 @@
+# A switch letter that is only a switch, without + or -.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 1:14
+---
+program P; {$T} begin end.

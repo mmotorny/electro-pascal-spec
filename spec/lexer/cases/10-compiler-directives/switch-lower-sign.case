@@ -1,0 +1,6 @@
+# A lower-case switch with a sign.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; {$r-} begin end.

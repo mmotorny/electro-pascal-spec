@@ -113,18 +113,22 @@ virtual` are ordinary identifiers to the lexer.
 
 - **Decimal integers** are digit sequences with values from 0 to
   2147483647. Leading zeros don't matter. A larger value is error 7, at the
-  number's last digit. A minus sign is a separate token, so `-2147483648` is
-  an error.
+  digit where the value first goes over: in a run of twenty `1`s, that's
+  the 11th. A minus sign is a separate token, so `-2147483648` is an error.
 - **Hex integers** are `$` and one or more hex digits, either case, with a
-  value up to `$FFFFFFFF`. Leading zeros don't count. The value is a 32-bit
-  pattern read as signed: `$FFFFFFFF` is -1 and `$80000000` is -2147483648.
-  `$` without a hex digit right after it is error 7.
+  value up to `$FFFFFFFF`, and error 7 likewise at the digit that goes over.
+  Leading zeros don't count. The value is a 32-bit pattern read as signed:
+  `$FFFFFFFF` is -1 and `$80000000` is -2147483648. `$` without a hex digit
+  right after it is error 7.
 - **Reals** are digits, then a fraction (`.` and digits), an exponent
   (`E` or `e`, an optional sign and digits), or both. Unlike the syntax
   diagrams, the digits after `.` and after `E` may be missing: `1.`, `1.e5`
-  and `1e` are all accepted, and a missing exponent counts as 0. A number
-  can't start with `.`. A value beyond the Extended range is error 6, just
-  after the number.
+  and `1e` are all accepted, and a missing exponent counts as 0. The
+  exponent's digits are read only while its value stays at most 9999, and
+  the next digit starts a new token: `1e12345` is `REAL(1e1234)` then
+  `INTEGER(5)`. Leading zeros in the exponent don't count. A number can't
+  start with `.`. A value beyond the Extended range is error 6, just after
+  the number.
 - `1..2` is `1`, `..`, `2`: a `.` directly followed by another `.` doesn't
   make a real.
 
@@ -145,8 +149,10 @@ parts ends the string, and the next part starts a new one. The parts are:
 - **Quoted strings**: characters between apostrophes on one line, with two
   apostrophes standing for one. A line end before the closing apostrophe is
   error 8.
-- **`#` and a number**, decimal or hex, with no blank after `#`. Only the
-  low 8 bits of the value are used: `#256` is `#0`, and `#65601` is `'A'`.
+- **`#` and a number**, decimal or hex, with no blank after `#`. The
+  number is read like any integer, with the same limits and error 7 when it
+  overflows. Then only its low 8 bits are used: `#256` is `#0`, `#65601` is
+  `'A'` and `#2147483647` is `#255`.
 - **`^` and the very next character**, whatever it is, a blank included:
   the character in upper case with bit 64 flipped. `^M` and `^m` are `#13`,
   `^@` is `#0`, `^[` is `#27`, `^1` is `'q'`, `^'` is `'g'`, and `^` then a
@@ -183,16 +189,37 @@ statements, set constructors and `case` labels. Everywhere else `^` is
 ([compiler directives](lexer/cases/10-compiler-directives))
 
 A comment whose first character is `$` is a compiler directive. Directives
-are not tokens. Their names aren't case sensitive. An unknown directive is
-error 17. `{ $R+}` is an ordinary comment.
+are not tokens. Their names aren't case sensitive. `{ $R+}` is an ordinary
+comment.
+
+A directive is checked as soon as `{$` or `(*$` is read, before the end of
+the comment is looked for, so a bad directive is error 17 even in a comment
+that never ends. After the `$` comes one of:
+
+- a conditional directive name (`DEFINE`, `UNDEF`, `IFDEF`, `IFNDEF`,
+  `IFOPT`, `ELSE`, `ENDIF`);
+- a list of switches, each a switch letter and `+` or `-`, separated by
+  commas with no blanks: `{$R+,X-}`. Anything after the list and a blank
+  is ignored;
+- a parameter directive letter (`C D G I L M O R S`), followed by its
+  parameter or nothing at all: `{$R}` is accepted.
+
+Anything else is error 17, at the column of the offending item: a blank
+right after `$`, an unknown name such as `{$FOO}` or `{$Z+}`, a switch
+letter that isn't also a parameter directive written without its sign
+(`{$T}`), or a missing item after a comma (`{$R+,}`).
 
 The conditional directives work at this level: text skipped by `{$IFDEF}`
-and similar is not scanned for tokens, so it may hold anything except
-unbalanced comments. A `{$ENDIF}` inside a comment in skipped text doesn't
-count. A missing `{$ENDIF}` is error 129 at the end of the file.
+and similar produces no tokens. It is still read for comments and quoted
+strings, though: a `{$ENDIF}` inside a comment or after an apostrophe on the
+same line doesn't count. A string still open at the end of a line just ends
+there. A comment still open at the end of the file is error 10, and a
+missing `{$ENDIF}` is error 129, both at the end of the file.
 
-## Open questions
+## Not covered yet
 
-- Error positions: integer overflow is reported at the number's last digit,
-  but real overflow just after the number.
-- The lexer inside `asm` blocks, which is a separate scanner.
+- The scanner inside `asm` blocks, which is a separate scanner: after `asm`,
+  no further tokens reach the Pascal parser until the block's `end`.
+- Include files (`{$I name}`).
+- Why real overflow is reported just after the number, while integer
+  overflow is reported at the digit that overflows.

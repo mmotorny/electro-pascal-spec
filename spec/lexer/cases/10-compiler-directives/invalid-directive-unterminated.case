@@ -1,0 +1,5 @@
+# An invalid directive that never ends: error 17, not 10.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 1:14
+---
+program P; {$T = begin end.

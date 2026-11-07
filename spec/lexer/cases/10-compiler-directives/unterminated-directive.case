@@ -1,0 +1,5 @@
+# A directive that never ends: the directive is checked first.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 10 at 2:1
+---
+program P; {$R+ begin end.

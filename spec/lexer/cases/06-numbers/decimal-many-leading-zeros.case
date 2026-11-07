@@ -1,0 +1,6 @@
+# Thirty leading zeros don't overflow.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ INTEGER(7) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
+tpc: ok
+output: '7'
+---
+program P; const C = 0000000000000000000000000000007; begin Write(C) end.

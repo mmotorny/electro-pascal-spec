@@ -1,0 +1,5 @@
+# Twelve hex digits: the error is at the 9th.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ
+tpc: error 7 at 1:31
+---
+program P; const C = $FFFFFFFFFFFF; begin Write(C) end.

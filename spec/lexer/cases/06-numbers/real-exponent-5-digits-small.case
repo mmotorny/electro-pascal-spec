@@ -1,0 +1,5 @@
+# A five-digit exponent: the fifth digit is a separate token.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(1e1234) INTEGER(5)
+tpc: error 85 at 1:28
+---
+program P; const C = 1e12345; begin Write(C) end.

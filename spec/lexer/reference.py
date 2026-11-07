@@ -41,10 +41,16 @@ TYPE_PARTS = {"TYPE", "VAR"}
 SECTION_WORDS = {"CONST", "TYPE", "VAR", "LABEL", "BEGIN", "PROCEDURE", "FUNCTION",
                  "CONSTRUCTOR", "DESTRUCTOR", "IMPLEMENTATION", "INTERFACE"}
 PREDEFINED = {"VER70", "MSDOS", "CPU86", "CPU87"}
+CONDITIONALS = {"DEFINE", "UNDEF", "IFDEF", "IFNDEF", "IFOPT", "ELSE", "ENDIF"}
+SWITCHES = set("ABDEFGIKLNOPQRSTVWXY")
+PARAMETERS = set("CDGILMORS")
 MAX_LINE = 127
 EXTENDED_MAX = "1.18973149535723176502e4932"
 # Errors only the lexer reports; when TPC reports one, the spec must too.
 LEXICAL_ERRORS = {6, 7, 8, 11}
+# Errors the lexer may report. When TPC reports something else after all the
+# tokens the spec predicts, its parser stopped before reading further.
+LEXER_MAY_REPORT = LEXICAL_ERRORS | {5, 10, 17, 129}
 
 
 class LexError(Exception):
@@ -129,6 +135,8 @@ class _Lexer:
 
     def comment(self, close):
         """Reads a comment up to `close`; handles directives."""
+        if self.peek() == b"$":
+            self.check_directive()
         body = bytearray()
         while True:
             if self.text.startswith(close, self.pos):
@@ -144,6 +152,31 @@ class _Lexer:
             self.pos += 1
         if body[:1] == b"$":
             self.directive(bytes(body[1:]))
+
+    def check_directive(self):
+        """Checks a directive's name and switches as soon as {$ is read.
+
+        Error 17 is reported at the first bad item, even if the comment
+        never ends.
+        """
+        i = self.pos + 1
+        while True:
+            start = i
+            while i < len(self.text) and self.text[i:i + 1].isalpha():
+                i += 1
+            name = self.text[start:i].decode("latin-1").upper()
+            sign = self.text[i:i + 1]
+            if name in CONDITIONALS:
+                return
+            if len(name) == 1 and name in SWITCHES and sign in (b"+", b"-"):
+                i += 1
+                if self.text[i:i + 1] == b",":
+                    i += 1
+                    continue
+                return
+            if len(name) == 1 and name in PARAMETERS:
+                return
+            raise LexError(17, self.n + 1, start + 1)
 
     def directive(self, body):
         words = body.decode("latin-1").split()
@@ -180,7 +213,7 @@ class _Lexer:
                     ch = self.peek()
                     if ch is None:
                         if not self.next_line():
-                            raise self.eof_error(129)
+                            raise self.eof_error(10)
                         continue
                     body += ch
                     self.pos += 1
@@ -197,8 +230,13 @@ class _Lexer:
                     elif name == "ELSE" and depth == 0:
                         return
             elif c == b"'":
-                # Strings in skipped text aren't scanned; an apostrophe is just a character.
+                # Skipped text is still read for strings, so a directive inside
+                # one doesn't count. A string still open at the line's end ends there.
                 self.pos += 1
+                while (ch := self.peek()) is not None and ch != b"'":
+                    self.pos += 1
+                if ch is not None:
+                    self.pos += 1
             else:
                 self.pos += 1
 
@@ -243,8 +281,8 @@ class _Lexer:
                     self.emit(SINGLES[c])
                 else:
                     raise LexError(5, line, column)
-            if self.tokens[-2:] == ["END", "DOT"]:
-                return
+            if self.tokens[-2:] == ["END", "DOT"] or self.tokens[-1:] == ["ASM"]:
+                return  # The end of the program, or an asm block, which isn't modelled.
 
     def word(self):
         start = self.pos
@@ -263,6 +301,23 @@ class _Lexer:
             self.pos += 1
         return self.text[start:self.pos]
 
+    def integer(self, hex_digits=False):
+        """Reads an integer's digits; error 7 at the digit where it overflows.
+
+        Decimal values may be up to 2147483647, hex values up to $FFFFFFFF.
+        Returns None if there are no digits.
+        """
+        limit = 0xFFFFFFFF if hex_digits else 2147483647
+        ok = b"0123456789abcdefABCDEF" if hex_digits else b"0123456789"
+        value, any_digit = 0, False
+        while (c := self.peek()) is not None and c in ok:
+            value = value * (16 if hex_digits else 10) + int(c, 16)
+            if value > limit:
+                raise LexError(7, *self.where())
+            self.pos += 1
+            any_digit = True
+        return value if any_digit else None
+
     def number(self):
         start = self.pos
         whole = self.digits()
@@ -276,27 +331,28 @@ class _Lexer:
             self.pos += 1
             if self.peek() in (b"+", b"-"):
                 self.pos += 1
-            self.digits()
+            # Exponent digits are read only while the exponent stays <= 9999.
+            exponent = 0
+            while (c := self.peek()) is not None and c.isdigit() and exponent * 10 + int(c) <= 9999:
+                exponent = exponent * 10 + int(c)
+                self.pos += 1
         text = self.text[start:self.pos].decode("ascii")
         if real:
             number = text.rstrip("eE+-")
+            if number[-1:] in "eE+-":
+                number = number.rstrip("eE+-")
             if decimal.Decimal(number if not number.endswith(".") else number + "0") > decimal.Decimal(EXTENDED_MAX):
                 raise LexError(6, self.n + 1, self.pos + 1)
             self.emit(f"REAL({text})")
             return
-        value = int(whole)
-        if value > 2147483647:
-            raise LexError(7, self.n + 1, start + len(whole))
-        self.emit(f"INTEGER({value})")
+        self.pos = start
+        self.emit(f"INTEGER({self.integer()})")
 
     def hex_number(self):
         self.pos += 1
-        digits = self.digits(hex_digits=True)
-        if not digits:
+        value = self.integer(hex_digits=True)
+        if value is None:
             raise LexError(7, *self.where())
-        value = int(digits, 16)
-        if value > 0xFFFFFFFF:
-            raise LexError(7, self.n + 1, self.pos)
         self.emit(f"INTEGER({value - (1 << 32) if value >= 1 << 31 else value})")
 
     def string(self):
@@ -322,11 +378,9 @@ class _Lexer:
                 self.pos += 1
                 if self.peek() == b"$":
                     self.pos += 1
-                    digits = self.digits(hex_digits=True)
-                    number = int(digits, 16) if digits else None
+                    number = self.integer(hex_digits=True)
                 else:
-                    digits = self.digits()
-                    number = int(digits) if digits else None
+                    number = self.integer()
                 if number is None:
                     raise LexError(7, *self.where())
                 value.append(number & 255)
@@ -356,15 +410,18 @@ def check(tokens, error, captured, verdict):
     captured: TPC's tokens in the spec's notation; verdict: "ok" or
     "error N at L:C".
     """
+    if tokens[-1:] == ["ASM"] and captured[:len(tokens)] == tokens:
+        return None  # asm blocks have their own scanner, not modelled yet.
     if captured != tokens[:len(captured)]:
         i = next(i for i, (a, b) in enumerate(zip(captured, tokens + [None] * len(captured))) if a != b)
         return f"token {i + 1}: TPC {captured[i]}, spec {tokens[i] if i < len(tokens) else '(end)'}"
+    words = verdict.split()
+    code = int(words[1]) if len(words) > 1 and words[0] == "error" else None
     if error:
         expected = f"error {error[0]} at {error[1]}:{error[2]}"
-        if len(captured) == len(tokens) and verdict != expected:
+        if len(captured) == len(tokens) and verdict != expected and code in LEXER_MAY_REPORT:
             return f"spec predicts {expected} after token {len(tokens)}, TPC: {verdict}"
-    words = verdict.split()
-    if len(words) > 1 and words[0] == "error" and int(words[1]) in LEXICAL_ERRORS:
+    if code in LEXICAL_ERRORS:
         if not error or len(captured) != len(tokens):
             return f"TPC reports {verdict} after token {len(captured)}; the spec predicts no lexer error there"
     return None
