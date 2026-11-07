@@ -341,7 +341,9 @@ class _Lexer:
             number = text.rstrip("eE+-")
             if number[-1:] in "eE+-":
                 number = number.rstrip("eE+-")
-            if decimal.Decimal(number if not number.endswith(".") else number + "0") > decimal.Decimal(EXTENDED_MAX):
+            # TPC's conversion isn't exact (see lexer.md), and it already
+            # overflows on the largest Extended value itself.
+            if decimal.Decimal(number if not number.endswith(".") else number + "0") >= decimal.Decimal(EXTENDED_MAX):
                 raise LexError(6, self.n + 1, self.pos + 1)
             self.emit(f"REAL({text})")
             return

@@ -216,10 +216,25 @@ same line doesn't count. A string still open at the end of a line just ends
 there. A comment still open at the end of the file is error 10, and a
 missing `{$ENDIF}` is error 129, both at the end of the file.
 
+## Real values
+
+([real values](lexer/cases/13-real-values))
+
+Each case here prints the exact 80-bit Extended value of a real literal.
+`TPC`'s conversion is not correctly rounded: it is often a few units off in
+the last place, so an implementation has to reproduce `TPC`'s own
+arithmetic. That arithmetic isn't known yet (issue #10). What is known:
+
+- The largest accepted value is about `1.1897314e4932`. The largest
+  Extended value itself, `1.18973149535723176502e4932`, is already error 6.
+- Values below the smallest normal Extended value (about
+  `3.3621e-4932`) become 0. There are no denormals.
+
 ## Not covered yet
 
 - The scanner inside `asm` blocks, which is a separate scanner: after `asm`,
   no further tokens reach the Pascal parser until the block's `end`.
 - Include files (`{$I name}`).
+- The exact value of real literals (see [real values](#real-values)).
 - Why real overflow is reported just after the number, while integer
   overflow is reported at the digit that overflows.
