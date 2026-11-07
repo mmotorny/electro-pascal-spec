@@ -1,0 +1,6 @@
+host_tool = use_repo_rule("//third_party:host_tool.bzl", "host_tool")
+
+host_tool(
+    name = "mtools_mcopy",
+    program = "mcopy",
+)

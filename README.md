@@ -14,6 +14,7 @@ Developed on macOS (Apple Silicon) with [Homebrew](https://brew.sh).
 | Bazelisk | latest | `brew install bazelisk` | Runs the latest Bazel |
 | QEMU | latest | `brew install qemu` | Runs MS-DOS 6.22 and Borland Pascal 7.01 as the reference machine |
 | Python 3 | latest | `xcode-select --install` | Drives the installers on the reference machine |
+| mtools | latest | `brew install mtools` | Copies files to and from the reference machine's disk |
 
 Tools aren't pinned: keep them up to date with `brew upgrade`.
 
@@ -55,6 +56,13 @@ and typing keys like a user would. It takes about a minute.
 
 `bazel run //machine:run` boots that disk in a QEMU window. Changes to the
 disk are thrown away when QEMU exits. Arguments after `--` go to QEMU.
+
+## IDE help as text
+
+`bazel build //help:all` decodes the DOS IDE's online help into plain text:
+`bazel-bin/help/turbo.txt` (language, compiler and run-time library) and
+`bazel-bin/help/tvision.txt` (Turbo Vision). It's Borland's text, so it exists
+only as build output.
 
 ## License
 

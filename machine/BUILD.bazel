@@ -9,6 +9,7 @@ genrule(
         "//third_party/msdos622:archive",
     ],
     outs = ["disk.img"],
+    visibility = ["//visibility:public"],
     cmd = " ".join([
         "/usr/bin/python3 -B -s $(location install.py)",
         "--qemu $(location //third_party/qemu:qemu-system-i386)",

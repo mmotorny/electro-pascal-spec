@@ -1,0 +1,33 @@
+# The DOS IDE's online help, decoded into plain text. The text is Borland's:
+# it exists only as these outputs and is never committed.
+load("//machine:defs.bzl", "disk_file")
+
+disk_file(
+    name = "turbo_tph",
+    out = "turbo.tph",
+    path = "BP/BIN/TURBO.TPH",
+)
+
+disk_file(
+    name = "tvision_tph",
+    out = "tvision.tph",
+    path = "BP/BIN/TVISION.TPH",
+)
+
+# The IDE's help: language, compiler, run-time library.
+genrule(
+    name = "turbo",
+    srcs = [":turbo_tph"],
+    outs = ["turbo.txt"],
+    cmd = "/usr/bin/python3 -B -s $(location tph.py) $< $@",
+    tools = ["tph.py"],
+)
+
+# Turbo Vision's help.
+genrule(
+    name = "tvision",
+    srcs = [":tvision_tph"],
+    outs = ["tvision.txt"],
+    cmd = "/usr/bin/python3 -B -s $(location tph.py) $< $@",
+    tools = ["tph.py"],
+)
