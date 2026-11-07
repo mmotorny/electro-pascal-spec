@@ -45,6 +45,7 @@ python_tool(
     name = "probe",
     data = [
         ":disk",
+        "//machine/coverage",
         "//third_party/mtools",
         "//third_party/qemu:qemu-system-i386",
     ],
@@ -52,6 +53,7 @@ python_tool(
         "--qemu=$(rootpath //third_party/qemu:qemu-system-i386)",
         "--mtools=$(rootpath //third_party/mtools)",
         "--disk=$(rootpath :disk)",
+        "--coverage-plugin=$(rootpath //machine/coverage)",
     ],
     main = "probe.py",
     srcs = ["qmp.py"],

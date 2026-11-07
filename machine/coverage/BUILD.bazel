@@ -1,0 +1,15 @@
+# QEMU plugin that records executed edges between markers; see coverage.c.
+genrule(
+    name = "coverage",
+    srcs = [
+        "coverage.c",
+        "@qemu_plugin_api//:flags.txt",
+    ],
+    outs = ["coverage.dylib"],
+    cmd = " ".join([
+        "/usr/bin/clang -O2 -shared -fPIC -undefined dynamic_lookup",
+        "$$(cat $(location @qemu_plugin_api//:flags.txt))",
+        "-o $@ $(location coverage.c)",
+    ]),
+    visibility = ["//visibility:public"],
+)

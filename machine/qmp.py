@@ -30,7 +30,7 @@ class Machine:
     """A 486 PC with a floppy drive and one IDE hard disk, without a display."""
 
     def __init__(self, qemu, workdir, hard_disk, floppy=None, snapshot=False,
-                 floppy_writable=False, boot="ac"):
+                 floppy_writable=False, boot="ac", extra_args=()):
         """Starts the machine.
 
         boot: QEMU boot order, "ac" for floppy then hard disk, "c" for the
@@ -51,7 +51,8 @@ class Machine:
         self._proc = subprocess.Popen(
             [qemu] + MACHINE_ARGS + [
                 "-display", "none", "-monitor", "none", "-serial", "none",
-                "-parallel", "none", "-qmp", "stdio", "-boot", f"order={boot}"] + drives,
+                "-parallel", "none", "-qmp", "stdio", "-boot", f"order={boot}"]
+            + drives + list(extra_args),
             stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         self._read()
         self.cmd("qmp_capabilities")

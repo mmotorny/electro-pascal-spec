@@ -4,3 +4,7 @@ host_tool(
     name = "qemu_system_i386",
     program = "qemu-system-i386",
 )
+
+qemu_plugin_api = use_repo_rule("//third_party/qemu:plugin_api.bzl", "qemu_plugin_api")
+
+qemu_plugin_api(name = "qemu_plugin_api")

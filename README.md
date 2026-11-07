@@ -61,7 +61,11 @@ disk are thrown away when QEMU exits. Arguments after `--` go to QEMU.
 on the reference machine and prints the results as JSON: whether it compiled,
 or the error number, line, column and message, plus `TPC`'s full output. It
 also records what the results ran on: the QEMU version and hashes of the key
-BP files. Large sets are spread over one machine per CPU core.
+BP files. Large sets are spread over one machine per CPU core. With
+`--coverage`, each result also lists the code edges `TPC` executed while
+compiling it, recorded by a QEMU plugin (`machine/coverage/`). The plugin
+is compiled with the Xcode command-line tools against Homebrew QEMU's
+plugin header.
 
 ## Spec
 
