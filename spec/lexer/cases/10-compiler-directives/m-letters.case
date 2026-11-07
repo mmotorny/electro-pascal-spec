@@ -1,0 +1,5 @@
+# M followed by letters instead of numbers.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 1:16
+---
+program P; {$M ABC} begin end.

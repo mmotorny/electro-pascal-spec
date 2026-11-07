@@ -92,7 +92,11 @@ expects and `TPC`'s recorded verdict and program output.
 `bazel run //fuzz -- --out DIR [--rounds N]` mutates the spec's cases and
 keeps every mutant that makes `TPC` run code no earlier input reached,
 shrinks each one, and writes them to `DIR` with their verdicts. These finds
-are candidates for new cases.
+are candidates for new cases. `--range-file` limits coverage to an address
+range, to focus on one part of `TPC`. `python3 spec/lexer/check_inputs.py`
+then compares the reference lexer with `TPC` on the finds, given a dump of
+the tokens `TPC` delivered for them, and lists every disagreement: each is a
+gap in the spec.
 
 ## IDE help as text
 

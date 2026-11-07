@@ -162,7 +162,7 @@ class _Lexer:
         i = self.pos + 1
         while True:
             start = i
-            while i < len(self.text) and self.text[i:i + 1].isalpha():
+            while i < len(self.text) and self.text[i:i + 1].isalnum():
                 i += 1
             name = self.text[start:i].decode("latin-1").upper()
             sign = self.text[i:i + 1]
@@ -174,8 +174,15 @@ class _Lexer:
                     i += 1
                     continue
                 return
+            if name == "M":
+                # $M needs numbers: after any blanks, a digit or $ must follow.
+                while self.text[i:i + 1] in (b" ", b"\t"):
+                    i += 1
+                if self.text[i:i + 1].isdigit() or self.text[i:i + 1] == b"$":
+                    return
+                raise LexError(17, self.n + 1, i + 1)
             if len(name) == 1 and name in PARAMETERS:
-                return
+                return  # File names and other text: anything goes here.
             raise LexError(17, self.n + 1, start + 1)
 
     def directive(self, body):

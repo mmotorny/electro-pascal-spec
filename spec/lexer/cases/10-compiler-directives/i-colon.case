@@ -1,0 +1,5 @@
+# I directly followed by a colon.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 15 at 1:22
+---
+program P; {$I:X.INC} begin end.

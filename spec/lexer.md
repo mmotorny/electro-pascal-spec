@@ -194,15 +194,20 @@ comment.
 
 A directive is checked as soon as `{$` or `(*$` is read, before the end of
 the comment is looked for, so a bad directive is error 17 even in a comment
-that never ends. After the `$` comes one of:
+that never ends. Its name is the run of letters and digits after the `$`,
+so `{$M16384}` has the unknown name `M16384`. The name is one of:
 
 - a conditional directive name (`DEFINE`, `UNDEF`, `IFDEF`, `IFNDEF`,
   `IFOPT`, `ELSE`, `ENDIF`);
 - a list of switches, each a switch letter and `+` or `-`, separated by
   commas with no blanks: `{$R+,X-}`. Anything after the list and a blank
   is ignored;
-- a parameter directive letter (`C D G I L M O R S`), followed by its
-  parameter or nothing at all: `{$R}` is accepted.
+- a parameter directive letter (`C D G I L M O R S`) and its parameter.
+  Most take a file name or other text, which may be anything, including
+  nothing at all: `{$R}` and `{$L:X.OBJ}` are accepted (a missing file is
+  error 15, but that's not the lexer's business). `M` takes numbers: after
+  any blanks, a number must follow, so `{$M}`, `{$M ABC}` and `{$M=16384}`
+  are error 17 at the first character that isn't one.
 
 Anything else is error 17, at the column of the offending item: a blank
 right after `$`, an unknown name such as `{$FOO}` or `{$Z+}`, a switch
