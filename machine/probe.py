@@ -16,8 +16,9 @@ With a coverage plugin (//machine/coverage), each result also gets
 "coverage": the sorted edge indices TPC executed while compiling the probe.
 Only code inside TPC's own load image counts, so that BIOS, DOS and timer
 interrupts don't make coverage differ between runs. Where TPC loads is found
-by running a tiny program from the same batch file that prints its PSP
-segment; DOS gives TPC the same place.
+by running a tiny program that prints its PSP segment. DOS gives TPC the
+same place, provided the program's full path is as long as TPC's, because
+DOS stores the path in the environment block allocated just below it.
 """
 
 import argparse
@@ -96,8 +97,6 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
     tools.mtool("mformat", "-C", "-f", "1440", "-i", floppy, "::")
     tools.mtool("mmd", "-i", floppy, "::/P")
     script = ["@ECHO OFF", "A:", "CD \\P"]
-    if coverage:
-        script.append("A:\\PSP > A:\\PSP.TXT")
     for n, source in enumerate(sources):
         name = f"P{first + n:07}"
         path = os.path.join(workdir, name + ".PAS")
@@ -122,10 +121,9 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
     tools.mtool("mcopy", "-i", floppy, os.path.join(workdir, "RUN.BAT"), "::/")
     extra = []
     if coverage:
-        for name, code in (("MARK.COM", MARKER_COM), ("PSP.COM", PSP_COM)):
-            with open(os.path.join(workdir, name), "wb") as f:
-                f.write(code)
-            tools.mtool("mcopy", "-i", floppy, os.path.join(workdir, name), "::/")
+        with open(os.path.join(workdir, "MARK.COM"), "wb") as f:
+            f.write(MARKER_COM)
+        tools.mtool("mcopy", "-i", floppy, os.path.join(workdir, "MARK.COM"), "::/")
         edges_file = os.path.join(workdir, "edges.txt")
         lo, hi = coverage["range"]
         extra = ["-plugin", f"{coverage['plugin']},out={edges_file},lo={lo},hi={hi}"]
@@ -176,14 +174,15 @@ def tpc_range(tools, disk, workdir):
     os.makedirs(d)
     floppy = os.path.join(d, "fd.img")
     tools.mtool("mformat", "-C", "-f", "1440", "-i", floppy, "::")
-    for name, code in (("PSP.COM", PSP_COM),):
-        with open(os.path.join(d, name), "wb") as f:
-            f.write(code)
-        tools.mtool("mcopy", "-i", floppy, os.path.join(d, name), "::/")
-    with open(os.path.join(d, "RUN.BAT"), "wb") as f:
-        f.write(b"@ECHO OFF\r\nA:\r\nCD \\P\r\nA:\\PSP > A:\\PSP.TXT\r\nCD \\\r\nECHO PROBES DONE\r\n")
-    tools.mtool("mcopy", "-i", floppy, os.path.join(d, "RUN.BAT"), "::/")
+    # A:\P\PSP00000.COM is as long as C:\BP\BIN\TPC.EXE.
+    assert len("A:\\P\\PSP00000.COM") == len(TPC)
     tools.mtool("mmd", "-i", floppy, "::/P")
+    with open(os.path.join(d, "PSP00000.COM"), "wb") as f:
+        f.write(PSP_COM)
+    tools.mtool("mcopy", "-i", floppy, os.path.join(d, "PSP00000.COM"), "::/P/")
+    with open(os.path.join(d, "RUN.BAT"), "wb") as f:
+        f.write(b"@ECHO OFF\r\nA:\r\nCD \\P\r\nA:\\P\\PSP00000 > A:\\PSP.TXT\r\nCD \\\r\nECHO PROBES DONE\r\n")
+    tools.mtool("mcopy", "-i", floppy, os.path.join(d, "RUN.BAT"), "::/")
     m = Machine(tools.qemu, d, disk, floppy=floppy, snapshot=True, floppy_writable=True, boot="c")
     try:
         m.wait_prompt("C:\\>", timeout=60)

@@ -27,7 +27,7 @@ python_tool(
 python_test(
     name = "cases_test",
     size = "small",
-    data = glob(["**/*.case"]),
+    data = ["//spec/lexer:cases"],
     main = "check_cases.py",
     srcs = ["cases.py"],
 )
