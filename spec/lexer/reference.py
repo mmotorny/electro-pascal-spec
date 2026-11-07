@@ -276,6 +276,12 @@ class _Lexer:
                 self.number()
             elif c == b"$":
                 self.hex_number()
+            elif c == b"^" and self._caret_is_char() and self.peek(1) is None:
+                # A character literal with nothing after it on the line: TPC
+                # delivers ^ itself, then reports the string as unterminated.
+                self.pos += 1
+                self.emit("CARET")
+                raise LexError(8, line, column + 1)
             elif c in (b"'", b"#") or (c == b"^" and self._caret_is_char()):
                 self.string()
             else:

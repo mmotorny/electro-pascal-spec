@@ -157,7 +157,9 @@ parts ends the string, and the next part starts a new one. The parts are:
   the character in upper case with bit 64 flipped. `^M` and `^m` are `#13`,
   `^@` is `#0`, `^[` is `#27`, `^1` is `'q'`, `^'` is `'g'`, and `^` then a
   space is `` ` `` (96). Only one character is taken: `^Integer` is `^I`
-  followed by the identifier `nteger`.
+  followed by the identifier `nteger`. Where an operand is expected but `^`
+  is the last character on its line, `TPC` delivers `CARET` and then
+  reports error 8 just after it, as for an unterminated string.
 
 Whether `^` starts a string depends on where it appears. Where an operand
 of an expression is expected, `^` and the next character are a character

@@ -1,0 +1,6 @@
+# ^ at the end of a line, where an operand is expected: TPC delivers CARET, then reports error 8 as for an unterminated string.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ CARET
+tpc: error 8 at 1:23
+---
+program P; const C = ^
+M; begin end.
