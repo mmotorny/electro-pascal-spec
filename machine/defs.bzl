@@ -10,6 +10,6 @@ def disk_file(name, path, out):
         name = name,
         srcs = ["//machine:disk"],
         outs = [out],
-        cmd = "MTOOLS_SKIP_CHECK=1 $(location //third_party/mtools:mcopy) -n -i $(location //machine:disk)@@%d ::/%s $@" % (PARTITION_OFFSET, path),
-        tools = ["//third_party/mtools:mcopy"],
+        cmd = "MTOOLS_SKIP_CHECK=1 $(location //third_party/mtools:mtools) -c mcopy -n -i $(location //machine:disk)@@%d ::/%s $@" % (PARTITION_OFFSET, path),
+        tools = ["//third_party/mtools:mtools"],
     )

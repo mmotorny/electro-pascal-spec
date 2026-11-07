@@ -16,7 +16,7 @@ def main():
     parser.add_argument("--disk", required=True)
     args, extra = parser.parse_known_args()
     qemu = os.path.abspath(args.qemu)
-    os.execv(qemu, [qemu] + MACHINE_ARGS + [
+    os.execv(qemu, [qemu] + MACHINE_ARGS + ["-boot", "order=c",
         "-drive", f"if=ide,index=0,format=raw,snapshot=on,file={os.path.abspath(args.disk)}",
         "-drive", "if=floppy,index=0",
     ] + extra)

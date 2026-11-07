@@ -22,24 +22,36 @@ _KEYS = {
 # a fixed date, and no network.
 MACHINE_ARGS = [
     "-machine", "pc", "-cpu", "486", "-m", "16",
-    "-rtc", "base=1994-06-01T12:00:00", "-nic", "none", "-boot", "order=ac",
+    "-rtc", "base=1994-06-01T12:00:00", "-nic", "none",
 ]
 
 
 class Machine:
     """A 486 PC with a floppy drive and one IDE hard disk, without a display."""
 
-    def __init__(self, qemu, workdir, hard_disk, floppy=None):
+    def __init__(self, qemu, workdir, hard_disk, floppy=None, snapshot=False,
+                 floppy_writable=False, boot="ac"):
+        """Starts the machine.
+
+        boot: QEMU boot order, "ac" for floppy then hard disk, "c" for the
+            hard disk only.
+
+        snapshot: boot the hard disk without changing it; writes are thrown
+            away when QEMU exits.
+        floppy_writable: let the guest write to the floppy image.
+        """
         self._screen_file = os.path.join(workdir, "screen.bin")
-        drives = ["-drive", f"if=ide,index=0,format=raw,file={hard_disk}"]
+        disk_opts = ",snapshot=on" if snapshot else ""
+        drives = ["-drive", f"if=ide,index=0,format=raw{disk_opts},file={hard_disk}"]
         if floppy:
-            drives += ["-drive", f"if=floppy,index=0,format=raw,readonly=on,file={floppy}"]
+            floppy_opts = "" if floppy_writable else ",readonly=on"
+            drives += ["-drive", f"if=floppy,index=0,format=raw{floppy_opts},file={floppy}"]
         else:
             drives += ["-drive", "if=floppy,index=0"]
         self._proc = subprocess.Popen(
             [qemu] + MACHINE_ARGS + [
                 "-display", "none", "-monitor", "none", "-serial", "none",
-                "-parallel", "none", "-qmp", "stdio"] + drives,
+                "-parallel", "none", "-qmp", "stdio", "-boot", f"order={boot}"] + drives,
             stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         self._read()
         self.cmd("qmp_capabilities")

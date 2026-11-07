@@ -1,4 +1,4 @@
-load(":run.bzl", "machine_run")
+load(":python_tool.bzl", "python_tool")
 
 # The reference machine's hard disk: MS-DOS 6.22 and Borland Pascal 7.01,
 # installed with default options by their own installers inside QEMU.
@@ -25,7 +25,34 @@ genrule(
 )
 
 # Boots the reference disk in a QEMU window. Changes are thrown away on exit.
-machine_run(
+python_tool(
     name = "run",
-    disk = ":disk",
+    data = [
+        ":disk",
+        "//third_party/qemu:qemu-system-i386",
+    ],
+    fixed_args = [
+        "--qemu=$(rootpath //third_party/qemu:qemu-system-i386)",
+        "--disk=$(rootpath :disk)",
+    ],
+    main = "run.py",
+    srcs = ["qmp.py"],
+)
+
+# Compiles Pascal files with TPC on the reference machine and prints the
+# results as JSON: bazel run //machine:probe -- file.pas ...
+python_tool(
+    name = "probe",
+    data = [
+        ":disk",
+        "//third_party/mtools",
+        "//third_party/qemu:qemu-system-i386",
+    ],
+    fixed_args = [
+        "--qemu=$(rootpath //third_party/qemu:qemu-system-i386)",
+        "--mtools=$(rootpath //third_party/mtools)",
+        "--disk=$(rootpath :disk)",
+    ],
+    main = "probe.py",
+    srcs = ["qmp.py"],
 )

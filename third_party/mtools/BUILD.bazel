@@ -1,5 +1,5 @@
 alias(
-    name = "mcopy",
-    actual = "@mtools_mcopy//:tool",
+    name = "mtools",
+    actual = "@mtools//:tool",
     visibility = ["//visibility:public"],
 )

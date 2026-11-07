@@ -57,6 +57,12 @@ and typing keys like a user would. It takes about a minute.
 `bazel run //machine:run` boots that disk in a QEMU window. Changes to the
 disk are thrown away when QEMU exits. Arguments after `--` go to QEMU.
 
+`bazel run //machine:probe -- file.pas ...` compiles each file with `TPC.EXE`
+on the reference machine and prints the results as JSON: whether it compiled,
+or the error number, line, column and message, plus `TPC`'s full output. It
+also records what the results ran on: the QEMU version and hashes of the key
+BP files. Large sets are spread over one machine per CPU core.
+
 ## IDE help as text
 
 `bazel build //help:all` decodes the DOS IDE's online help into plain text:
