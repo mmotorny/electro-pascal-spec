@@ -1,0 +1,22 @@
+byo_file = use_repo_rule("//third_party:byo.bzl", "byo_file")
+
+byo_file(
+    name = "tp70_users_guide",
+    description = "Turbo Pascal 7.0 User's Guide (1992): a 188-page scanned PDF with an OCR text layer",
+    file_name = "users_guide.pdf",
+    url_env = "TP70_USERS_GUIDE_URL",
+)
+
+byo_file(
+    name = "tp70_language_guide",
+    description = "Turbo Pascal 7.0 Language Guide (1992): a 319-page scanned PDF with an OCR text layer",
+    file_name = "language_guide.pdf",
+    url_env = "TP70_LANGUAGE_GUIDE_URL",
+)
+
+byo_file(
+    name = "tp70_programmers_reference",
+    description = "Turbo Pascal 7.0 Programmer's Reference (1992): a 310-page scanned PDF with an OCR text layer",
+    file_name = "programmers_reference.pdf",
+    url_env = "TP70_PROGRAMMERS_REFERENCE_URL",
+)

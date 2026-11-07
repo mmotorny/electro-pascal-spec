@@ -1,0 +1,17 @@
+alias(
+    name = "users_guide",
+    actual = "@tp70_users_guide//:file",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "language_guide",
+    actual = "@tp70_language_guide//:file",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "programmers_reference",
+    actual = "@tp70_programmers_reference//:file",
+    visibility = ["//visibility:public"],
+)

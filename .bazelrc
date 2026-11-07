@@ -1,0 +1,3 @@
+# Per-user settings from the gitignored user.bazelrc, including where to fetch
+# proprietary third-party files (see third_party/byo.bzl).
+try-import %workspace%/user.bazelrc

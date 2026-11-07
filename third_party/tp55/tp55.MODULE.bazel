@@ -1,0 +1,8 @@
+byo_file = use_repo_rule("//third_party:byo.bzl", "byo_file")
+
+byo_file(
+    name = "tp55",
+    description = "Turbo Pascal 5.5 (1989): the original, unmodified tp55.zip that Borland later released free",
+    file_name = "tp55.zip",
+    url_env = "TP55_URL",
+)

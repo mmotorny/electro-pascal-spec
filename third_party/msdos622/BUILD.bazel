@@ -1,0 +1,5 @@
+alias(
+    name = "archive",
+    actual = "@msdos622//:file",
+    visibility = ["//visibility:public"],
+)

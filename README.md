@@ -1,0 +1,57 @@
+# electro-pascal-spec
+
+A clean-room specification of the Pascal dialect of Borland Pascal 7.01 for
+DOS and its units, including Turbo Vision. The spec is written by observing
+how the original compiler and the programs it builds behave. The clean-room
+implementation lives in a separate repo.
+
+## Prerequisites
+
+Developed on macOS (Apple Silicon) with [Homebrew](https://brew.sh).
+
+| Tool | Version | Install | Used for |
+| --- | --- | --- | --- |
+| Bazelisk | latest | `brew install bazelisk` | Runs the latest Bazel |
+| QEMU | latest | `brew install qemu` | Runs MS-DOS 6.22 and Borland Pascal 7.01 as the reference machine |
+
+Tools aren't pinned: keep them up to date with `brew upgrade`.
+
+## Proprietary inputs
+
+Spec work runs against original software and manuals that are not freely
+licensed, so this repo doesn't contain them or say where to get them. All of
+them are required: bring your own copies, which you must be licensed to use.
+
+| Target | What | Terms | Variable |
+| --- | --- | --- | --- |
+| `//third_party/bp701:archive` | Borland Pascal With Objects 7.01 (1993), English, 3.5" disk images in a 7z archive | Proprietary | `BP701_URL` |
+| `//third_party/msdos622:archive` | MS-DOS 6.22 (Upgrade), 3.5" disk images in a 7z archive | Proprietary | `MSDOS622_URL` |
+| `//third_party/tp55:archive` | Turbo Pascal 5.5 (1989), `tp55.zip` as later released free by Borland | Free for personal use only, no redistribution | `TP55_URL` |
+| `//third_party/tp70:users_guide` | Turbo Pascal 7.0 User's Guide (1992), scanned PDF | Proprietary | `TP70_USERS_GUIDE_URL` |
+| `//third_party/tp70:language_guide` | Turbo Pascal 7.0 Language Guide (1992), scanned PDF | Proprietary | `TP70_LANGUAGE_GUIDE_URL` |
+| `//third_party/tp70:programmers_reference` | Turbo Pascal 7.0 Programmer's Reference (1992), scanned PDF | Proprietary | `TP70_PROGRAMMERS_REFERENCE_URL` |
+
+Set each variable in a `user.bazelrc` file in the repo root. It's gitignored.
+Use `file://` for a local copy:
+
+```
+common --repo_env=BP701_URL=file:///path/to/bp701.7z
+```
+
+## Building
+
+```
+bazel build //...
+```
+
+## License
+
+BSD 3-Clause, see `LICENSE`. This covers the spec and everything else in the
+repo except the third-party files described above, which keep their own terms.
+
+## Trademarks
+
+Borland, Turbo Pascal and Turbo Vision are trademarks of their respective
+owners, and MS-DOS is a trademark of Microsoft. They're used here only to
+identify what this spec describes. This project is not affiliated with or
+endorsed by any of them.

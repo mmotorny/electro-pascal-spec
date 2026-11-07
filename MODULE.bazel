@@ -1,0 +1,9 @@
+module(name = "electro_pascal_spec")
+
+include("//third_party/bp701:bp701.MODULE.bazel")
+
+include("//third_party/msdos622:msdos622.MODULE.bazel")
+
+include("//third_party/tp55:tp55.MODULE.bazel")
+
+include("//third_party/tp70:tp70.MODULE.bazel")

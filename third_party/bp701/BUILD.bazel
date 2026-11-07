@@ -1,0 +1,5 @@
+alias(
+    name = "archive",
+    actual = "@bp701//:file",
+    visibility = ["//visibility:public"],
+)

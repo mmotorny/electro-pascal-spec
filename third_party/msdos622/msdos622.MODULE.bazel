@@ -1,0 +1,8 @@
+byo_file = use_repo_rule("//third_party:byo.bzl", "byo_file")
+
+byo_file(
+    name = "msdos622",
+    description = "Microsoft MS-DOS 6.22 (Upgrade): its three 3.5\" setup disks as disk images in a 7z archive",
+    file_name = "msdos622.7z",
+    url_env = "MSDOS622_URL",
+)

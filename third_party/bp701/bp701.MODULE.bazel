@@ -1,0 +1,8 @@
+byo_file = use_repo_rule("//third_party:byo.bzl", "byo_file")
+
+byo_file(
+    name = "bp701",
+    description = "Borland Pascal With Objects 7.01 (1993), English: its 3.5\" installation disks, including the Run-time Library Source Code disk, as disk images in a 7z archive",
+    file_name = "bp701.7z",
+    url_env = "BP701_URL",
+)

@@ -1,0 +1,5 @@
+alias(
+    name = "archive",
+    actual = "@tp55//:file",
+    visibility = ["//visibility:public"],
+)
