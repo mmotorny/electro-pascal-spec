@@ -234,6 +234,10 @@ arithmetic. That arithmetic isn't known yet (issue #10). What is known:
   Extended value itself, `1.18973149535723176502e4932`, is already error 6.
 - Values below the smallest normal Extended value (about
   `3.3621e-4932`) become 0. There are no denormals.
+- Only the first 19 significant digits count; any digits after them are
+  ignored, as if they were 0.
+- Scaling by a positive power of ten is exact as far as the cases go
+  (up to 10^27); scaling by a negative power is where the result goes off.
 
 ## Not covered yet
 
