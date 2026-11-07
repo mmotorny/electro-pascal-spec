@@ -15,6 +15,9 @@ build it.
   record what a result came from alongside the result instead: tool versions
   (such as QEMU) and hashes of the key proprietary files (such as `BPC.EXE`
   and `TURBO.TPL`).
+- Don't wrap `bazel run` or `bazel build` commands in shell scripts, aliases
+  or make targets. Document the Bazel command itself, in `README.md` for
+  people or here for agents.
 
 ## Proprietary materials
 

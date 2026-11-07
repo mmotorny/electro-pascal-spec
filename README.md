@@ -13,6 +13,7 @@ Developed on macOS (Apple Silicon) with [Homebrew](https://brew.sh).
 | --- | --- | --- | --- |
 | Bazelisk | latest | `brew install bazelisk` | Runs the latest Bazel |
 | QEMU | latest | `brew install qemu` | Runs MS-DOS 6.22 and Borland Pascal 7.01 as the reference machine |
+| Python 3 | latest | `xcode-select --install` | Drives the installers on the reference machine |
 
 Tools aren't pinned: keep them up to date with `brew upgrade`.
 
@@ -43,6 +44,17 @@ common --repo_env=BP701_URL=file:///path/to/bp701.7z
 ```
 bazel build //...
 ```
+
+## Reference machine
+
+`bazel build //machine:disk` builds the reference machine's hard disk,
+`bazel-bin/machine/disk.img`: a 64 MB disk image for a 486 PC with 16 MB of
+memory. A script installs MS-DOS 6.22 and then Borland Pascal 7.01 inside
+QEMU by running their own installers with default options, reading the screen
+and typing keys like a user would. It takes about a minute.
+
+`bazel run //machine:run` boots that disk in a QEMU window. Changes to the
+disk are thrown away when QEMU exits. Arguments after `--` go to QEMU.
 
 ## License
 

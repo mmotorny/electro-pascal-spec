@@ -1,0 +1,5 @@
+alias(
+    name = "qemu-system-i386",
+    actual = "@qemu_system_i386//:tool",
+    visibility = ["//visibility:public"],
+)

@@ -1,0 +1,30 @@
+load(":run.bzl", "machine_run")
+
+# The reference machine's hard disk: MS-DOS 6.22 and Borland Pascal 7.01,
+# installed with default options by their own installers inside QEMU.
+genrule(
+    name = "disk",
+    srcs = [
+        "//third_party/bp701:archive",
+        "//third_party/msdos622:archive",
+    ],
+    outs = ["disk.img"],
+    cmd = " ".join([
+        "/usr/bin/python3 -B -s $(location install.py)",
+        "--qemu $(location //third_party/qemu:qemu-system-i386)",
+        "--msdos $(location //third_party/msdos622:archive)",
+        "--bp $(location //third_party/bp701:archive)",
+        "--out $@",
+    ]),
+    tools = [
+        "install.py",
+        "qmp.py",
+        "//third_party/qemu:qemu-system-i386",
+    ],
+)
+
+# Boots the reference disk in a QEMU window. Changes are thrown away on exit.
+machine_run(
+    name = "run",
+    disk = ":disk",
+)
