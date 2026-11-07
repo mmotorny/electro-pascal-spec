@@ -1,0 +1,6 @@
+# A large number after #.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#0)
+tpc: ok
+output: 'A'
+---
+program P; const S = #65601; begin Write(S) end.

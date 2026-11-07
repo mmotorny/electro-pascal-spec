@@ -1,0 +1,6 @@
+# Leading zeros in a hex number don't count against the range.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ INTEGER(255) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
+tpc: ok
+output: '255'
+---
+program P; const C = $000000000FF; begin Write(C) end.

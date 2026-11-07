@@ -1,0 +1,5 @@
+# Leading zeros in a label are not significant: 01 and 1 are the same label.
+tokens: PROGRAM IDENT(P) SEMI LABEL INTEGER(1) COMMA INTEGER(1)
+tpc: error 4 at 1:21
+---
+program P; label 1, 01; begin 1: end.

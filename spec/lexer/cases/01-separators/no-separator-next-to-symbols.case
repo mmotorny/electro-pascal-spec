@@ -1,0 +1,6 @@
+# Words need no separator next to special symbols.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P;begin end.

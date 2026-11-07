@@ -1,0 +1,5 @@
+# In a type, ^ followed by a digit.
+tokens: PROGRAM IDENT(P) SEMI TYPE IDENT(T) EQ CARET
+tpc: error 2 at 1:22
+---
+program P; type T = ^1; begin end.

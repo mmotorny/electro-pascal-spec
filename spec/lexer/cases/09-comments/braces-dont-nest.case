@@ -1,0 +1,5 @@
+# Braces don't nest: the comment ends at the first }, leaving a stray }.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 5 at 1:18
+---
+program P; { { } } begin end.

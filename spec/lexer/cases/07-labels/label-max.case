@@ -1,0 +1,6 @@
+# 9999 is the largest numeric label.
+tokens: PROGRAM IDENT(P) SEMI LABEL INTEGER(9999) SEMI BEGIN INTEGER(9999) COLON END DOT
+tpc: ok
+output: ''
+---
+program P; label 9999; begin 9999: end.

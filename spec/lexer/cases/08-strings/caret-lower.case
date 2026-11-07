@@ -1,0 +1,6 @@
+# ^m in lower case is the same as ^M.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#13) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
+tpc: ok
+output: #13
+---
+program P; const S = ^m; begin Write(S) end.

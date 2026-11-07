@@ -1,0 +1,5 @@
+# A blank between two parts of a string makes them two strings.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING('a') STRING(#13)
+tpc: error 85 at 1:26
+---
+program P; const S = 'a' #13; begin Write(S) end.

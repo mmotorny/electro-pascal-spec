@@ -1,0 +1,6 @@
+# A dot directly followed by an exponent.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ
+tpc: ok
+output: ' 1.0000000000E+05'
+---
+program P; const C = 1.e5; begin Write(C) end.

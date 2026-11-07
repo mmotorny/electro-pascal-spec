@@ -25,3 +25,15 @@ python_tool = rule(
         "fixed_args": attr.string_list(),
     },
 )
+
+python_test = rule(
+    implementation = _python_tool_impl,
+    test = True,
+    doc = "A test that runs `main` with `fixed_args`; it passes if `main` exits with 0.",
+    attrs = {
+        "main": attr.label(allow_single_file = [".py"], mandatory = True),
+        "srcs": attr.label_list(allow_files = [".py"]),
+        "data": attr.label_list(allow_files = True),
+        "fixed_args": attr.string_list(),
+    },
+)

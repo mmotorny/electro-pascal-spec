@@ -1,0 +1,8 @@
+# The CR of a CR LF line end doesn't count towards the length.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P;
+{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}
+begin end.

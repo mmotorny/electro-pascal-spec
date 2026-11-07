@@ -1,0 +1,6 @@
+# Reserved words are recognised in mixed case.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+PrOgRaM p; bEgIn eNd.

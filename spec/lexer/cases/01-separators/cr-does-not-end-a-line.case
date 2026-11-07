@@ -1,0 +1,5 @@
+# A carriage return alone is a blank, not a line end: the error is reported on line 1.
+tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITELN) LPAREN INTEGER(1) RPAREN IDENT(WRITELN)
+tpc: error 85 at 1:30
+---
+program P;begin  WriteLn(1)  WriteLn(2);end.

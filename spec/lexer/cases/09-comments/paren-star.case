@@ -1,0 +1,6 @@
+# A comment in (* and *).
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; (* comment *) begin end.

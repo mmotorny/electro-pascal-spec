@@ -1,0 +1,6 @@
+# Tab, ^A and ^_ (ASCII 9, 1, 31) separate tokens like a space.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program	P;beginend.

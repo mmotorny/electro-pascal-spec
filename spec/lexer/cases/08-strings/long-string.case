@@ -1,0 +1,6 @@
+# An 80-character quoted string.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx') SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
+tpc: ok
+output: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+---
+program P; const S = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'; begin Write(S) end.

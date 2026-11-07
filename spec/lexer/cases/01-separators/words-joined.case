@@ -1,0 +1,6 @@
+# Two words without a separator are one identifier.
+tokens: IDENT(PROGRAMP) SEMI
+tpc: error 36 at 1:1
+---
+programP;
+begin end.

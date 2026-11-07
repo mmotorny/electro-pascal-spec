@@ -1,0 +1,6 @@
+# + - * / and parentheses.
+tokens: PROGRAM IDENT(P) SEMI VAR IDENT(R) COLON IDENT(REAL) SEMI BEGIN IDENT(R) ASSIGN LPAREN INTEGER(1) PLUS INTEGER(2) RPAREN STAR INTEGER(3) MINUS INTEGER(4) SLASH INTEGER(5) END DOT
+tpc: ok
+output: ''
+---
+program P; var R: Real; begin R := (1 + 2) * 3 - 4 / 5 end.

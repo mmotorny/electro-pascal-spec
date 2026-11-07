@@ -1,0 +1,5 @@
+# A } outside a comment.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 5 at 1:12
+---
+program P; } begin end.

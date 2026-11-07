@@ -1,0 +1,6 @@
+# { $R+} is an ordinary comment.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; { $Z+} begin end.

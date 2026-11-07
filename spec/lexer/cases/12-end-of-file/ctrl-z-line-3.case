@@ -1,0 +1,7 @@
+# ^Z on line 3.
+tokens: PROGRAM IDENT(P) SEMI BEGIN
+tpc: error 10 at 3:1
+---
+program P;
+begin
+end.

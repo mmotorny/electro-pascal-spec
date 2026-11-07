@@ -1,0 +1,5 @@
+# ^ followed by a blank.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ
+tpc: error 85 at 1:24
+---
+program P; const S = ^ M; begin Write(S) end.

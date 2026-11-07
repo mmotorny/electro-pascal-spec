@@ -28,6 +28,17 @@ build it.
 - Their URLs belong only in the gitignored `user.bazelrc`. After any Bazel
   change, check that `MODULE.bazel.lock` contains none of them.
 
+## Spec cases
+
+- A case's `tpc:` and `output:` lines are written only by
+  `bazel run //spec:record`, never by hand. Run it after adding or changing
+  cases, and keep `bazel test //spec:cases_test` passing.
+- When a recorded result disagrees with the spec's text or a case's
+  `tokens:` line, the recorded result is right: fix the text or the tokens,
+  or record the behaviour as a quirk.
+- Write cases as small, complete programs of our own. When a case shows a
+  value, make the program print it so `output:` records it.
+
 ## Clean room
 
 - The BP 7.01 archive includes Borland's runtime library source. The spec

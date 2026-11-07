@@ -1,0 +1,6 @@
+# ^M as an argument.
+tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN STRING(#13) RPAREN END DOT
+tpc: ok
+output: #13
+---
+program P; begin Write(^M) end.

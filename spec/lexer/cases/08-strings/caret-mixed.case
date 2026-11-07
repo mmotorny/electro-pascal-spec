@@ -1,0 +1,6 @@
+# Caret characters join with quoted strings.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING('a'#13#10'b') SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
+tpc: ok
+output: 'a'#13#10'b'
+---
+program P; const S = 'a'^M^J'b'; begin Write(S) end.

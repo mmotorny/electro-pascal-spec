@@ -1,0 +1,7 @@
+# ^Z early, with more lines after it: where the end of file is reported.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 10 at 2:1
+---
+program P;
+begin
+end.

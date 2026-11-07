@@ -1,0 +1,5 @@
+# A blank between # and the number.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ
+tpc: error 7 at 1:23
+---
+program P; const S = # 13; begin Write(S) end.

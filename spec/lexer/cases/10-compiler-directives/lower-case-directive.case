@@ -1,0 +1,6 @@
+# Directive names are not case sensitive.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; {$r+} begin end.

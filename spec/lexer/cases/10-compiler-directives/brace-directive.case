@@ -1,0 +1,6 @@
+# {$R+} is a directive, not a token.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; {$R+} begin end.

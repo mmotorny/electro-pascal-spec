@@ -8,7 +8,9 @@ several machines in parallel.
 Each result is either {"verdict": "ok"} or {"verdict": "error", "code": N,
 "line": L, "column": C, "message": "..."}, plus TPC's full output and its
 exit code. Line and column are 1-based; the column is where TPC puts its
-caret.
+caret. When a probe compiles, the program is also run, and "run_output"
+holds what it wrote to standard output (as a latin-1 string, one character
+per byte).
 """
 
 import argparse
@@ -85,6 +87,8 @@ def run_batch(tools, disk, sources, workdir, first=0):
             # COMMAND.COM creates the file even when the condition is false,
             # so a non-zero exit code is a non-empty file.
             f"IF ERRORLEVEL 1 ECHO 1> {name}.ERL",
+            # As with ERL, the redirection creates RUN even if nothing runs.
+            f"IF EXIST {name}.EXE {name} > {name}.RUN",
             f"IF EXIST {name}.EXE DEL {name}.EXE",
         ]
     script += ["CD \\", "ECHO PROBES DONE"]
@@ -105,7 +109,7 @@ def run_batch(tools, disk, sources, workdir, first=0):
 
     out_dir = os.path.join(workdir, "out")
     os.makedirs(out_dir)
-    tools.mtool("mcopy", "-n", "-i", floppy, "::/P/*.OUT", "::/P/*.ERL", out_dir + "/")
+    tools.mtool("mcopy", "-n", "-i", floppy, "::/P/*.OUT", "::/P/*.ERL", "::/P/*.RUN", out_dir + "/")
     results = []
     for n in range(len(sources)):
         name = f"P{first + n:07}"
@@ -115,6 +119,9 @@ def run_batch(tools, disk, sources, workdir, first=0):
             output = f.read().decode("cp437")
         result = parse_output(output)
         result["exit_code"] = 1 if failed else 0
+        if result["verdict"] == "ok":
+            with open(os.path.join(out_dir, name + ".RUN"), "rb") as f:
+                result["run_output"] = f.read().decode("latin-1")
         result["output"] = output
         results.append(result)
     return results

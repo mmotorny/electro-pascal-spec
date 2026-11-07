@@ -1,0 +1,6 @@
+# A decimal integer.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ INTEGER(123) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
+tpc: ok
+output: '123'
+---
+program P; const C = 123; begin Write(C) end.

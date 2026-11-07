@@ -1,0 +1,6 @@
+# 'external' is not a reserved word in TPC, so it can be declared as a variable.
+tokens: PROGRAM IDENT(P) SEMI VAR IDENT(EXTERNAL) COLON IDENT(INTEGER) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; var external: Integer; begin end.

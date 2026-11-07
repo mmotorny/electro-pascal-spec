@@ -1,0 +1,6 @@
+# Negative exponent.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(7E-2) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
+tpc: ok
+output: ' 7.0000000000E-02'
+---
+program P; const C = 7E-2; begin Write(C) end.

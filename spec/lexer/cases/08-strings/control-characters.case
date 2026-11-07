@@ -1,0 +1,6 @@
+# #13#10 is a two-character string.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#13#10) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
+tpc: ok
+output: #13#10
+---
+program P; const S = #13#10; begin Write(S) end.

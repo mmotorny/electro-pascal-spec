@@ -1,0 +1,5 @@
+# 'constructor' is a reserved word, so it can't be declared as a variable.
+tokens: PROGRAM IDENT(P) SEMI VAR CONSTRUCTOR
+tpc: error 2 at 1:16
+---
+program P; var constructor: Integer; begin end.

@@ -1,0 +1,6 @@
+# A real number with an exponent.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(1e10) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
+tpc: ok
+output: ' 1.0000000000E+10'
+---
+program P; const C = 1e10; begin Write(C) end.

@@ -1,0 +1,6 @@
+# ^ followed by a digit.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ
+tpc: ok
+output: 'q'
+---
+program P; const S = ^1; begin Write(S) end.

@@ -1,0 +1,5 @@
+# 'string' is a reserved word, so it can't be declared as a variable.
+tokens: PROGRAM IDENT(P) SEMI VAR STRING
+tpc: error 2 at 1:16
+---
+program P; var string: Integer; begin end.

@@ -1,0 +1,33 @@
+load("//machine:python_tool.bzl", "python_test", "python_tool")
+
+# Runs the spec's cases through TPC and writes each verdict into its case:
+# bazel run //spec:record [-- case or directory ...]
+python_tool(
+    name = "record",
+    data = [
+        "//machine:disk",
+        "//third_party/mtools",
+        "//third_party/qemu:qemu-system-i386",
+    ],
+    fixed_args = [
+        "--qemu=$(rootpath //third_party/qemu:qemu-system-i386)",
+        "--mtools=$(rootpath //third_party/mtools)",
+        "--disk=$(rootpath //machine:disk)",
+    ],
+    main = "record.py",
+    srcs = [
+        "cases.py",
+        "//machine:probe.py",
+        "//machine:qmp.py",
+    ],
+)
+
+# Checks that every case is well formed and has a recorded verdict. Doesn't
+# run TPC.
+python_test(
+    name = "cases_test",
+    size = "small",
+    data = glob(["**/*.case"]),
+    main = "check_cases.py",
+    srcs = ["cases.py"],
+)

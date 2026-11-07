@@ -56,3 +56,8 @@ python_tool(
     main = "probe.py",
     srcs = ["qmp.py"],
 )
+
+exports_files([
+    "probe.py",
+    "qmp.py",
+])

@@ -1,0 +1,7 @@
+# A 128-character line inside a comment, before the end of the program.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 11 at 2:128
+---
+program P;
+{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}
+begin end.

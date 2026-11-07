@@ -63,6 +63,18 @@ or the error number, line, column and message, plus `TPC`'s full output. It
 also records what the results ran on: the QEMU version and hashes of the key
 BP files. Large sets are spread over one machine per CPU core.
 
+## Spec
+
+The spec lives in [`spec/`](spec). It starts with the lexer,
+[`spec/lexer.md`](spec/lexer.md), backed by test cases in
+`spec/lexer/cases/`. Each case is a small program with the tokens the spec
+expects and `TPC`'s recorded verdict and program output.
+
+- `bazel run //spec:record` runs every case through `TPC` on the reference
+  machine and writes the verdicts and outputs into the cases.
+- `bazel test //spec:cases_test` checks that every case is well formed and
+  recorded, without running `TPC`.
+
 ## IDE help as text
 
 `bazel build //help:all` decodes the DOS IDE's online help into plain text:

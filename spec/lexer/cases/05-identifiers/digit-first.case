@@ -1,0 +1,5 @@
+# An identifier can't start with a digit: 1A is a number followed by an identifier.
+tokens: PROGRAM IDENT(P) SEMI VAR
+tpc: error 2 at 1:16
+---
+program P; var 1A: Integer; begin end.

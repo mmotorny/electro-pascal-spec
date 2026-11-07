@@ -1,0 +1,6 @@
+# #256 is accepted; the output shows which character it is.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#0) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
+tpc: ok
+output: #0
+---
+program P; const S = #256; begin Write(S) end.

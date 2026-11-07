@@ -1,0 +1,6 @@
+# $FFFFFFFF is allowed, and is -1 as a 32-bit signed value.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ INTEGER(-1) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
+tpc: ok
+output: '-1'
+---
+program P; const C = $FFFFFFFF; begin Write(C) end.

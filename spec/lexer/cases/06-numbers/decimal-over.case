@@ -1,0 +1,5 @@
+# 2147483648 is out of range.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ
+tpc: error 7 at 1:31
+---
+program P; const C = 2147483648; begin Write(C) end.

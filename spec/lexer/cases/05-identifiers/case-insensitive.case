@@ -1,0 +1,5 @@
+# Identifiers are not case sensitive: x and X are the same.
+tokens: PROGRAM IDENT(P) SEMI VAR IDENT(X) COMMA IDENT(X)
+tpc: error 4 at 1:19
+---
+program P; var x, X: Integer; begin end.

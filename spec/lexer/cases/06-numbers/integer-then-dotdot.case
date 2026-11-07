@@ -1,0 +1,6 @@
+# 1..2 is an integer, .. and an integer, not a real.
+tokens: PROGRAM IDENT(P) SEMI TYPE IDENT(T) EQ INTEGER(1) DOTDOT INTEGER(2) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; type T = 1..2; begin end.

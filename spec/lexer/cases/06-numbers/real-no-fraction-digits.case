@@ -1,0 +1,6 @@
+# A dot with no digits after it.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ
+tpc: ok
+output: ' 1.0000000000E+00'
+---
+program P; const C = 1.; begin Write(C) end.

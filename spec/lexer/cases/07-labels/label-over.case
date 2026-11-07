@@ -1,0 +1,5 @@
+# 10000 is too large for a label.
+tokens: PROGRAM IDENT(P) SEMI LABEL
+tpc: error 2 at 1:18
+---
+program P; label 10000; begin 10000: end.

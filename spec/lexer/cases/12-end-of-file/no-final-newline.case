@@ -1,0 +1,6 @@
+# The file doesn't have to end with a line end.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; begin end.
