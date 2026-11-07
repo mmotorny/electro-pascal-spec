@@ -36,6 +36,10 @@ build it.
 - When a recorded result disagrees with the spec's text or a case's
   `tokens:` line, the recorded result is right: fix the text or the tokens,
   or record the behaviour as a quirk.
+- A case's `tokens:` line must match the token stream captured from `TPC`.
+  The capture tool lives in the dirty room (`dirty/`, local only); its
+  spec-notation dump is the one thing the clean room may use from it, and
+  `spec/compare.py` checks the cases against it.
 - Write cases as small, complete programs of our own. When a case shows a
   value, make the program print it so `output:` records it.
 

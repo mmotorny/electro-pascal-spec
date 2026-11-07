@@ -1,5 +1,5 @@
-# A dot directly followed by an exponent.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ
+# A dot may be followed directly by an exponent: 1.e5 is a real.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(1.e5) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
 tpc: ok
 output: ' 1.0000000000E+05'
 ---

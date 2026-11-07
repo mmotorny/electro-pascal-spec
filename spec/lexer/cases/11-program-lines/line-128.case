@@ -1,5 +1,5 @@
-# A line of 128 characters is too long.
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+# A line of 128 characters is too long; the error comes before any token on the line.
+tokens: 
 tpc: error 11 at 1:128
 ---
 program P; begin end. {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}

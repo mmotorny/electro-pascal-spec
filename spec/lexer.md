@@ -7,8 +7,11 @@ lines are recorded from the real compiler and are the final word; where this
 text and a case disagree, the case is right and this text needs fixing.
 
 Status: first draft, from the Language Guide, the IDE help and black-box
-probes. The `tokens:` lines are this spec's claims and haven't yet been
-checked against `TPC`'s actual token stream (issue #6).
+probes. Every case's `tokens:` line matches the token stream captured from
+`TPC` (issue #6). A case's token list ends where `TPC` stops asking for
+tokens: at the end of the program, or at the token where it reports an
+error. When the error is in the lexer itself, the bad token is not
+delivered.
 
 ## Notation
 
@@ -42,7 +45,8 @@ string. For example `'Line 1'#13#10`.
 - A line may hold at most 127 characters, not counting CRs. A tab counts as
   one character. A longer line is error 11 at column 128, wherever it is,
   even inside a comment ([program lines](lexer/cases/11-program-lines)).
-  The Language Guide's figure of 126 is wrong.
+  The error comes before any token on that line is delivered. The Language
+  Guide's figure of 126 is wrong.
 - ^Z (26) ends the file; nothing after it is read. When the file ends too
   early, the error is reported at column 1 of the line after the last line
   read, and a line that ^Z cuts short still counts as read
@@ -127,10 +131,9 @@ virtual` are ordinary identifiers to the lexer.
 ## Labels
 
 A label is an identifier or a number from 0 to 9999; leading zeros don't
-matter, so `01` and `1` are the same label. `10000` is rejected
-([labels](lexer/cases/07-labels)). That the range check belongs to the lexer
-or the parser can't be seen from outside; either way, numbers in label
-positions follow this rule.
+matter, so `01` and `1` are the same label ([labels](lexer/cases/07-labels)).
+To the lexer a numeric label is an ordinary `INTEGER`: `10000` is delivered
+as a number and then rejected where a label is expected.
 
 ## Character strings
 
@@ -144,15 +147,18 @@ parts ends the string, and the next part starts a new one. The parts are:
   error 8.
 - **`#` and a number**, decimal or hex, with no blank after `#`. Only the
   low 8 bits of the value are used: `#256` is `#0`, and `#65601` is `'A'`.
-- **`^` and one character**: the character in upper case with bit 64
-  flipped. `^M` and `^m` are `#13`, `^@` is `#0`, `^[` is `#27`, `^1` is
-  `'q'`, `^'` is `'g'`. Only one character is taken: `^Integer` is `^I`
+- **`^` and the very next character**, whatever it is, a blank included:
+  the character in upper case with bit 64 flipped. `^M` and `^m` are `#13`,
+  `^@` is `#0`, `^[` is `#27`, `^1` is `'q'`, `^'` is `'g'`, and `^` then a
+  space is `` ` `` (96). Only one character is taken: `^Integer` is `^I`
   followed by the identifier `nteger`.
 
-Whether `^` followed by a character starts a string depends on context. In a
-constant or an expression it does. After `=` in a type declaration, or `:`
-in a variable declaration, `^M` is a pointer to type `M`. How `TPC` decides
-is an open question.
+Whether `^` starts a string depends on where it appears. Where a constant
+or an operand of an expression is expected, `^` and the next character are
+a character string as above, and join with neighbouring parts. Everywhere
+else `^` is `CARET`: in a type (`^M` after `=` in a type declaration or `:`
+in a variable declaration is a pointer to type `M`, and `^1` there is
+`CARET INTEGER(1)`), and after an operand (`Q^.F`).
 
 ## Comments
 
@@ -181,8 +187,8 @@ count. A missing `{$ENDIF}` is error 129 at the end of the file.
 
 ## Open questions
 
-- How `^` is decided between a character and a pointer.
 - Error positions: integer overflow is reported at the number's last digit,
   but real overflow just after the number.
-- The exact token stream for all of the above, once `TPC`'s tokens can be
-  captured (issue #6).
+- How `^` behaves in contexts the cases don't cover yet, such as after a
+  closing parenthesis or in a set constructor.
+- The lexer inside `asm` blocks, which is a separate scanner.

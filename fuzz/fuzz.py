@@ -118,6 +118,8 @@ def main():
     parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--per-round", type=int, default=3200)
     parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument("--range-file", help="file holding 'lo hi', the linear address range to "
+                        "count coverage in, instead of all of TPC")
     parser.add_argument("seeds", nargs="*", help="case directories to start from")
     args = parser.parse_args()
 
@@ -131,8 +133,13 @@ def main():
     tools = probe.Tools(os.path.abspath(args.qemu), os.path.abspath(args.mtools))
     disk, plugin = os.path.abspath(args.disk), os.path.abspath(args.coverage_plugin)
 
+    coverage_range = None
+    if args.range_file:
+        with open(os.path.join(base, args.range_file)) as f:
+            coverage_range = tuple(int(x, 0) for x in f.read().split()[:2])
+
     def run(sources):
-        return probe.run(tools, disk, sources, coverage=plugin)[1]
+        return probe.run(tools, disk, sources, coverage=plugin, coverage_range=coverage_range)[1]
 
     rng = random.Random(args.seed)
     seen = set()

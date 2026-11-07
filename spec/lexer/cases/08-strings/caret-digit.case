@@ -1,5 +1,5 @@
 # ^ followed by a digit.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING('q') SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
 tpc: ok
 output: 'q'
 ---

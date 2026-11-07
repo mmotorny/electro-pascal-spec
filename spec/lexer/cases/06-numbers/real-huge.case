@@ -1,5 +1,5 @@
-# A real number near the top of the Extended range.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(1e4932) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
+# 1e4932 is a valid real token; the error is that the value doesn't fit the Real type Write is given.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(1e4932) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN
 tpc: error 76 at 1:43
 ---
 program P; const C = 1e4932; begin Write(C) end.

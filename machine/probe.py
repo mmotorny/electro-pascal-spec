@@ -215,10 +215,12 @@ def machine_info(tools, disk, workdir):
     return {"qemu": version, "sha256": hashes}
 
 
-def run(tools, disk, sources, jobs=None, coverage=None):
+def run(tools, disk, sources, jobs=None, coverage=None, coverage_range=None):
     """Compiles each source (bytes) and returns (machine info, results).
 
     coverage: path to the coverage plugin, to record coverage.
+    coverage_range: (lo, hi) linear addresses to count coverage in; default:
+        all of TPC's load image.
     """
     jobs = jobs or os.cpu_count() or 1
     size = max(1, min(BATCH_SIZE, -(-len(sources) // jobs)))  # Spread over all machines.
@@ -226,7 +228,7 @@ def run(tools, disk, sources, jobs=None, coverage=None):
     with tempfile.TemporaryDirectory() as work:
         info = machine_info(tools, disk, work)
         if coverage:
-            coverage = {"plugin": coverage, "range": tpc_range(tools, disk, work)}
+            coverage = {"plugin": coverage, "range": coverage_range or tpc_range(tools, disk, work)}
 
         def one(i):
             d = os.path.join(work, f"batch{i}")

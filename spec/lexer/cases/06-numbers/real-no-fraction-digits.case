@@ -1,5 +1,5 @@
-# A dot with no digits after it.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ
+# A real may end with a dot and no digits: 1. is 1.0.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(1.) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
 tpc: ok
 output: ' 1.0000000000E+00'
 ---

@@ -78,6 +78,10 @@ expects and `TPC`'s recorded verdict and program output.
   machine and writes the verdicts and outputs into the cases.
 - `bazel test //spec:cases_test` checks that every case is well formed and
   recorded, without running `TPC`.
+- `python3 spec/compare.py CAPTURED.json` compares the cases' `tokens:`
+  lines with a dump of the tokens `TPC` actually delivered, in the spec's
+  notation. The dump comes from a capture tool that is not part of this
+  repo.
 
 ## Fuzzing
 

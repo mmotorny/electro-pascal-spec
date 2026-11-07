@@ -1,5 +1,5 @@
-# A large number after #.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#0)
+# Only the low 8 bits of the number after # count: #65601 is 'A'.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING('A') SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
 tpc: ok
 output: 'A'
 ---
