@@ -153,12 +153,18 @@ parts ends the string, and the next part starts a new one. The parts are:
   space is `` ` `` (96). Only one character is taken: `^Integer` is `^I`
   followed by the identifier `nteger`.
 
-Whether `^` starts a string depends on where it appears. Where a constant
-or an operand of an expression is expected, `^` and the next character are
-a character string as above, and join with neighbouring parts. Everywhere
-else `^` is `CARET`: in a type (`^M` after `=` in a type declaration or `:`
-in a variable declaration is a pointer to type `M`, and `^1` there is
-`CARET INTEGER(1)`), and after an operand (`Q^.F`).
+Whether `^` starts a string depends on where it appears. Where an operand
+of an expression is expected, `^` and the next character are a character
+string as above, and join with neighbouring parts: in constant expressions,
+statements, set constructors and `case` labels. Everywhere else `^` is
+`CARET`:
+
+- wherever a type is expected: after `=` in a type declaration, after `:`
+  in a variable, record field or typed constant declaration, and after `of`
+  in an array type. There `^M` is always a pointer to type `M`, so a
+  subrange of characters can't be written with `^`: `type T = ^A..^Z` is an
+  error. `^1` there is `CARET INTEGER(1)`.
+- after an operand, where it dereferences a pointer: `Q^.F`, `(Q)^`.
 
 ## Comments
 
@@ -189,6 +195,4 @@ count. A missing `{$ENDIF}` is error 129 at the end of the file.
 
 - Error positions: integer overflow is reported at the number's last digit,
   but real overflow just after the number.
-- How `^` behaves in contexts the cases don't cover yet, such as after a
-  closing parenthesis or in a set constructor.
 - The lexer inside `asm` blocks, which is a separate scanner.

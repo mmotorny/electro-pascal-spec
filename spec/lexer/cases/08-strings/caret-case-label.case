@@ -1,0 +1,6 @@
+# A caret character as a case label.
+tokens: PROGRAM IDENT(P) SEMI VAR IDENT(C) COLON IDENT(CHAR) SEMI BEGIN IDENT(C) ASSIGN STRING(#13) SEMI CASE IDENT(C) OF STRING(#13) COLON IDENT(WRITE) LPAREN STRING('y') RPAREN ELSE IDENT(WRITE) LPAREN STRING('n') RPAREN END END DOT
+tpc: ok
+output: 'y'
+---
+program P; var C: Char; begin C := #13; case C of ^M: Write('y') else Write('n') end end.

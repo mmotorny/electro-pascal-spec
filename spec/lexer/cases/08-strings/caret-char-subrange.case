@@ -1,0 +1,5 @@
+# A subrange of caret characters in a type declaration.
+tokens: PROGRAM IDENT(P) SEMI TYPE IDENT(T) EQ CARET IDENT(A) DOTDOT
+tpc: error 85 at 1:23
+---
+program P; type T = ^A..^Z; var C: T; begin C := ^B; Write(Ord(C)) end.

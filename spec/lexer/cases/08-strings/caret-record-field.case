@@ -1,0 +1,6 @@
+# ^ after ':' in a record field is a pointer type.
+tokens: PROGRAM IDENT(P) SEMI TYPE IDENT(R) EQ RECORD IDENT(F) COLON CARET IDENT(INTEGER) END SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; type R = record F: ^Integer end; begin end.

@@ -1,0 +1,6 @@
+# A caret character in a constant expression.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ IDENT(ORD) LPAREN STRING(#1) RPAREN PLUS INTEGER(1) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
+tpc: ok
+output: '2'
+---
+program P; const C = Ord(^A) + 1; begin Write(C) end.

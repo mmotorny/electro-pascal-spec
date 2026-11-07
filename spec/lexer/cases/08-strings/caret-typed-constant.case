@@ -1,0 +1,6 @@
+# ^ after ':' in a typed constant is a pointer type.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(Q) COLON CARET IDENT(INTEGER) EQ NIL SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; const Q: ^Integer = nil; begin end.
