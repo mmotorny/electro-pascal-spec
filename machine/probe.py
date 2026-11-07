@@ -80,7 +80,8 @@ def parse_output(text):
         if match:
             return {"verdict": "error", "code": int(match.group(1)), "line": None,
                     "column": None, "message": match.group(2)}
-    if any(re.search(r"\d+ lines, \d+ bytes code", l) for l in lines):
+    # Compiles that take 0.1 s or more also report ", X.X seconds".
+    if any(re.search(r"\d+ lines, (?:[\d.]+ seconds, )?\d+ bytes code", l) for l in lines):
         return {"verdict": "ok"}
     return {"verdict": "unknown"}
 

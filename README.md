@@ -79,6 +79,13 @@ expects and `TPC`'s recorded verdict and program output.
 - `bazel test //spec:cases_test` checks that every case is well formed and
   recorded, without running `TPC`.
 
+## Fuzzing
+
+`bazel run //fuzz -- --out DIR [--rounds N]` mutates the spec's cases and
+keeps every mutant that makes `TPC` run code no earlier input reached,
+shrinks each one, and writes them to `DIR` with their verdicts. These finds
+are candidates for new cases.
+
 ## IDE help as text
 
 `bazel build //help:all` decodes the DOS IDE's online help into plain text:
