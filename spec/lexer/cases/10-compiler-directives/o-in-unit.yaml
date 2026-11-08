@@ -1,0 +1,45 @@
+description: "{$O Foo} inside a unit rather than the program."
+options:
+  - /M
+source: |
+  {$F+}
+  program P;
+  uses Overlay, Foo;
+
+  var Name: string;
+  begin
+    Name := ParamStr(0);
+    OvrInit(Copy(Name, 1, Length(Name) - 4) + '.OVR');
+    Hello
+  end.
+files:
+  FOO.PAS: |
+    {$O+,F+}
+    unit Foo;
+    {$O Foo}
+    interface
+    procedure Hello;
+    implementation
+    procedure Hello;
+    begin
+      Write('hi')
+    end;
+    end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - USES
+  - IDENT: OVERLAY
+  - COMMA
+  - IDENT: FOO
+  - SEMI
+  - UNIT
+  - IDENT: FOO
+  - SEMI
+compile:
+  error: 17
+  line: 3
+  column: 3
+  file: FOO.PAS
+  message: Invalid compiler directive.

@@ -1,0 +1,19 @@
+description: "{$O Bar} for a unit the program doesn't use."
+source: |
+  program P;
+  uses Overlay;
+  {$O Bar}
+  begin
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - USES
+  - IDENT: OVERLAY
+  - SEMI
+compile:
+  error: 3
+  line: 3
+  column: 5
+  message: Unknown identifier.

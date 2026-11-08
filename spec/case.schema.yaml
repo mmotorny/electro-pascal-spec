@@ -15,6 +15,14 @@ properties:
     description: What the input is and what it shows.
     type: string
     minLength: 1
+  options:
+    description: Options for TPC's command line, such as /M or /DNAME, given
+      before the program's name.
+    type: array
+    minItems: 1
+    items:
+      type: string
+      pattern: ^[/-][A-Za-z0-9$_.:;=+,\\-]*$
   source:
     description: The program, byte for byte.
     $ref: '#/$defs/bytes'

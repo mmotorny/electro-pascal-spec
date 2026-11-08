@@ -195,10 +195,10 @@ def run_batch(tools, disk, sources, workdir, first=0):
     names = [probe.probe_name(first + n) for n in range(len(sources))]
     probe.lay_out(tools, floppy, workdir, names, sources)
     script = ["@ECHO OFF", "A:"]
-    for name in names:
+    for name, source in zip(names, sources):
         script += [
             f"CD \\P\\{name}",
-            f"{probe.TPC} {name}.PAS > {name}.OUT",
+            probe.command(name, source),
             f"IF ERRORLEVEL 1 ECHO 1> {name}.ERL",
             f"IF EXIST {name}.EXE DEL {name}.EXE",
         ]
@@ -308,8 +308,9 @@ def main():
             import yaml
             case = yaml.safe_load(data)
             data = case["source"].encode("latin-1")
-            if case.get("files"):
-                data = (data, {k: v.encode("latin-1") for k, v in case["files"].items()})
+            if case.get("files") or case.get("options"):
+                files = {k: v.encode("latin-1") for k, v in (case.get("files") or {}).items()}
+                data = (data, files, case.get("options") or [])
         sources.append(data)
     with open(args.machine) as f:
         tpc_sha256 = json.load(f)["sha256"][TPC_EXE]

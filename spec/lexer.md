@@ -72,6 +72,8 @@ output: "7"
   | `ASSIGN` | `:=` | none |
   | `CARET` `AT` | `^` `@` | none |
 
+- `options`, when present, lists options for `TPC`'s command line, such as
+  `/M` (build the units the program uses from their sources) or `/DNAME`.
 - `files`, when present, holds more files beside the program, such as
   include files: DOS file names in upper case, each mapped to its
   contents, written like `source`.
@@ -320,7 +322,7 @@ of:
   ([parameter-c-text](lexer/cases/10-compiler-directives/parameter-c-text.yaml), [parameter-c-empty](lexer/cases/10-compiler-directives/parameter-c-empty.yaml), [parameter-d-text](lexer/cases/10-compiler-directives/parameter-d-text.yaml), [parameter-d-empty](lexer/cases/10-compiler-directives/parameter-d-empty.yaml), [parameter-g-text](lexer/cases/10-compiler-directives/parameter-g-text.yaml), [parameter-g-empty](lexer/cases/10-compiler-directives/parameter-g-empty.yaml), [parameter-s-text](lexer/cases/10-compiler-directives/parameter-s-text.yaml), [parameter-s-empty](lexer/cases/10-compiler-directives/parameter-s-empty.yaml), [switch-without-sign](lexer/cases/10-compiler-directives/switch-without-sign.yaml), [switch-r-blank](lexer/cases/10-compiler-directives/switch-r-blank.yaml), [r-equals](lexer/cases/10-compiler-directives/r-equals.yaml)).
   `I` and `L` take a file name, read as described under
   [include files](#include-files); a colon right after the letter is part
-  of it ([l-colon](lexer/cases/10-compiler-directives/l-colon.yaml)). `O` takes a unit name.
+  of it ([l-colon](lexer/cases/10-compiler-directives/l-colon.yaml)). `O` takes a unit name, see [overlays](#overlays).
   `M` takes numbers, see [memory sizes](#memory-sizes)
   ([parameter-with-blank](lexer/cases/10-compiler-directives/parameter-with-blank.yaml)).
 
@@ -390,8 +392,17 @@ This goes for `{$UNDEF}`, `{$IFDEF}` and `{$IFNDEF}` too
 
 `VER70`, `MSDOS`, `CPU86` and `CPU87` are defined from the start;
 `VER60`, `DPMI` and `WINDOWS` are not
-([predefined-symbols](lexer/cases/10-compiler-directives/predefined-symbols.yaml), [not-predefined-symbols](lexer/cases/10-compiler-directives/not-predefined-symbols.yaml)). The reference machine has
-a floating-point unit; whether `CPU87` depends on one is untested. The
+([predefined-symbols](lexer/cases/10-compiler-directives/predefined-symbols.yaml), [not-predefined-symbols](lexer/cases/10-compiler-directives/not-predefined-symbols.yaml)). `CPU87` is defined when
+`TPC` finds a floating-point unit as it starts, as it does on the reference
+machine; nothing else turns it on or off.
+
+`TPC`'s `/D` option defines more symbols before the program is read: names
+separated by `;` or `,`, read like those of `{$DEFINE}`. `/D` alone defines
+nothing. A name that can't be a symbol, such as `/D1X`, is error 130
+("Error in initial conditional defines"), before any token
+([d-option](lexer/cases/10-compiler-directives/d-option.yaml), [d-option-lower-case](lexer/cases/10-compiler-directives/d-option-lower-case.yaml), [d-option-two](lexer/cases/10-compiler-directives/d-option-two.yaml), [d-option-comma](lexer/cases/10-compiler-directives/d-option-comma.yaml), [d-option-empty](lexer/cases/10-compiler-directives/d-option-empty.yaml), [d-option-digit-first](lexer/cases/10-compiler-directives/d-option-digit-first.yaml)).
+
+The
 defined symbols, these four included, share 1024 bytes, each taking its
 length plus one. A `{$DEFINE}` that doesn't fit is error 127 at its name.
 Removing a symbol, even a predefined one, makes room again
@@ -483,6 +494,20 @@ with the rest of the directive's line. Include files may include others
   in one, `TPC` reads on to the include file's end and reports error 10
   just after the `.` ([final-end-in-include](lexer/cases/14-include-files/final-end-in-include.yaml)).
 
+### Overlays
+
+`{$O name}` marks the program's unit `name` for overlaying. The name isn't
+case sensitive, and text after it is ignored
+([o-overlay-unit](lexer/cases/10-compiler-directives/o-overlay-unit.yaml), [o-lower-case](lexer/cases/10-compiler-directives/o-lower-case.yaml), [o-text-after-name](lexer/cases/10-compiler-directives/o-text-after-name.yaml), [o-without-far-calls](lexer/cases/10-compiler-directives/o-without-far-calls.yaml)).
+Errors:
+
+- no name, as in `{$O}`: error 2 where the name should start
+  ([o-no-name](lexer/cases/10-compiler-directives/o-no-name.yaml));
+- a unit the program doesn't use: error 3 ([o-unknown-unit](lexer/cases/10-compiler-directives/o-unknown-unit.yaml));
+- a unit not compiled with `{$O+}`, or one of the standard units such as
+  `Crt`: error 144 ([o-unit-not-overlay](lexer/cases/10-compiler-directives/o-unit-not-overlay.yaml), [o-without-overlay-unit](lexer/cases/10-compiler-directives/o-without-overlay-unit.yaml));
+- `{$O name}` in a unit: error 17 ([o-in-unit](lexer/cases/10-compiler-directives/o-in-unit.yaml)).
+
 ### `)` ending a `(*$` directive
 
 In a directive written with `(*$`, a `)` directly after the directive's
@@ -544,7 +569,8 @@ reproduce `TPC`'s own arithmetic. That arithmetic isn't known yet
 
 - The scanner inside `asm` blocks, which is a separate scanner: after `asm`,
   no further tokens reach the Pascal parser until the block's `end`.
-- `{$O unit}`, which needs units.
-- Whether `CPU87` is predefined on a machine without a floating-point
-  unit.
+- `CPU87` on a machine without a floating-point unit: QEMU always has
+  one, so no case shows it undefined.
+- `{$O name}` while `TPC` looks for a run-time error (its `/F` option),
+  which needs a unit compiled beforehand.
 - The exact value of real literals (see [real values](#real-values)).

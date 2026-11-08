@@ -1,0 +1,92 @@
+description: "{$O Foo} overlays unit Foo, compiled with {$O+}; /M builds it from FOO.PAS."
+options:
+  - /M
+source: |
+  {$F+}
+  program P;
+  uses Overlay, Foo;
+  {$O Foo}
+  var Name: string;
+  begin
+    Name := ParamStr(0);
+    OvrInit(Copy(Name, 1, Length(Name) - 4) + '.OVR');
+    Hello
+  end.
+files:
+  FOO.PAS: |
+    {$O+,F+}
+    unit Foo;
+    interface
+    procedure Hello;
+    implementation
+    procedure Hello;
+    begin
+      Write('hi')
+    end;
+    end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - USES
+  - IDENT: OVERLAY
+  - COMMA
+  - IDENT: FOO
+  - SEMI
+  - UNIT
+  - IDENT: FOO
+  - SEMI
+  - INTERFACE
+  - PROCEDURE
+  - IDENT: HELLO
+  - SEMI
+  - IMPLEMENTATION
+  - PROCEDURE
+  - IDENT: HELLO
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: hi
+  - RPAREN
+  - END
+  - SEMI
+  - END
+  - DOT
+  - VAR
+  - IDENT: NAME
+  - COLON
+  - STRING
+  - SEMI
+  - BEGIN
+  - IDENT: NAME
+  - ASSIGN
+  - IDENT: PARAMSTR
+  - LPAREN
+  - INTEGER: 0
+  - RPAREN
+  - SEMI
+  - IDENT: OVRINIT
+  - LPAREN
+  - IDENT: COPY
+  - LPAREN
+  - IDENT: NAME
+  - COMMA
+  - INTEGER: 1
+  - COMMA
+  - IDENT: LENGTH
+  - LPAREN
+  - IDENT: NAME
+  - RPAREN
+  - MINUS
+  - INTEGER: 4
+  - RPAREN
+  - PLUS
+  - STRING: .OVR
+  - RPAREN
+  - SEMI
+  - IDENT: HELLO
+  - END
+  - DOT
+compile: ok
+output: hi

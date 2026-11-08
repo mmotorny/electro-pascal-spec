@@ -100,12 +100,34 @@ def probe_name(n):
     return f"P{n:07}"
 
 
+# Options a probe may give TPC: no blanks or characters COMMAND.COM treats
+# specially.
+OPTION = re.compile(r"[/-][A-Za-z0-9$_.:;=+,\\-]*")
+
+
+def unpack(source):
+    """A probe's (program, extra files, TPC options). A source is the program
+    as bytes, or (bytes, {file name: bytes}) or (bytes, files, [option, ...])."""
+    if not isinstance(source, tuple):
+        return source, {}, []
+    main, extra, options = (source + ([],))[:3]
+    for option in options:
+        if not OPTION.fullmatch(option):
+            raise ValueError(f"bad TPC option {option!r}")
+    return main, extra, options
+
+
+def command(name, source):
+    """The line that compiles probe `name` with TPC."""
+    return " ".join([TPC] + unpack(source)[2] + [f"{name}.PAS > {name}.OUT"])
+
+
 def lay_out(tools, floppy, workdir, names, sources):
     """Puts each probe in its own folder, A:\\P\\<name>\\, as <name>.PAS plus
-    the extra files it brings. A source is bytes, or (bytes, {name: bytes})."""
+    the extra files it brings (see unpack)."""
     tree = os.path.join(workdir, "P")
     for name, source in zip(names, sources):
-        main, extra = source if isinstance(source, tuple) else (source, {})
+        main, extra, _ = unpack(source)
         folder = os.path.join(tree, name)
         os.makedirs(folder)
         with open(os.path.join(folder, name + ".PAS"), "wb") as f:
@@ -129,11 +151,11 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
     names = [probe_name(first + n) for n in range(len(sources))]
     lay_out(tools, floppy, workdir, names, sources)
     script = ["@ECHO OFF", "A:"]
-    for name in names:
+    for name, source in zip(names, sources):
         script.append(f"CD \\P\\{name}")
         if coverage:
             script.append("A:\\MARK")
-        script += [f"{TPC} {name}.PAS > {name}.OUT"]
+        script += [command(name, source)]
         if coverage:
             script.append("A:\\MARK")
         script += [
@@ -243,8 +265,8 @@ def machine_info(tools, disk, workdir):
 
 def run(tools, disk, sources, jobs=None, coverage=None, coverage_range=None):
     """Compiles each source and returns (machine info, results). A source is
-    bytes, or (bytes, {file name: bytes}) for a program with extra files
-    beside it, such as include files.
+    the program as bytes, or a tuple that adds extra files beside it (such
+    as include files) and options for TPC's command line; see unpack.
 
     coverage: path to the coverage plugin, to record coverage.
     coverage_range: (lo, hi) linear addresses to count coverage in; default:

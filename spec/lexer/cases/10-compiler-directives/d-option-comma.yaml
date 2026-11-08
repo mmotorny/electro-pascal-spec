@@ -1,0 +1,35 @@
+description: /DFOO,BAR defines both.
+options:
+  - /DFOO,BAR
+source: |
+  program P;
+  {$IFDEF FOO} const A = 1; {$ELSE} const A = 2; {$ENDIF}
+  {$IFDEF BAR} const B = 1; {$ELSE} const B = 2; {$ENDIF}
+  begin
+    Write(A, B)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: A
+  - EQ
+  - INTEGER: 1
+  - SEMI
+  - CONST
+  - IDENT: B
+  - EQ
+  - INTEGER: 1
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: A
+  - COMMA
+  - IDENT: B
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "11"

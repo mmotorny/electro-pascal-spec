@@ -1,0 +1,16 @@
+description: "/D1X: a symbol name can't start with a digit."
+options:
+  - /D1X
+source: |
+  program P;
+  {$IFDEF FOO} const A = 1; {$ELSE} const A = 2; {$ENDIF}
+  {$IFDEF BAR} const B = 1; {$ELSE} const B = 2; {$ENDIF}
+  begin
+    Write(A, B)
+  end.
+tokens: []
+compile:
+  error: 130
+  line: 1
+  column: 1
+  message: Error in initial conditional defines.

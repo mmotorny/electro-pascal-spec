@@ -1,0 +1,19 @@
+description: "{$O Crt} in a program that doesn't use Overlay."
+source: |
+  program P;
+  uses Crt;
+  {$O Crt}
+  begin
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - USES
+  - IDENT: CRT
+  - SEMI
+compile:
+  error: 144
+  line: 3
+  column: 5
+  message: Cannot overlay this unit.

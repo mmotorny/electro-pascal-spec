@@ -17,6 +17,8 @@ A case is a YAML file holding one mapping (see spec/case.schema.yaml):
     output: "7"
 
   description  what the input is and what it shows.
+  options      optional: options for TPC's command line, such as /M or
+               /DNAME, given before the program's name.
   source       the program, byte for byte. Each character of the string is
                one byte, U+0000 to U+00FF.
   files        optional: more files beside the program, such as include
@@ -48,7 +50,7 @@ import re
 import yaml
 
 EXTENSION = ".yaml"
-FIELDS = ("description", "source", "files", "tokens", "compile", "output")
+FIELDS = ("description", "options", "source", "files", "tokens", "compile", "output")
 VERDICT_FIELDS = ("error", "line", "column", "file", "message")
 WIDTH = 76
 
@@ -97,10 +99,14 @@ class Case:
         return {k: v.encode("latin-1") for k, v in (self.data.get("files") or {}).items()}
 
     @property
+    def options(self):
+        return list(self.data.get("options") or [])
+
+    @property
     def input(self):
         """What to give machine/probe.py and machine/tokens.py: the source, or
-        (source, files) when the case has files."""
-        return (self.source, self.files) if self.files else self.source
+        (source, files, options) when the case has files or options."""
+        return (self.source, self.files, self.options) if self.files or self.options else self.source
 
     @property
     def output(self):
@@ -263,6 +269,9 @@ def dump(data):
             lines += folded(key, value)
         elif key == "source":
             lines += text_value(key, value)
+        elif key == "options":
+            lines.append("options:")
+            lines += [f"  - {scalar(o)}" for o in value]
         elif key == "files":
             lines.append("files:")
             for name, text in value.items():
