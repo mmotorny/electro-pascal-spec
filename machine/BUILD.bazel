@@ -59,7 +59,31 @@ python_tool(
     srcs = ["qmp.py"],
 )
 
+# Prints the tokens TPC's scanner delivers for each file:
+# bazel run //machine:tokens -- file.pas|case.yaml ... [--out x.json]
+python_tool(
+    name = "tokens",
+    data = [
+        ":disk",
+        "//third_party/mtools",
+        "//third_party/qemu:qemu-system-i386",
+    ],
+    fixed_args = [
+        "--qemu=$(rootpath //third_party/qemu:qemu-system-i386)",
+        "--mtools=$(rootpath //third_party/mtools)",
+        "--disk=$(rootpath :disk)",
+    ],
+    main = "tokens.py",
+    srcs = [
+        "gdbremote.py",
+        "probe.py",
+        "qmp.py",
+    ],
+)
+
 exports_files([
+    "gdbremote.py",
     "probe.py",
     "qmp.py",
+    "tokens.py",
 ])

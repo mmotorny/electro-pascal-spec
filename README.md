@@ -78,20 +78,21 @@ tokens the spec expects, and what compiling and running it with `TPC` gave;
 [`spec/case.schema.yaml`](spec/case.schema.yaml) defines the format.
 
 - `bazel run //spec:record [-- case or directory ...]` runs cases through
-  `TPC` on the reference machine and writes what compiling and running
-  them gives into the cases.
+  `TPC` on the reference machine and writes what it gives into them: the
+  tokens its scanner delivers, whether the program compiles, and what it
+  prints.
 - `bazel test //spec:tpc_test` runs every case through `TPC` the same way
-  and fails if any case's `compile` or `output` differs from what `TPC`
-  gives. It changes nothing. Bazel reruns it only when a case, the
+  and fails if any case's `tokens`, `compile` or `output` differ from what
+  `TPC` gives. It changes nothing. Bazel reruns it only when a case, the
   reference machine or the tools change.
 - `bazel test //spec:cases_test` checks, without running `TPC`, that every
   case is well formed and recorded, that every rule's links name existing
   cases and every case is linked from a rule, and that the rules the spec
   gives for real values hold for the recorded values.
-- `bazel run //spec:compare -- CAPTURED.json` compares the cases' `tokens`
-  with a dump of the tokens `TPC` actually delivered, in the spec's
-  notation. The dump comes from a capture tool that is not part of this
-  repo.
+- `bazel run //machine:tokens -- file ...` prints the tokens `TPC`'s
+  scanner delivers for Pascal files or cases. It watches `TPC` through
+  QEMU's gdbstub, using a few facts about `TPC`'s internals gathered at the
+  top of `machine/tokens.py`.
 
 Where Borland's documents disagree with `TPC`, the spec follows `TPC` and
 doesn't mention them. The disagreements are collected in

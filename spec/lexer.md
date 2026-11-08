@@ -5,13 +5,13 @@ source file into tokens. Every rule ends with links to the cases in
 [`lexer/cases/`](lexer/cases) that show it, and every case is linked from
 some rule; `bazel test //spec:cases_test` checks both. A link whose text
 holds a `*` or `?` stands for all the cases in its folder that match it. A
-case's `compile` and `output` are recorded from the real compiler and are
-the final word; where this text and a case disagree, the case is right and
-this text needs fixing.
+case's `tokens`, `compile` and `output` are recorded from the real compiler
+and are the final word; where this text and a case disagree, the case is
+right and this text needs fixing. `bazel test //spec:tpc_test` checks that
+every case still matches what `TPC` gives.
 
-Every case's `tokens` match the token stream captured from `TPC`. Between
-them, the cases take both sides of every branch in `TPC`'s scanner that a
-single source file can reach, except as noted under
+Between them, the cases take both sides of every branch in `TPC`'s scanner
+that a single source file can reach, except as noted under
 [not covered yet](#not-covered-yet). A case's token list ends where `TPC`
 stops asking for tokens: at the end of the program, or at the token where
 it reports an error. When the error is in the lexer itself, the bad token

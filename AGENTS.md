@@ -15,6 +15,9 @@ build it.
   record what a result came from alongside the result instead: tool versions
   (such as QEMU) and hashes of the key proprietary files (such as `BPC.EXE`
   and `TURBO.TPL`).
+  The exception is a tool that relies on `TPC`'s internals: it must check
+  that `TPC.EXE` is the exact file its facts were taken from, by hash, and
+  refuse to run otherwise (as `machine/tokens.py` does).
 - Don't wrap `bazel run` or `bazel build` commands in shell scripts, aliases
   or make targets. Document the Bazel command itself, in `README.md` for
   people or here for agents.
@@ -30,17 +33,14 @@ build it.
 
 ## Spec cases
 
-- A case's `compile` and `output` are written only by
-  `bazel run //spec:record`, never by hand. Run it after adding or changing
-  cases, and keep `bazel test //spec:cases_test //spec:tpc_test` passing.
-- When a recorded result disagrees with the spec's text or a case's
-  `tokens`, the recorded result is right: fix the text or the tokens,
-  or record the behaviour as a quirk.
-- A case's `tokens` must match the token stream captured from `TPC`, in
-  the spec's token names. `bazel run //spec:compare` checks the cases
-  against such a capture.
-- Describe in a case's `description` what its input is and what it shows, never why `TPC` behaves
-  that way inside.
+- A case's `tokens`, `compile` and `output` are written only by
+  `bazel run //spec:record`, never by hand: write the `description` and
+  the `source`, then record. Keep
+  `bazel test //spec:cases_test //spec:tpc_test` passing.
+- When a recorded result disagrees with the spec's text, the recorded
+  result is right: fix the text, or record the behaviour as a quirk.
+- Describe in a case's `description` what its input is and what it shows,
+  never why `TPC` behaves that way inside.
 - Write cases as small, complete programs of our own, laid out over lines
   the usual way: a line per declaration and statement, statements
   indented. Keep a program on fewer lines only where its layout is what
@@ -65,21 +65,28 @@ results may not.
 
 - **Facts are welcome**, whatever they were learned from: programs we wrote,
   results recorded from `TPC` (verdicts, program output, token streams in the
-  spec's token names), and descriptions in our own words of how `TPC`
-  behaves, including how its parts interact (for example where the parser
-  makes the lexer read `^` as a character).
+  spec's token names), descriptions in our own words of how `TPC` behaves,
+  including how its parts interact (for example where the parser makes the
+  lexer read `^` as a character), and the facts about `TPC`'s internals that
+  the harness needs to observe it (see Tools).
 - **Never Borland's expression**: no code, disassembly listings, text from
   the manuals or the IDE help, and nothing copied or paraphrased from the
   runtime library source on the BP disks. Exact identifiers, declarations
   and error message strings are fine, since compatibility needs them.
-- **Never raw results of reverse engineering**: no listings, addresses,
-  traces, coverage data, internal token codes or notes about `TPC`'s code.
-  Work with them only in the gitignored `dirty/` folder or in Bazel outputs,
-  delete them when the work is done, and make nothing committed depend on
-  them.
+- **Never raw results of reverse engineering**: no listings, traces,
+  coverage data or notes about how `TPC`'s code works. Work with them only
+  in the gitignored `dirty/` folder or in Bazel outputs, delete them when
+  the work is done, and make nothing committed depend on them.
 - **Tools**: generic tools (debugger clients, trace recorders, the coverage
-  plugin) may be committed. Tools that carry knowledge of `TPC`'s code, such
-  as its addresses, byte patterns or internal codes, may not.
+  plugin) may be committed. A tool that observes `TPC` may carry the facts
+  about its internals it needs for that, such as where to stop, where in
+  memory to read and how `TPC` numbers its token kinds, gathered in one
+  marked place (see `machine/tokens.py`). Never its code: no machine code,
+  byte patterns or disassembly; compare against a hash where a tool must
+  recognise `TPC`'s code.
+- **The spec stays behaviour only.** Internals never appear in the spec or
+  the cases: the clean-room implementation reads them and doesn't need
+  them.
 - **No implementation code in the spec**: the spec is prose and cases. Code
   in this repo is harness tooling only: building the machine, running,
   recording, comparing and fuzzing.
@@ -103,9 +110,11 @@ Why the boundary is drawn here:
   Don't hold back facts out of excess caution.
 - **What stays out does so for concrete reasons**: Borland's expression is
   protected, and passing on information obtained by decompiling is limited
-  to what interoperability needs.
-  Addresses, internal codes and listings aren't needed to describe the
-  language.
+  to what interoperability needs. Checking a compatible compiler's spec
+  against `TPC` is interoperability work, and the few internals the harness
+  needs to do it are facts, like the memory layouts that books on DOS
+  internals have long published. Listings, traces and notes about the code
+  aren't needed for it.
 
 ## Method
 

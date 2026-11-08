@@ -75,14 +75,7 @@ class Case:
     @property
     def tokens(self):
         """The token list as (kind, value) pairs, value None for a bare kind."""
-        out = []
-        for token in self.data.get("tokens") or []:
-            if isinstance(token, dict):
-                ((kind, value),) = token.items()
-                out.append((kind, value))
-            else:
-                out.append((token, None))
-        return out
+        return token_pairs(self.data.get("tokens") or [])
 
     @tokens.setter
     def tokens(self, pairs):
@@ -112,6 +105,11 @@ def find(root):
         inside = "cases" in os.path.abspath(dirpath).split(os.sep)
         paths += [os.path.join(dirpath, f) for f in files if inside and f.endswith(EXTENSION)]
     return [Case(p) for p in sorted(paths)]
+
+
+def token_pairs(tokens):
+    """A token list as (kind, value) pairs, value None for a bare kind."""
+    return [next(iter(t.items())) if isinstance(t, dict) else (t, None) for t in tokens]
 
 
 def verdict(result):

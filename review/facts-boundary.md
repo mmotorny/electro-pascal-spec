@@ -14,12 +14,16 @@ comes from Borland's manuals. Check each change against these questions:
 1. Does it contain Borland's expression: code (Pascal, assembly or machine
    code from `TPC.EXE` or Borland's libraries), disassembly, or text copied or
    closely paraphrased from Borland's manuals or online help?
-2. Does it contain raw reverse-engineering results: memory addresses or
-   offsets inside `TPC.EXE`, byte patterns or signatures of its code, internal
-   token codes or numbering, names of internal routines, traces, coverage
-   data, or notes describing `TPC`'s code rather than its behaviour?
-3. Is any committed tool specific to `TPC.EXE`'s code (it embeds addresses,
-   byte patterns or internal codes), rather than generic?
+2. Does it contain raw reverse-engineering results: listings, traces,
+   coverage data, or notes describing how `TPC`'s code works rather than its
+   behaviour?
+3. Does a tool carry more of `TPC.EXE` than the facts it needs to observe
+   `TPC`? Addresses to stop at, memory offsets to read and internal codes
+   are allowed in a harness tool that uses them, gathered in one marked
+   place. Machine code, byte patterns or signatures of `TPC`'s code are not
+   (a hash is fine), nor are internals the tool doesn't use.
+3a. Do internals of `TPC` (addresses, offsets, internal codes) appear in the
+   spec's text or cases, which must describe behaviour only?
 4. Does it add implementation code to the spec (for example a lexer or parser
    written to behave like `TPC`), rather than harness tooling for building,
    running, recording, comparing or fuzzing?

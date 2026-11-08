@@ -4,11 +4,13 @@ Usage: bazel run //spec:record [-- case or directory ...]
        bazel test //spec:tpc_test
 
 With no case or directory, takes every case under spec/. Records each
-case's compile and output, prints the cases that changed, and writes
-spec/MACHINE.json: what the results ran on.
+case's tokens (captured from TPC's scanner by machine/tokens.py), compile
+and output (from machine/probe.py), prints the cases that changed, and
+writes spec/MACHINE.json: what the results ran on.
 
 With --check (as //spec:tpc_test runs it), changes nothing: prints every case
-whose compile or output differs from what TPC gives, and fails if any does.
+whose tokens, compile or output differ from what TPC gives, and fails if any
+do.
 """
 
 import argparse
@@ -20,6 +22,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
 
 import cases  # noqa: E402
 import probe  # noqa: E402
+import tokens  # noqa: E402
 
 
 def main():
@@ -43,21 +46,24 @@ def main():
         selected += [cases.Case(path)] if path.endswith(cases.EXTENSION) else cases.find(path)
 
     tools = probe.Tools(os.path.abspath(args.qemu), os.path.abspath(args.mtools))
-    info, results = probe.run(tools, os.path.abspath(args.disk), [c.source for c in selected])
+    sources = [c.source for c in selected]
+    info, results = probe.run(tools, os.path.abspath(args.disk), sources)
+    _, captured = tokens.run(tools, os.path.abspath(args.disk), sources)
     changed = 0
-    for case, result in zip(selected, results):
-        new = {"compile": cases.verdict(result)}
+    for case, result, capture in zip(selected, results, captured):
+        new = {"tokens": capture["tokens"], "compile": cases.verdict(result)}
         if "run_output" in result:
             new["output"] = result["run_output"]
-        old = {k: case.data.get(k) for k in ("compile", "output")}
-        if old == {"compile": new["compile"], "output": new.get("output")}:
+        old = {k: case.data.get(k) for k in ("tokens", "compile", "output")}
+        if old == {**new, "output": new.get("output")}:
             continue
         changed += 1
         name = os.path.relpath(case.path, workspace)
         if args.check:
-            print(f"{name}: the case says {describe(old)}; TPC gives {describe(new)}")
+            for problem in differences(old, new):
+                print(f"{name}: {problem}")
             continue
-        print(f"{name}: {old} -> {new}")
+        print(f"{name}: " + "; ".join(differences(old, new)))
         case.data.pop("output", None)
         case.data.update(new)
         case.save()
@@ -74,12 +80,20 @@ def main():
     print(f"{len(selected)} cases, {changed} changed")
 
 
-def describe(result):
-    """A case's compile and output in one line."""
-    text = cases.verdict_text(result["compile"]) if result.get("compile") else "nothing"
-    if result.get("output") is not None:
-        text += f", output {cases.scalar(result['output'])}"
-    return text
+def differences(old, new):
+    """What differs between a case's recorded fields and what TPC gives."""
+    out = []
+    if old["tokens"] != new["tokens"]:
+        a = [cases.token_text(*t) for t in cases.token_pairs(old["tokens"] or [])]
+        b = [cases.token_text(*t) for t in cases.token_pairs(new["tokens"])]
+        i = next((i for i, (x, y) in enumerate(zip(a, b)) if x != y), min(len(a), len(b)))
+        out.append(f"tokens from {i + 1}: the case says {', '.join(a[i:i + 4]) or '(end)'}; "
+                   f"TPC gives {', '.join(b[i:i + 4]) or '(end)'}")
+    for key in ("compile", "output"):
+        if old.get(key) != new.get(key):
+            show = lambda v: "nothing" if v is None else cases.verdict_text(v) if key == "compile" else cases.scalar(v)
+            out.append(f"{key}: the case says {show(old.get(key))}; TPC gives {show(new.get(key))}")
+    return out
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 load("//machine:python_tool.bzl", "python_test", "python_tool")
 
-# Runs the spec's cases through TPC and writes each verdict into its case:
+# Runs the spec's cases through TPC and writes its tokens, verdict and output
+# into each case:
 # bazel run //spec:record [-- case or directory ...]
 python_tool(
     name = "record",
@@ -17,13 +18,15 @@ python_tool(
     main = "record.py",
     srcs = [
         "cases.py",
+        "//machine:gdbremote.py",
         "//machine:probe.py",
         "//machine:qmp.py",
+        "//machine:tokens.py",
     ],
 )
 
 # Runs every case through TPC on the reference machine and fails if any
-# case's compile or output differs from what TPC gives. Records nothing.
+# case's tokens, compile or output differ from what TPC gives. Records nothing.
 python_test(
     name = "tpc_test",
     size = "medium",
@@ -43,17 +46,11 @@ python_test(
     main = "record.py",
     srcs = [
         "cases.py",
+        "//machine:gdbremote.py",
         "//machine:probe.py",
         "//machine:qmp.py",
+        "//machine:tokens.py",
     ],
-)
-
-# Compares the cases' tokens with a capture of TPC's tokens:
-# bazel run //spec:compare -- CAPTURED.json [--write]
-python_tool(
-    name = "compare",
-    main = "compare.py",
-    srcs = ["cases.py"],
 )
 
 # Checks that every case is well formed, recorded and cited by lexer.md, and
