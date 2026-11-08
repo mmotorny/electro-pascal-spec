@@ -1,0 +1,25 @@
+description: "{$N+} right after a program heading with parameters."
+source: |
+  program P(Input, Output);
+  {$N+}
+  begin
+    Write(1)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - LPAREN
+  - IDENT: INPUT
+  - COMMA
+  - IDENT: OUTPUT
+  - RPAREN
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - INTEGER: 1
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "1"

@@ -1,0 +1,110 @@
+description: The instructions whose names are Pascal reserved words, each as
+  the first word of a statement.
+source: |
+  program P;
+  var
+    W: Word;
+  begin
+    W := 0;
+    asm
+      mov ax, 6
+      and ax, 7
+      mov bx, 1
+      xor dx, dx
+      div bx
+      mov dx, 0
+      in al, dx
+      not ax
+      or ax, 0
+      shl ax, 1
+      shr ax, 1
+      xor ax, ax
+      mov W, 5
+    end;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 6
+  - ASM_END
+  - ASM_INSTRUCTION: AND
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 7
+  - ASM_END
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: BX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 1
+  - ASM_END
+  - ASM_INSTRUCTION: XOR
+  - ASM_RESERVED: DX
+  - ASM_SYMBOL: ","
+  - ASM_RESERVED: DX
+  - ASM_END
+  - ASM_INSTRUCTION: DIV
+  - ASM_RESERVED: BX
+  - ASM_END
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: DX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 0
+  - ASM_END
+  - ASM_INSTRUCTION: IN
+  - ASM_RESERVED: AL
+  - ASM_SYMBOL: ","
+  - ASM_RESERVED: DX
+  - ASM_END
+  - ASM_INSTRUCTION: NOT
+  - ASM_RESERVED: AX
+  - ASM_END
+  - ASM_INSTRUCTION: OR
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 0
+  - ASM_END
+  - ASM_INSTRUCTION: SHL
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 1
+  - ASM_END
+  - ASM_INSTRUCTION: SHR
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 1
+  - ASM_END
+  - ASM_INSTRUCTION: XOR
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_RESERVED: AX
+  - ASM_END
+  - ASM_INSTRUCTION: MOV
+  - ASM_IDENT: W
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 5
+  - ASM_END
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: W
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "5"

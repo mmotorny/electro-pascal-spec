@@ -1,0 +1,29 @@
+description: "{$I BODY.INC with the comment's } on the next line."
+source: |
+  program P;
+  {$I BODY.INC
+  }
+  begin
+    Write(C)
+  end.
+files:
+  BODY.INC: |
+    const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

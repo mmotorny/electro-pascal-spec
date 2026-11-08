@@ -1,0 +1,22 @@
+description: "'1else': a number directly followed by the reserved word else."
+source: |
+  program P;
+  begin
+    if 1 = 1else
+      Write(2)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IF
+  - INTEGER: 1
+  - EQ
+  - REAL: 1e
+  - IDENT: LSE
+compile:
+  error: 57
+  line: 3
+  column: 12
+  message: THEN expected.

@@ -1,0 +1,11 @@
+description: A CR inside 'program'.
+source: "pro\rgram P;\nbegin\nend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

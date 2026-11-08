@@ -1,0 +1,16 @@
+description: "{$M 16384,0,$FFFFFFF0}: a hex heapmax with its top bit set."
+source: |
+  program P;
+  {$M 16384,0,$FFFFFFF0}
+  begin
+    Write(1)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 17
+  line: 2
+  column: 13
+  message: Invalid compiler directive.

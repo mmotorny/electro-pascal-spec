@@ -1,0 +1,135 @@
+description: The program prints the state of every switch, as {$IFOPT} finds
+  it before any directive sets one.
+source: |
+  program P;
+  begin
+    {$IFOPT A+} Write('A+ '); {$ELSE} Write('A- '); {$ENDIF}
+    {$IFOPT B+} Write('B+ '); {$ELSE} Write('B- '); {$ENDIF}
+    {$IFOPT D+} Write('D+ '); {$ELSE} Write('D- '); {$ENDIF}
+    {$IFOPT E+} Write('E+ '); {$ELSE} Write('E- '); {$ENDIF}
+    {$IFOPT F+} Write('F+ '); {$ELSE} Write('F- '); {$ENDIF}
+    {$IFOPT G+} Write('G+ '); {$ELSE} Write('G- '); {$ENDIF}
+    {$IFOPT I+} Write('I+ '); {$ELSE} Write('I- '); {$ENDIF}
+    {$IFOPT K+} Write('K+ '); {$ELSE} Write('K- '); {$ENDIF}
+    {$IFOPT L+} Write('L+ '); {$ELSE} Write('L- '); {$ENDIF}
+    {$IFOPT N+} Write('N+ '); {$ELSE} Write('N- '); {$ENDIF}
+    {$IFOPT O+} Write('O+ '); {$ELSE} Write('O- '); {$ENDIF}
+    {$IFOPT P+} Write('P+ '); {$ELSE} Write('P- '); {$ENDIF}
+    {$IFOPT Q+} Write('Q+ '); {$ELSE} Write('Q- '); {$ENDIF}
+    {$IFOPT R+} Write('R+ '); {$ELSE} Write('R- '); {$ENDIF}
+    {$IFOPT S+} Write('S+ '); {$ELSE} Write('S- '); {$ENDIF}
+    {$IFOPT T+} Write('T+ '); {$ELSE} Write('T- '); {$ENDIF}
+    {$IFOPT V+} Write('V+ '); {$ELSE} Write('V- '); {$ENDIF}
+    {$IFOPT W+} Write('W+ '); {$ELSE} Write('W- '); {$ENDIF}
+    {$IFOPT X+} Write('X+ '); {$ELSE} Write('X- '); {$ENDIF}
+    {$IFOPT Y+} Write('Y+ '); {$ELSE} Write('Y- '); {$ENDIF}
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "A+ "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "B- "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "D+ "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "E+ "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "F- "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "G- "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "I+ "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "K+ "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "L+ "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "N- "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "O- "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "P- "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "Q- "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "R- "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "S+ "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "T- "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "V+ "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "W+ "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "X+ "
+  - RPAREN
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "Y+ "
+  - RPAREN
+  - SEMI
+  - END
+  - DOT
+compile: ok
+output: "A+ B- D+ E+ F- G- I+ K+ L+ N- O- P- Q- R- S+ T- V+ W+ X+ Y+ "

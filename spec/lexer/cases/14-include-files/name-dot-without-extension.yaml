@@ -1,0 +1,28 @@
+description: "{$I BODY.}: a name ending in a dot, for the file BODY, which has no extension."
+source: |
+  program P;
+  {$I BODY.}
+  begin
+    Write(C)
+  end.
+files:
+  BODY: |
+    const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

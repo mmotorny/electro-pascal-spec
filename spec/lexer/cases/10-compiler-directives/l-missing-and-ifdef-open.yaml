@@ -1,0 +1,20 @@
+description: A missing {$L} file and an {$IFNDEF} still open at the final
+  end.
+source: |
+  program P;
+  {$L NOFILE}
+  {$IFNDEF X}
+  begin
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile:
+  error: 15
+  line: 5
+  column: 4
+  message: File not found (NOFILE.OBJ).

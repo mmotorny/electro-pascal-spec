@@ -1,0 +1,24 @@
+description: An {$ELSE} in an include file for an {$IFDEF} of the file that
+  includes it.
+source: |
+  program P;
+  {$DEFINE X}
+  {$IFDEF X}
+  {$I ELSE.INC}
+  {$ENDIF}
+  begin
+    Write(1)
+  end.
+files:
+  ELSE.INC: |
+    {$ELSE}
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 128
+  line: 1
+  column: 3
+  file: ELSE.INC
+  message: Misplaced conditional directive.

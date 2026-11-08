@@ -1,0 +1,15 @@
+description: "{$R+,X}: the second switch in a list has no sign."
+source: |
+  program P;
+  {$R+,X}
+  begin
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 17
+  line: 2
+  column: 6
+  message: Invalid compiler directive.

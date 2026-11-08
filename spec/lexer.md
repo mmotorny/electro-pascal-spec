@@ -55,7 +55,8 @@ output: "7"
   byte, so a source holding control characters or bytes above 127 is
   written as a double-quoted string with escapes, such as `"pro\0gram"` or
   `"M\xe9"`.
-- `tokens` lists the tokens in order. A token is its kind, alone or mapped
+- `tokens` lists the tokens in order, those of units that `TPC` builds
+  along the way included (see [units](#units)). A token is its kind, alone or mapped
   to its value:
 
   | Kind | Token | Value |
@@ -85,7 +86,7 @@ output: "7"
   contents, written like `source`.
 - `precompile`, when present, names some of those files, which `TPC`
   compiles first, in that order and with no options, such as a unit the
-  program needs already compiled. Only the program's compile is recorded.
+  program needs already compiled. Their compiles add no tokens.
 - `compile` is what compiling the source with `TPC` gives: `ok`; `hang`
   when `TPC` never finishes compiling it; or the error number with the line and column `TPC` reports it at, the file it
   is in when that isn't the program, and `TPC`'s message:
@@ -115,14 +116,19 @@ output: "7"
   ([line-128-in-comment-before-end](lexer/cases/11-program-lines/line-128-in-comment-before-end.yaml), [line-128-in-string](lexer/cases/11-program-lines/line-128-in-string.yaml), [line-128-in-skipped-text](lexer/cases/11-program-lines/line-128-in-skipped-text.yaml)).
 - NUL (0) bytes are dropped as a line is read, as if they weren't in the
   file: `pro`, NUL, `gram` is `program`, a NUL between two digits or inside
-  a quoted string disappears, and NULs don't count toward the line length
+  a quoted string disappears, and NULs don't count toward the line length.
+  So are carriage returns: `pro`, CR, `gram` is `program` too, and CRs take
+  no column in the positions `TPC` reports
+  ([cr-inside-word](lexer/cases/01-separators/cr-inside-word.yaml), [cr-does-not-end-a-line](lexer/cases/01-separators/cr-does-not-end-a-line.yaml))
   ([nul-in-word](lexer/cases/02-character-set/nul-in-word.yaml), [nul-in-number](lexer/cases/02-character-set/nul-in-number.yaml), [nul-in-string](lexer/cases/02-character-set/nul-in-string.yaml), [nul-not-counted](lexer/cases/02-character-set/nul-not-counted.yaml), [nul-after-semicolon](lexer/cases/02-character-set/nul-after-semicolon.yaml)).
 - Nothing changes where a token crosses a 4096-byte boundary of the file
   ([string-across-4096](lexer/cases/11-program-lines/string-across-4096.yaml)).
 - ^Z (26) ends the file; nothing after it is read
   ([ctrl-z-ends-file](lexer/cases/12-end-of-file/ctrl-z-ends-file.yaml)). When the file ends too early, the error is
-  reported at column 1 of the line after the last line read, and a line
-  that ^Z cuts short still counts as read
+  reported at column 1 of the line after the last line read. A line with
+  text before its ^Z counts as read; a line that starts with ^Z doesn't, so
+  the error is reported on that line
+  ([ctrl-z-line-3](lexer/cases/12-end-of-file/ctrl-z-line-3.yaml), [ctrl-z](lexer/cases/15-asm-blocks/ctrl-z.yaml))
   ([ctrl-z-early](lexer/cases/12-end-of-file/ctrl-z-early.yaml), [ctrl-z-early-more-lines](lexer/cases/12-end-of-file/ctrl-z-early-more-lines.yaml), [ctrl-z-line-3](lexer/cases/12-end-of-file/ctrl-z-line-3.yaml), [missing-final-dot](lexer/cases/12-end-of-file/missing-final-dot.yaml)).
   The last line needs no line end ([no-final-newline](lexer/cases/12-end-of-file/no-final-newline.yaml)).
 - Scanning stops after the program's final `end.`. Anything after it is
@@ -201,10 +207,17 @@ are ordinary identifiers to the lexer ([not-reserved-*](lexer/cases/04-reserved-
   don't count ([hex-leading-zeros](lexer/cases/06-numbers/hex-leading-zeros.yaml)). The value is a 32-bit pattern read
   as signed: `$FFFFFFFF` is -1 and `$80000000` is -2147483648
   ([hex-max](lexer/cases/06-numbers/hex-max.yaml), [hex-sign-bit](lexer/cases/06-numbers/hex-sign-bit.yaml)). `$` without a hex digit right after it is
-  error 7 ([dollar-alone](lexer/cases/06-numbers/dollar-alone.yaml), [dollar-space](lexer/cases/06-numbers/dollar-space.yaml)).
+  error 7, at the character after the `$` ([dollar-alone](lexer/cases/06-numbers/dollar-alone.yaml), [dollar-space](lexer/cases/06-numbers/dollar-space.yaml)).
 - **Reals** are digits, then a fraction (`.` and digits), an exponent
   (`E` or `e`, an optional sign and digits), or both
   ([real-fraction](lexer/cases/06-numbers/real-fraction.yaml), [real-exponent](lexer/cases/06-numbers/real-exponent.yaml), [real-exponent-negative](lexer/cases/06-numbers/real-exponent-negative.yaml), [real-exponent-upper-signed](lexer/cases/06-numbers/real-exponent-upper-signed.yaml), [real-many-fraction-digits](lexer/cases/06-numbers/real-many-fraction-digits.yaml), [real-many-integer-digits](lexer/cases/06-numbers/real-many-integer-digits.yaml)).
+  What follows the digits decides whether a number is an integer or a
+  real, and the limits of integers apply only to integers: 60 digits and
+  `.0` are a real ([real-many-integer-digits](lexer/cases/06-numbers/real-many-integer-digits.yaml)). A real ends at the first
+  character that can't go on with it, a letter included: `1.x` is
+  `REAL(1.)` and `IDENT(X)`, `1ex` is `REAL(1e)` and `IDENT(X)`, and
+  `1else` is `REAL(1e)` and `IDENT(LSE)`
+  ([real-dot-then-letter](lexer/cases/06-numbers/real-dot-then-letter.yaml), [real-exponent-then-letter](lexer/cases/06-numbers/real-exponent-then-letter.yaml), [number-then-else](lexer/cases/06-numbers/number-then-else.yaml)).
   The digits after `.` and after `E` may be missing: `1.`, `1.e5`, `1e`,
   `1e+` and `1e-` are all accepted, and a missing exponent counts as 0
   ([real-no-fraction-digits](lexer/cases/06-numbers/real-no-fraction-digits.yaml), [real-dot-exponent](lexer/cases/06-numbers/real-dot-exponent.yaml), [real-exponent-no-digits](lexer/cases/06-numbers/real-exponent-no-digits.yaml), [real-exponent-plus-no-digits](lexer/cases/06-numbers/real-exponent-plus-no-digits.yaml), [real-exponent-minus-no-digits](lexer/cases/06-numbers/real-exponent-minus-no-digits.yaml)).
@@ -241,9 +254,11 @@ between parts ends the string, and the next part starts a new one
 - **Quoted strings**: characters between apostrophes on one line, with two
   apostrophes standing for one
   ([quoted](lexer/cases/08-strings/quoted.yaml), [empty](lexer/cases/08-strings/empty.yaml), [blank](lexer/cases/08-strings/blank.yaml), [doubled-apostrophe](lexer/cases/08-strings/doubled-apostrophe.yaml), [long-string](lexer/cases/08-strings/long-string.yaml)) ([brace-in-string](lexer/cases/09-comments/brace-in-string.yaml)).
-  A line end before the closing apostrophe is error 8 ([unterminated](lexer/cases/08-strings/unterminated.yaml)).
+  A line end before the closing apostrophe is error 8, at the column after
+  the line's last character ([unterminated](lexer/cases/08-strings/unterminated.yaml)).
 - **`#` and a number**, decimal or hex, with no blank after `#`
-  ([control-characters](lexer/cases/08-strings/control-characters.yaml), [hash-hex](lexer/cases/08-strings/hash-hex.yaml), [hash-space](lexer/cases/08-strings/hash-space.yaml)). The number is read like
+  ([control-characters](lexer/cases/08-strings/control-characters.yaml), [hash-hex](lexer/cases/08-strings/hash-hex.yaml)). `#` without a digit right after it is error 7,
+  at the character after the `#` ([hash-space](lexer/cases/08-strings/hash-space.yaml)). The number is read like
   any integer, with the same limits and error 7 when it overflows
   ([hash-overflow](lexer/cases/08-strings/hash-overflow.yaml)). Then only its low 8 bits are used: `#256` is `#0`,
   `#65601` is `'A'` and `#2147483647` is `#255`
@@ -320,7 +335,10 @@ of:
   `IFOPT`, `ELSE`, `ENDIF`), see below;
 - a list of switches, each a switch letter and `+` or `-`, separated by
   commas with no blanks: `{$R+,X-}` ([switch-list](lexer/cases/10-compiler-directives/switch-list.yaml)). A blank after a
-  comma is error 17 ([switch-list-blank-after-comma](lexer/cases/10-compiler-directives/switch-list-blank-after-comma.yaml)). Anything after
+  comma is error 17 ([switch-list-blank-after-comma](lexer/cases/10-compiler-directives/switch-list-blank-after-comma.yaml)). Each item after a comma is
+  checked like the first: `{$R+,X}` is error 17 at the `X`, while a
+  parameter directive's letter is accepted there, `{$R+,C+}` included
+  ([switch-list-no-sign-second](lexer/cases/10-compiler-directives/switch-list-no-sign-second.yaml), [switch-list-parameter-second](lexer/cases/10-compiler-directives/switch-list-parameter-second.yaml)). Anything after
   the last sign that isn't a comma is ignored, a blank or not: `{$R+ text}`
   is accepted, and `{$R-B+}` turns R off and leaves B alone
   ([switch-trailing-text](lexer/cases/10-compiler-directives/switch-trailing-text.yaml), [switch-text-after-sign](lexer/cases/10-compiler-directives/switch-text-after-sign.yaml));
@@ -331,22 +349,34 @@ of:
   ([parameter-c-text](lexer/cases/10-compiler-directives/parameter-c-text.yaml), [parameter-c-empty](lexer/cases/10-compiler-directives/parameter-c-empty.yaml), [parameter-d-text](lexer/cases/10-compiler-directives/parameter-d-text.yaml), [parameter-d-empty](lexer/cases/10-compiler-directives/parameter-d-empty.yaml), [parameter-g-text](lexer/cases/10-compiler-directives/parameter-g-text.yaml), [parameter-g-empty](lexer/cases/10-compiler-directives/parameter-g-empty.yaml), [parameter-s-text](lexer/cases/10-compiler-directives/parameter-s-text.yaml), [parameter-s-empty](lexer/cases/10-compiler-directives/parameter-s-empty.yaml), [switch-without-sign](lexer/cases/10-compiler-directives/switch-without-sign.yaml), [switch-r-blank](lexer/cases/10-compiler-directives/switch-r-blank.yaml), [r-equals](lexer/cases/10-compiler-directives/r-equals.yaml)).
   `I` and `L` take a file name, read as described under
   [include files](#include-files); a colon right after the letter is part
-  of it ([l-colon](lexer/cases/10-compiler-directives/l-colon.yaml)). `O` takes a unit name, see [overlays](#overlays).
+  of it ([l-colon](lexer/cases/10-compiler-directives/l-colon.yaml)). `L` names an object file, and a name without a
+  `.` gets `.OBJ`. `TPC` looks for it only at the program's final `.`: a
+  missing file is error 15 there, naming the file, and comes before error
+  129 for a conditional still open there
+  ([l-colon](lexer/cases/10-compiler-directives/l-colon.yaml), [paren-l-no-close](lexer/cases/10-compiler-directives/paren-l-no-close.yaml), [l-missing-and-ifdef-open](lexer/cases/10-compiler-directives/l-missing-and-ifdef-open.yaml)). `O` takes a unit name, see [overlays](#overlays).
   `M` takes numbers, see [memory sizes](#memory-sizes)
   ([parameter-with-blank](lexer/cases/10-compiler-directives/parameter-with-blank.yaml)).
 
-Anything else is error 17, at the column of the offending item: a blank
-right after `$` ([dollar-blank](lexer/cases/10-compiler-directives/dollar-blank.yaml)), an unknown name such as `{$FOO}` or
-`{$Z+}` ([unknown-directive](lexer/cases/10-compiler-directives/unknown-directive.yaml)), a switch list with a bad item
-([switch-list-bad-second](lexer/cases/10-compiler-directives/switch-list-bad-second.yaml)), a switch letter that isn't also a parameter
-directive written without its sign (`{$T}`, `{$T }`)
-([switch-t-no-sign](lexer/cases/10-compiler-directives/switch-t-no-sign.yaml), [switch-b-no-sign](lexer/cases/10-compiler-directives/switch-b-no-sign.yaml), [switch-t-blank](lexer/cases/10-compiler-directives/switch-t-blank.yaml)), or a missing item
-after a comma (`{$R+,}`) ([switch-trailing-comma](lexer/cases/10-compiler-directives/switch-trailing-comma.yaml)).
+Anything else is error 17, at the first character of the item that is
+wrong: the blank of a blank right after `$` ([dollar-blank](lexer/cases/10-compiler-directives/dollar-blank.yaml)), the
+first letter of an unknown name such as `{$FOO}` or `{$Z+}`
+([unknown-directive](lexer/cases/10-compiler-directives/unknown-directive.yaml)), whatever follows a comma in a switch list when it isn't
+a good item, a blank, a letter or the `}` of `{$R+,}`
+([switch-list-bad-second](lexer/cases/10-compiler-directives/switch-list-bad-second.yaml), [switch-trailing-comma](lexer/cases/10-compiler-directives/switch-trailing-comma.yaml)), and the letter of a
+switch that isn't also a parameter directive written without its sign
+(`{$T}`, `{$T }`)
+([switch-t-no-sign](lexer/cases/10-compiler-directives/switch-t-no-sign.yaml), [switch-b-no-sign](lexer/cases/10-compiler-directives/switch-b-no-sign.yaml), [switch-t-blank](lexer/cases/10-compiler-directives/switch-t-blank.yaml)).
+
+Before any directive changes them, the switches are
+`A+ B- D+ E+ F- G- I+ K+ L+ N- O- P- Q- R- S+ T- V+ W+ X+ Y+`
+([default-switches](lexer/cases/10-compiler-directives/default-switches.yaml)).
 
 ### Switches that must come first
 
 The switches `A D E G K L N O T X Y` may appear only before the program
-heading or right after it ([switch-n-before-header](lexer/cases/10-compiler-directives/switch-n-before-header.yaml), [switch-n-after-header](lexer/cases/10-compiler-directives/switch-n-after-header.yaml)).
+heading or right after it, before the token that follows the heading's
+`;`, a heading with parameters included
+([switch-n-before-header](lexer/cases/10-compiler-directives/switch-n-before-header.yaml), [switch-n-after-header](lexer/cases/10-compiler-directives/switch-n-after-header.yaml), [switch-n-after-program-parameters](lexer/cases/10-compiler-directives/switch-n-after-program-parameters.yaml)).
 After a `uses` clause or a declaration, or inside a statement part, any of
 them is error 17 at the switch letter
 ([switch-*-after-declaration](lexer/cases/10-compiler-directives/), [switch-n-after-uses](lexer/cases/10-compiler-directives/switch-n-after-uses.yaml), [switch-n-in-statement](lexer/cases/10-compiler-directives/switch-n-in-statement.yaml)).
@@ -359,7 +389,9 @@ The other switches (`B F I P Q R S V W`) and `{$M}` may appear anywhere
 ([m-hex](lexer/cases/10-compiler-directives/m-hex.yaml)). Before each number, any run of blanks, commas and semicolons
 is skipped, so `{$M 16384 0 655360}`, `{$M 16384;0;655360}` and
 `{$M ,16384,,0, ,655360}` are all accepted
-([m-blanks](lexer/cases/10-compiler-directives/m-blanks.yaml), [m-semicolons](lexer/cases/10-compiler-directives/m-semicolons.yaml), [m-extra-commas](lexer/cases/10-compiler-directives/m-extra-commas.yaml)). Anything after the third
+([m-blanks](lexer/cases/10-compiler-directives/m-blanks.yaml), [m-semicolons](lexer/cases/10-compiler-directives/m-semicolons.yaml), [m-extra-commas](lexer/cases/10-compiler-directives/m-extra-commas.yaml)). A number ends at the first character
+that isn't one of its digits, and a letter there is error 17 at the letter:
+`{$M 16384x,0,655360}` ([m-number-then-letter](lexer/cases/10-compiler-directives/m-number-then-letter.yaml)). Anything after the third
 number is ignored ([m-trailing-text](lexer/cases/10-compiler-directives/m-trailing-text.yaml)). A number that is missing or out
 of range is error 17 at the place where it starts or should start, so
 `{$M}`, `{$M ABC}`, `{$M=16384}`, `{$M 16384}` and `{$M 16384,0}` are all
@@ -377,8 +409,9 @@ errors
   `{$M 16384,1024,1009}` is accepted, as both are 64 paragraphs, and
   `{$M 16384,1024,1008}` is an error
   ([m-heap-min-equals-max-rounded](lexer/cases/10-compiler-directives/m-heap-min-equals-max-rounded.yaml), [m-heap-min-above-max](lexer/cases/10-compiler-directives/m-heap-min-above-max.yaml)). A number too
-  large for an integer is an error too
-  ([m-heap-max-not-integer](lexer/cases/10-compiler-directives/m-heap-max-not-integer.yaml), [m-heap-min-not-integer](lexer/cases/10-compiler-directives/m-heap-min-not-integer.yaml)).
+  large for an integer is an error too, and so is a hex number with its top
+  bit set, which as an integer is negative: `$FFFFFFF0`
+  ([m-heap-max-not-integer](lexer/cases/10-compiler-directives/m-heap-max-not-integer.yaml), [m-heap-min-not-integer](lexer/cases/10-compiler-directives/m-heap-min-not-integer.yaml), [m-heap-max-hex-sign-bit](lexer/cases/10-compiler-directives/m-heap-max-hex-sign-bit.yaml)).
 
 ### Conditional symbols
 
@@ -408,7 +441,8 @@ machine; nothing else turns it on or off.
 `TPC`'s `/D` option defines more symbols before the program is read: names
 separated by `;` or `,`, read like those of `{$DEFINE}`. `/D` alone defines
 nothing. A name that can't be a symbol, such as `/D1X`, is error 130
-("Error in initial conditional defines"), before any token
+("Error in initial conditional defines") at line 1, column 1, before any
+token
 ([d-option](lexer/cases/10-compiler-directives/d-option.yaml), [d-option-lower-case](lexer/cases/10-compiler-directives/d-option-lower-case.yaml), [d-option-two](lexer/cases/10-compiler-directives/d-option-two.yaml), [d-option-comma](lexer/cases/10-compiler-directives/d-option-comma.yaml), [d-option-empty](lexer/cases/10-compiler-directives/d-option-empty.yaml), [d-option-digit-first](lexer/cases/10-compiler-directives/d-option-digit-first.yaml)).
 
 The
@@ -468,18 +502,27 @@ with the rest of the directive's line. Include files may include others
 - The name is the text after the `I` and any blanks, up to the next blank,
   `*` or `}`; text after a blank is ignored. Its letters are read in upper
   case, other characters as they are, and only its first 79 characters are
-  kept. A name without an extension gets
-  `.PAS`, and `{$I}` alone looks for `.PAS`. A colon right after the `I` is
+  kept. A line end ends the name too, and the comment then goes on on the
+  next line ([name-at-line-end](lexer/cases/14-include-files/name-at-line-end.yaml)). A name without a `.` gets `.PAS`, and
+  `{$I}` alone looks for `.PAS`; a name with a `.` has an extension even
+  when nothing follows it, so `{$I BODY.}` reads the file `BODY`
+  ([name-dot-without-extension](lexer/cases/14-include-files/name-dot-without-extension.yaml)). A colon right after the `I` is
   part of the name
   ([lower-case-name](lexer/cases/14-include-files/lower-case-name.yaml), [name-then-text](lexer/cases/14-include-files/name-then-text.yaml), [name-ends-at-star](lexer/cases/14-include-files/name-ends-at-star.yaml), [name-with-colon](lexer/cases/14-include-files/name-with-colon.yaml), [i-colon-missing](lexer/cases/14-include-files/i-colon-missing.yaml), [name-79-characters](lexer/cases/14-include-files/name-79-characters.yaml), [default-extension](lexer/cases/14-include-files/default-extension.yaml), [default-extension-only](lexer/cases/14-include-files/default-extension-only.yaml), [no-name](lexer/cases/14-include-files/no-name.yaml), [name-tilde](lexer/cases/14-include-files/name-tilde.yaml)).
 - A missing file is error 15, just after the directive; the message names
   the file that was looked for ([missing-file](lexer/cases/14-include-files/missing-file.yaml)).
-- Open include files share a limited room, and longer names take more of
-  it: 218 nested files with 8-character names fit but 219 don't, and 191
-  with 12-character names fit but 192 don't. The one that doesn't fit is
+- Include files may nest as long as, counting 20 plus the length of its
+  name for every file open at once, the total is at most 6144. The names
+  counted are the program's name as given to `TPC`, and each include
+  file's name as read from its directive, with `.PAS` added when it has
+  none. With the 12-character names that the cases' programs have, 218
+  nested files with 8-character names are allowed (32 + 218 × 28 = 6136)
+  and 219 aren't; 191 with 12-character names are (exactly 6144) and 192
+  aren't; and 235 with 6-character names are and 236 aren't, whether or not
+  their directives give the `.PAS`. The include file that goes over is
   error 18 just after its directive, in the file that includes it. A file
   that includes itself ends the same way
-  ([depth-218-short-names](lexer/cases/14-include-files/depth-218-short-names.yaml), [depth-219-short-names](lexer/cases/14-include-files/depth-219-short-names.yaml), [depth-191-long-names](lexer/cases/14-include-files/depth-191-long-names.yaml), [depth-192-long-names](lexer/cases/14-include-files/depth-192-long-names.yaml), [includes-itself](lexer/cases/14-include-files/includes-itself.yaml)).
+  ([depth-218-short-names](lexer/cases/14-include-files/depth-218-short-names.yaml), [depth-219-short-names](lexer/cases/14-include-files/depth-219-short-names.yaml), [depth-191-long-names](lexer/cases/14-include-files/depth-191-long-names.yaml), [depth-192-long-names](lexer/cases/14-include-files/depth-192-long-names.yaml), [depth-23?-*](lexer/cases/14-include-files/), [includes-itself](lexer/cases/14-include-files/includes-itself.yaml)).
 - Each file is read on its own terms: its own lines, with error 11 for a
   long one, and ^Z ending just that file. Its last line needs no line end
   ([long-line-in-include](lexer/cases/14-include-files/long-line-in-include.yaml), [ctrl-z-ends-include](lexer/cases/14-include-files/ctrl-z-ends-include.yaml), [no-final-line-end](lexer/cases/14-include-files/no-final-line-end.yaml)).
@@ -491,8 +534,9 @@ with the rest of the directive's line. Include files may include others
   and a conditional still open there, compiled or skipped, is error 129,
   both at the line after its last line, in the include file
   ([comment-open-at-end](lexer/cases/14-include-files/comment-open-at-end.yaml), [brace-comment-open-at-end](lexer/cases/14-include-files/brace-comment-open-at-end.yaml), [ifdef-open-at-end](lexer/cases/14-include-files/ifdef-open-at-end.yaml), [ifdef-skipping-at-end](lexer/cases/14-include-files/ifdef-skipping-at-end.yaml)).
-  An `{$ENDIF}` in an include file can't close an `{$IFDEF}` of the file
-  that includes it: error 128 ([endif-closes-outer-ifdef](lexer/cases/14-include-files/endif-closes-outer-ifdef.yaml)).
+  An `{$ELSE}` or `{$ENDIF}` in an include file can't belong to an
+  `{$IFDEF}` of the file that includes it: error 128
+  ([endif-closes-outer-ifdef](lexer/cases/14-include-files/endif-closes-outer-ifdef.yaml), [else-closes-outer-ifdef](lexer/cases/14-include-files/else-closes-outer-ifdef.yaml)).
 - Defined symbols and switches set in an include file stay set after it
   ([define-carries-over](lexer/cases/14-include-files/define-carries-over.yaml), [switch-carries-over](lexer/cases/14-include-files/switch-carries-over.yaml)).
 - In skipped text, `{$I}` is skipped like any other directive
@@ -501,7 +545,10 @@ with the rest of the directive's line. Include files may include others
   before `TPC` looks for the file ([in-statement](lexer/cases/14-include-files/in-statement.yaml), [in-procedure-body](lexer/cases/14-include-files/in-procedure-body.yaml)).
 - The program can't end in an include file: with the main `begin … end.`
   in one, `TPC` reads on to the include file's end and reports error 10
-  just after the `.` ([final-end-in-include](lexer/cases/14-include-files/final-end-in-include.yaml)).
+  at the `.` ([final-end-in-include](lexer/cases/14-include-files/final-end-in-include.yaml)). Nor can a statement part go on past
+  the end of the include file it begins in: with `begin` in an include
+  file and the rest in the program, it is error 10 at the line after the
+  include file's last line ([statement-part-begins-in-include](lexer/cases/14-include-files/statement-part-begins-in-include.yaml)).
 
 ### Overlays
 
@@ -512,16 +559,26 @@ Errors:
 
 - no name, as in `{$O}`: error 2 where the name should start
   ([o-no-name](lexer/cases/10-compiler-directives/o-no-name.yaml));
-- a unit the program doesn't use: error 3 ([o-unknown-unit](lexer/cases/10-compiler-directives/o-unknown-unit.yaml));
+- a unit the program doesn't use: error 3 at the name ([o-unknown-unit](lexer/cases/10-compiler-directives/o-unknown-unit.yaml));
 - a unit not compiled with `{$O+}`, or one of the standard units such as
-  `Crt`: error 144 ([o-unit-not-overlay](lexer/cases/10-compiler-directives/o-unit-not-overlay.yaml), [o-without-overlay-unit](lexer/cases/10-compiler-directives/o-without-overlay-unit.yaml));
-- `{$O name}` in a unit: error 17 ([o-in-unit](lexer/cases/10-compiler-directives/o-in-unit.yaml)).
+  `Crt`: error 144 at the name ([o-unit-not-overlay](lexer/cases/10-compiler-directives/o-unit-not-overlay.yaml), [o-without-overlay-unit](lexer/cases/10-compiler-directives/o-without-overlay-unit.yaml));
+- `{$O name}` in a unit: error 17 at the `O` ([o-in-unit](lexer/cases/10-compiler-directives/o-in-unit.yaml)).
 
 `{$O}` is checked the same way while `TPC` looks for a run-time error
 address (its `/F` option): `{$O Foo}` is accepted, and the compile ends
-with `/F`'s error 117, "Target address not found", when the address isn't
-in the program; `{$O Crt}` is still error 144
+with `/F`'s error 117, "Target address not found", which has no
+position, for the address 0000:0000; `{$O Crt}` is still error 144
 ([o-find-mode](lexer/cases/10-compiler-directives/o-find-mode.yaml), [o-find-mode-not-overlay](lexer/cases/10-compiler-directives/o-find-mode-not-overlay.yaml)).
+
+### Units
+
+With `/M`, `TPC` compiles each unit a program uses from its source,
+`NAME.PAS`, when it reads the `;` that ends the `uses` clause. The unit's
+tokens come in the list right there, after that `SEMI`, and the program's
+go on after the unit's final `DOT`; an error in the unit is reported in its
+file ([o-overlay-unit](lexer/cases/10-compiler-directives/o-overlay-unit.yaml), [o-in-unit](lexer/cases/10-compiler-directives/o-in-unit.yaml)). A unit compiled beforehand
+(see `precompile` under [cases](#cases)) adds no tokens
+([o-find-mode](lexer/cases/10-compiler-directives/o-find-mode.yaml)).
 
 ### `)` ending a `(*$` directive
 
@@ -568,23 +625,62 @@ it accepts, and how it encodes them, are not covered.
   A statement with no tokens gives no `ASM_END` either, such as character
   233 alone before `end` ([high-character-before-end](lexer/cases/15-asm-blocks/high-character-before-end.yaml)).
 - The first word of a statement, and the word after a label or a prefix,
-  is `ASM_INSTRUCTION` when it is an instruction, a prefix, `db`, `dw` or
-  `dd`, and `ASM_WORD` when it isn't, as for a label
-  ([block](lexer/cases/15-asm-blocks/block.yaml), [prefix-then-instruction](lexer/cases/15-asm-blocks/prefix-then-instruction.yaml), [db-string](lexer/cases/15-asm-blocks/db-string.yaml), [word-characters](lexer/cases/15-asm-blocks/word-characters.yaml), [label-starting-with-e](lexer/cases/15-asm-blocks/label-starting-with-e.yaml), [two-labels](lexer/cases/15-asm-blocks/two-labels.yaml), [end-then-digit](lexer/cases/15-asm-blocks/end-then-digit.yaml)).
+  is `ASM_INSTRUCTION` when it is one of these 227 words: the
+  instructions, the prefixes, and `db`, `dw` and `dd`
+  ([instructions](lexer/cases/15-asm-blocks/instructions.yaml), [instructions-pascal-reserved](lexer/cases/15-asm-blocks/instructions-pascal-reserved.yaml), [block](lexer/cases/15-asm-blocks/block.yaml), [db-string](lexer/cases/15-asm-blocks/db-string.yaml)):
+
+  `aaa aad aam aas adc add and arpl bound call cbw clc cld cli clts cmc
+  cmp cmpsb cmpsw cwd daa das db dd dec div dw enter f2xm1 fabs fadd
+  faddp fbld fbstp fchs fclex fcom fcomp fcompp fdecstp fdisi fdiv fdivp
+  fdivr fdivrp feni ffree fiadd ficom ficomp fidiv fidivr fild fimul
+  fincstp finit fist fistp fisub fisubr fld fld1 fldcw fldenv fldl2e
+  fldl2t fldlg2 fldln2 fldpi fldz fmul fmulp fnclex fndisi fneni fninit
+  fnop fnsave fnstcw fnstenv fnstsw fpatan fprem fptan frndint frstor
+  fsave fscale fsetpm fsqrt fst fstcw fstenv fstp fstsw fsub fsubp fsubr
+  fsubrp ftst fwait fxam fxch fxtract fyl2x fyl2xp1 hlt idiv imul in inc
+  insb insw int into iret ja jae jb jbe jc jcxz je jg jge jl jle jmp jna
+  jnae jnb jnbe jnc jne jng jnge jnl jnle jno jnp jns jnz jo jp jpe jpo
+  js jz lahf lar lds lea leave les lgdt lidt lldt lmsw lock lodsb lodsw
+  loop loope loopne loopnz loopz lsl ltr mov movsb movsw mul neg nop not
+  or out outsb outsw pop popa popf push pusha pushf rcl rcr rep repe
+  repne repnz repz ret retf retn rol ror sahf sal sar sbb scasb scasw
+  segcs segds seges segss sgdt shl shr sidt sldt smsw stc std sti stosb
+  stosw str sub test verr verw wait xchg xlat xor`
+
+  The prefixes are `lock rep repe repne repnz repz segcs segds seges
+  segss` ([prefixes](lexer/cases/15-asm-blocks/prefixes.yaml), [prefix-then-instruction](lexer/cases/15-asm-blocks/prefix-then-instruction.yaml)). Any other such word is
+  `ASM_RESERVED`, `ASM_NUMBER` or `ASM_STRING` as anywhere else, and
+  otherwise `ASM_WORD`, as for a label
+  ([register-first](lexer/cases/15-asm-blocks/register-first.yaml), [number-first](lexer/cases/15-asm-blocks/number-first.yaml), [word-characters](lexer/cases/15-asm-blocks/word-characters.yaml), [label-starting-with-e](lexer/cases/15-asm-blocks/label-starting-with-e.yaml), [two-labels](lexer/cases/15-asm-blocks/two-labels.yaml), [end-then-digit](lexer/cases/15-asm-blocks/end-then-digit.yaml)).
   Elsewhere, an instruction's name is an identifier
   ([instruction-as-variable](lexer/cases/15-asm-blocks/instruction-as-variable.yaml)).
-- One of the [reserved words](#words) is `ASM_RESERVED`, in the first
-  word of a statement too ([reserved-*](lexer/cases/15-asm-blocks/), [operator-*](lexer/cases/15-asm-blocks/), [register-first](lexer/cases/15-asm-blocks/register-first.yaml)).
+- Elsewhere, one of the [reserved words](#words) is `ASM_RESERVED`
+  ([reserved-*](lexer/cases/15-asm-blocks/), [operator-*](lexer/cases/15-asm-blocks/)).
 - Any other word that isn't a number is `ASM_IDENT`: it names a Pascal
   identifier, and its value leaves out a leading `&`
-  ([ampersand-register-name](lexer/cases/15-asm-blocks/ampersand-register-name.yaml), [instruction-as-variable](lexer/cases/15-asm-blocks/instruction-as-variable.yaml)). A word that names
-  no identifier is error 3, and gives no token
-  ([two-statements-no-separator](lexer/cases/15-asm-blocks/two-statements-no-separator.yaml), [identifier-39-characters](lexer/cases/15-asm-blocks/identifier-39-characters.yaml), [pascal-reserved-word-as-operand](lexer/cases/15-asm-blocks/pascal-reserved-word-as-operand.yaml)).
+  ([ampersand-register-name](lexer/cases/15-asm-blocks/ampersand-register-name.yaml), [instruction-as-variable](lexer/cases/15-asm-blocks/instruction-as-variable.yaml)).
 - A number is `ASM_NUMBER`, and a string is `ASM_STRING`, after `db` or
   not ([decimal](lexer/cases/15-asm-blocks/decimal.yaml), [hex-dollar](lexer/cases/15-asm-blocks/hex-dollar.yaml), [db-string](lexer/cases/15-asm-blocks/db-string.yaml), [string-two](lexer/cases/15-asm-blocks/string-two.yaml)). Any other
   character is `ASM_SYMBOL` ([symbol-*](lexer/cases/15-asm-blocks/), [paren-not-comment](lexer/cases/15-asm-blocks/paren-not-comment.yaml), [close-brace](lexer/cases/15-asm-blocks/close-brace.yaml)).
 - As in Pascal text, a number or string with an error in it gives no token
-  ([bad-decimal-digit](lexer/cases/15-asm-blocks/bad-decimal-digit.yaml), [decimal-over](lexer/cases/15-asm-blocks/decimal-over.yaml), [string-unterminated](lexer/cases/15-asm-blocks/string-unterminated.yaml)).
+  ([bad-decimal-digit](lexer/cases/15-asm-blocks/bad-decimal-digit.yaml), [decimal-over](lexer/cases/15-asm-blocks/decimal-over.yaml), [string-unterminated](lexer/cases/15-asm-blocks/string-unterminated.yaml)). Nor does a
+  word that names no identifier, which is error 3 at the start of the word,
+  or `&` alone, which is error 5 at the `&`
+  ([two-statements-no-separator](lexer/cases/15-asm-blocks/two-statements-no-separator.yaml), [identifier-39-characters](lexer/cases/15-asm-blocks/identifier-39-characters.yaml), [pascal-reserved-word-as-operand](lexer/cases/15-asm-blocks/pascal-reserved-word-as-operand.yaml), [ampersand-alone](lexer/cases/15-asm-blocks/ampersand-alone.yaml)).
+- A token that the assembler can't use where it stands is delivered, and
+  the error follows it:
+  - a first word that isn't an instruction and has no `:` after it: error
+    5 just after the word
+    ([register-first](lexer/cases/15-asm-blocks/register-first.yaml), [number-first](lexer/cases/15-asm-blocks/number-first.yaml), [end-then-digit](lexer/cases/15-asm-blocks/end-then-digit.yaml), [semicolon-is-not-a-comment](lexer/cases/15-asm-blocks/semicolon-is-not-a-comment.yaml));
+  - a first word with `:` after it that isn't a declared label, a register
+    included: error 3 just after the word ([label-undeclared](lexer/cases/15-asm-blocks/label-undeclared.yaml), [register-as-label](lexer/cases/15-asm-blocks/register-as-label.yaml));
+  - a second label after a label: error 5 at its start ([two-labels](lexer/cases/15-asm-blocks/two-labels.yaml));
+  - a symbol the operands can't take: error 5 at it ([symbol-*](lexer/cases/15-asm-blocks/), [close-brace](lexer/cases/15-asm-blocks/close-brace.yaml)).
+- A statement that ends before its operands are complete gives its
+  `ASM_END`, and then error 5: at the `{`, the `(` of `(*` or the `end` that
+  ended it; when the line ended, at the start of the statement's last
+  token, or at the line's end when blanks come before it
+  ([brace-comment-in-operand](lexer/cases/15-asm-blocks/brace-comment-in-operand.yaml), [paren-star-comment-in-operand](lexer/cases/15-asm-blocks/paren-star-comment-in-operand.yaml), [end-in-operand](lexer/cases/15-asm-blocks/end-in-operand.yaml), [statement-across-lines](lexer/cases/15-asm-blocks/statement-across-lines.yaml), [statement-across-lines-trailing-blanks](lexer/cases/15-asm-blocks/statement-across-lines-trailing-blanks.yaml)).
 
 ### Statements
 
@@ -652,8 +748,9 @@ at the end of a line are ignored
 - Only the first 32 characters of a word count; the rest are read and
   ignored. A Pascal identifier longer than 32 characters can't be named in
   full in a block, and one of exactly 32 characters is found by any longer
-  word that starts with it
-  ([identifier-39-characters](lexer/cases/15-asm-blocks/identifier-39-characters.yaml), [identifier-32-significant](lexer/cases/15-asm-blocks/identifier-32-significant.yaml)). For numbers,
+  word that starts with it. A leading `&` is one of the 32: `&` and a
+  32-character name finds no identifier
+  ([identifier-39-characters](lexer/cases/15-asm-blocks/identifier-39-characters.yaml), [identifier-32-significant](lexer/cases/15-asm-blocks/identifier-32-significant.yaml), [ampersand-32-characters](lexer/cases/15-asm-blocks/ampersand-32-characters.yaml)). For numbers,
   see [below](#numbers-in-a-statement).
 - A word that starts with a digit or `$` is a
   [number](#numbers-in-a-statement).
@@ -780,6 +877,35 @@ reproduce `TPC`'s own arithmetic. That arithmetic isn't known yet
   2 units above the correctly rounded value
   ([tenth](lexer/cases/13-real-values/tenth.yaml), [scale-??](lexer/cases/13-real-values/), [random-*](lexer/cases/13-real-values/)).
 
+## Error messages
+
+`TPC` reports an error as its number and its message. In error 15's
+message, NAME is the file that `TPC` looked for, named as described where
+the file is named
+([missing-file](lexer/cases/14-include-files/missing-file.yaml), [l-colon](lexer/cases/10-compiler-directives/l-colon.yaml)).
+
+| Error | Message | Case |
+| --- | --- | --- |
+| 2 | Identifier expected. | [define-no-name](lexer/cases/10-compiler-directives/define-no-name.yaml) |
+| 3 | Unknown identifier. | [o-unknown-unit](lexer/cases/10-compiler-directives/o-unknown-unit.yaml) |
+| 5 | Syntax error. | [not-a-symbol-exclamation](lexer/cases/02-character-set/not-a-symbol-exclamation.yaml) |
+| 6 | Error in real constant. | [real-overflow](lexer/cases/06-numbers/real-overflow.yaml) |
+| 7 | Error in integer constant. | [decimal-over](lexer/cases/06-numbers/decimal-over.yaml) |
+| 8 | String constant exceeds line. | [unterminated](lexer/cases/08-strings/unterminated.yaml) |
+| 10 | Unexpected end of file. | [unterminated-brace](lexer/cases/09-comments/unterminated-brace.yaml) |
+| 11 | Line too long. | [line-128](lexer/cases/11-program-lines/line-128.yaml) |
+| 15 | File not found (NAME). | [missing-file](lexer/cases/14-include-files/missing-file.yaml) |
+| 17 | Invalid compiler directive. | [unknown-directive](lexer/cases/10-compiler-directives/unknown-directive.yaml) |
+| 18 | Too many files. | [includes-itself](lexer/cases/14-include-files/includes-itself.yaml) |
+| 76 | Constant out of range. | [binary-32-digits](lexer/cases/15-asm-blocks/binary-32-digits.yaml) |
+| 117 | Target address not found. | [o-find-mode](lexer/cases/10-compiler-directives/o-find-mode.yaml) |
+| 118 | Include files are not allowed here. | [in-statement](lexer/cases/14-include-files/in-statement.yaml) |
+| 127 | Too many conditional symbols. | [symbols-over](lexer/cases/10-compiler-directives/symbols-over.yaml) |
+| 128 | Misplaced conditional directive. | [else-without-ifdef](lexer/cases/10-compiler-directives/else-without-ifdef.yaml) |
+| 129 | ENDIF directive missing. | [ifdef-unterminated](lexer/cases/10-compiler-directives/ifdef-unterminated.yaml) |
+| 130 | Error in initial conditional defines. | [d-option-digit-first](lexer/cases/10-compiler-directives/d-option-digit-first.yaml) |
+| 144 | Cannot overlay this unit. | [o-without-overlay-unit](lexer/cases/10-compiler-directives/o-without-overlay-unit.yaml) |
+
 ## Not covered yet
 
 - Which instructions and operands an [`asm` block](#asm-blocks) accepts,
@@ -787,3 +913,5 @@ reproduce `TPC`'s own arithmetic. That arithmetic isn't known yet
 - `CPU87` on a machine without a floating-point unit: QEMU always has
   one, so no case shows it undefined.
 - The exact value of real literals (see [real values](#real-values)).
+- How the units a program uses change the [limit on nested include
+  files](#include-files).

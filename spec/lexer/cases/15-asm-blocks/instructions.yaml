@@ -1,0 +1,1559 @@
+description: Every instruction name that isn't a Pascal reserved word, each
+  declared as a Pascal label and defined as a label in an asm block.
+source: |
+  program P;
+  label
+    Aaa,
+    Aad,
+    Aam,
+    Aas,
+    Adc,
+    Add,
+    Arpl,
+    Bound,
+    Call,
+    Cbw,
+    Clc,
+    Cld,
+    Cli,
+    Clts,
+    Cmc,
+    Cmp,
+    Cmpsb,
+    Cmpsw,
+    Cwd,
+    Daa,
+    Das,
+    Db,
+    Dd,
+    Dec,
+    Dw,
+    Enter,
+    F2xm1,
+    Fabs,
+    Fadd,
+    Faddp,
+    Fbld,
+    Fbstp,
+    Fchs,
+    Fclex,
+    Fcom,
+    Fcomp,
+    Fcompp,
+    Fdecstp,
+    Fdisi,
+    Fdiv,
+    Fdivp,
+    Fdivr,
+    Fdivrp,
+    Feni,
+    Ffree,
+    Fiadd,
+    Ficom,
+    Ficomp,
+    Fidiv,
+    Fidivr,
+    Fild,
+    Fimul,
+    Fincstp,
+    Finit,
+    Fist,
+    Fistp,
+    Fisub,
+    Fisubr,
+    Fld,
+    Fld1,
+    Fldcw,
+    Fldenv,
+    Fldl2e,
+    Fldl2t,
+    Fldlg2,
+    Fldln2,
+    Fldpi,
+    Fldz,
+    Fmul,
+    Fmulp,
+    Fnclex,
+    Fndisi,
+    Fneni,
+    Fninit,
+    Fnop,
+    Fnsave,
+    Fnstcw,
+    Fnstenv,
+    Fnstsw,
+    Fpatan,
+    Fprem,
+    Fptan,
+    Frndint,
+    Frstor,
+    Fsave,
+    Fscale,
+    Fsetpm,
+    Fsqrt,
+    Fst,
+    Fstcw,
+    Fstenv,
+    Fstp,
+    Fstsw,
+    Fsub,
+    Fsubp,
+    Fsubr,
+    Fsubrp,
+    Ftst,
+    Fwait,
+    Fxam,
+    Fxch,
+    Fxtract,
+    Fyl2x,
+    Fyl2xp1,
+    Hlt,
+    Idiv,
+    Imul,
+    Inc,
+    Insb,
+    Insw,
+    Int,
+    Into,
+    Iret,
+    Ja,
+    Jae,
+    Jb,
+    Jbe,
+    Jc,
+    Jcxz,
+    Je,
+    Jg,
+    Jge,
+    Jl,
+    Jle,
+    Jmp,
+    Jna,
+    Jnae,
+    Jnb,
+    Jnbe,
+    Jnc,
+    Jne,
+    Jng,
+    Jnge,
+    Jnl,
+    Jnle,
+    Jno,
+    Jnp,
+    Jns,
+    Jnz,
+    Jo,
+    Jp,
+    Jpe,
+    Jpo,
+    Js,
+    Jz,
+    Lahf,
+    Lar,
+    Lds,
+    Lea,
+    Leave,
+    Les,
+    Lgdt,
+    Lidt,
+    Lldt,
+    Lmsw,
+    Lock,
+    Lodsb,
+    Lodsw,
+    Loop,
+    Loope,
+    Loopne,
+    Loopnz,
+    Loopz,
+    Lsl,
+    Ltr,
+    Mov,
+    Movsb,
+    Movsw,
+    Mul,
+    Neg,
+    Nop,
+    Out,
+    Outsb,
+    Outsw,
+    Pop,
+    Popa,
+    Popf,
+    Push,
+    Pusha,
+    Pushf,
+    Rcl,
+    Rcr,
+    Rep,
+    Repe,
+    Repne,
+    Repnz,
+    Repz,
+    Ret,
+    Retf,
+    Retn,
+    Rol,
+    Ror,
+    Sahf,
+    Sal,
+    Sar,
+    Sbb,
+    Scasb,
+    Scasw,
+    Segcs,
+    Segds,
+    Seges,
+    Segss,
+    Sgdt,
+    Sidt,
+    Sldt,
+    Smsw,
+    Stc,
+    Std,
+    Sti,
+    Stosb,
+    Stosw,
+    Str,
+    Sub,
+    Test,
+    Verr,
+    Verw,
+    Wait,
+    Xchg,
+    Xlat;
+  begin
+    asm
+    aaa:
+    aad:
+    aam:
+    aas:
+    adc:
+    add:
+    arpl:
+    bound:
+    call:
+    cbw:
+    clc:
+    cld:
+    cli:
+    clts:
+    cmc:
+    cmp:
+    cmpsb:
+    cmpsw:
+    cwd:
+    daa:
+    das:
+    db:
+    dd:
+    dec:
+    dw:
+    enter:
+    f2xm1:
+    fabs:
+    fadd:
+    faddp:
+    fbld:
+    fbstp:
+    fchs:
+    fclex:
+    fcom:
+    fcomp:
+    fcompp:
+    fdecstp:
+    fdisi:
+    fdiv:
+    fdivp:
+    fdivr:
+    fdivrp:
+    feni:
+    ffree:
+    fiadd:
+    ficom:
+    ficomp:
+    fidiv:
+    fidivr:
+    fild:
+    fimul:
+    fincstp:
+    finit:
+    fist:
+    fistp:
+    fisub:
+    fisubr:
+    fld:
+    fld1:
+    fldcw:
+    fldenv:
+    fldl2e:
+    fldl2t:
+    fldlg2:
+    fldln2:
+    fldpi:
+    fldz:
+    fmul:
+    fmulp:
+    fnclex:
+    fndisi:
+    fneni:
+    fninit:
+    fnop:
+    fnsave:
+    fnstcw:
+    fnstenv:
+    fnstsw:
+    fpatan:
+    fprem:
+    fptan:
+    frndint:
+    frstor:
+    fsave:
+    fscale:
+    fsetpm:
+    fsqrt:
+    fst:
+    fstcw:
+    fstenv:
+    fstp:
+    fstsw:
+    fsub:
+    fsubp:
+    fsubr:
+    fsubrp:
+    ftst:
+    fwait:
+    fxam:
+    fxch:
+    fxtract:
+    fyl2x:
+    fyl2xp1:
+    hlt:
+    idiv:
+    imul:
+    inc:
+    insb:
+    insw:
+    int:
+    into:
+    iret:
+    ja:
+    jae:
+    jb:
+    jbe:
+    jc:
+    jcxz:
+    je:
+    jg:
+    jge:
+    jl:
+    jle:
+    jmp:
+    jna:
+    jnae:
+    jnb:
+    jnbe:
+    jnc:
+    jne:
+    jng:
+    jnge:
+    jnl:
+    jnle:
+    jno:
+    jnp:
+    jns:
+    jnz:
+    jo:
+    jp:
+    jpe:
+    jpo:
+    js:
+    jz:
+    lahf:
+    lar:
+    lds:
+    lea:
+    leave:
+    les:
+    lgdt:
+    lidt:
+    lldt:
+    lmsw:
+    lock:
+    lodsb:
+    lodsw:
+    loop:
+    loope:
+    loopne:
+    loopnz:
+    loopz:
+    lsl:
+    ltr:
+    mov:
+    movsb:
+    movsw:
+    mul:
+    neg:
+    nop:
+    out:
+    outsb:
+    outsw:
+    pop:
+    popa:
+    popf:
+    push:
+    pusha:
+    pushf:
+    rcl:
+    rcr:
+    rep:
+    repe:
+    repne:
+    repnz:
+    repz:
+    ret:
+    retf:
+    retn:
+    rol:
+    ror:
+    sahf:
+    sal:
+    sar:
+    sbb:
+    scasb:
+    scasw:
+    segcs:
+    segds:
+    seges:
+    segss:
+    sgdt:
+    sidt:
+    sldt:
+    smsw:
+    stc:
+    std:
+    sti:
+    stosb:
+    stosw:
+    str:
+    sub:
+    test:
+    verr:
+    verw:
+    wait:
+    xchg:
+    xlat:
+    end;
+    Write(1)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - LABEL
+  - IDENT: AAA
+  - COMMA
+  - IDENT: AAD
+  - COMMA
+  - IDENT: AAM
+  - COMMA
+  - IDENT: AAS
+  - COMMA
+  - IDENT: ADC
+  - COMMA
+  - IDENT: ADD
+  - COMMA
+  - IDENT: ARPL
+  - COMMA
+  - IDENT: BOUND
+  - COMMA
+  - IDENT: CALL
+  - COMMA
+  - IDENT: CBW
+  - COMMA
+  - IDENT: CLC
+  - COMMA
+  - IDENT: CLD
+  - COMMA
+  - IDENT: CLI
+  - COMMA
+  - IDENT: CLTS
+  - COMMA
+  - IDENT: CMC
+  - COMMA
+  - IDENT: CMP
+  - COMMA
+  - IDENT: CMPSB
+  - COMMA
+  - IDENT: CMPSW
+  - COMMA
+  - IDENT: CWD
+  - COMMA
+  - IDENT: DAA
+  - COMMA
+  - IDENT: DAS
+  - COMMA
+  - IDENT: DB
+  - COMMA
+  - IDENT: DD
+  - COMMA
+  - IDENT: DEC
+  - COMMA
+  - IDENT: DW
+  - COMMA
+  - IDENT: ENTER
+  - COMMA
+  - IDENT: F2XM1
+  - COMMA
+  - IDENT: FABS
+  - COMMA
+  - IDENT: FADD
+  - COMMA
+  - IDENT: FADDP
+  - COMMA
+  - IDENT: FBLD
+  - COMMA
+  - IDENT: FBSTP
+  - COMMA
+  - IDENT: FCHS
+  - COMMA
+  - IDENT: FCLEX
+  - COMMA
+  - IDENT: FCOM
+  - COMMA
+  - IDENT: FCOMP
+  - COMMA
+  - IDENT: FCOMPP
+  - COMMA
+  - IDENT: FDECSTP
+  - COMMA
+  - IDENT: FDISI
+  - COMMA
+  - IDENT: FDIV
+  - COMMA
+  - IDENT: FDIVP
+  - COMMA
+  - IDENT: FDIVR
+  - COMMA
+  - IDENT: FDIVRP
+  - COMMA
+  - IDENT: FENI
+  - COMMA
+  - IDENT: FFREE
+  - COMMA
+  - IDENT: FIADD
+  - COMMA
+  - IDENT: FICOM
+  - COMMA
+  - IDENT: FICOMP
+  - COMMA
+  - IDENT: FIDIV
+  - COMMA
+  - IDENT: FIDIVR
+  - COMMA
+  - IDENT: FILD
+  - COMMA
+  - IDENT: FIMUL
+  - COMMA
+  - IDENT: FINCSTP
+  - COMMA
+  - IDENT: FINIT
+  - COMMA
+  - IDENT: FIST
+  - COMMA
+  - IDENT: FISTP
+  - COMMA
+  - IDENT: FISUB
+  - COMMA
+  - IDENT: FISUBR
+  - COMMA
+  - IDENT: FLD
+  - COMMA
+  - IDENT: FLD1
+  - COMMA
+  - IDENT: FLDCW
+  - COMMA
+  - IDENT: FLDENV
+  - COMMA
+  - IDENT: FLDL2E
+  - COMMA
+  - IDENT: FLDL2T
+  - COMMA
+  - IDENT: FLDLG2
+  - COMMA
+  - IDENT: FLDLN2
+  - COMMA
+  - IDENT: FLDPI
+  - COMMA
+  - IDENT: FLDZ
+  - COMMA
+  - IDENT: FMUL
+  - COMMA
+  - IDENT: FMULP
+  - COMMA
+  - IDENT: FNCLEX
+  - COMMA
+  - IDENT: FNDISI
+  - COMMA
+  - IDENT: FNENI
+  - COMMA
+  - IDENT: FNINIT
+  - COMMA
+  - IDENT: FNOP
+  - COMMA
+  - IDENT: FNSAVE
+  - COMMA
+  - IDENT: FNSTCW
+  - COMMA
+  - IDENT: FNSTENV
+  - COMMA
+  - IDENT: FNSTSW
+  - COMMA
+  - IDENT: FPATAN
+  - COMMA
+  - IDENT: FPREM
+  - COMMA
+  - IDENT: FPTAN
+  - COMMA
+  - IDENT: FRNDINT
+  - COMMA
+  - IDENT: FRSTOR
+  - COMMA
+  - IDENT: FSAVE
+  - COMMA
+  - IDENT: FSCALE
+  - COMMA
+  - IDENT: FSETPM
+  - COMMA
+  - IDENT: FSQRT
+  - COMMA
+  - IDENT: FST
+  - COMMA
+  - IDENT: FSTCW
+  - COMMA
+  - IDENT: FSTENV
+  - COMMA
+  - IDENT: FSTP
+  - COMMA
+  - IDENT: FSTSW
+  - COMMA
+  - IDENT: FSUB
+  - COMMA
+  - IDENT: FSUBP
+  - COMMA
+  - IDENT: FSUBR
+  - COMMA
+  - IDENT: FSUBRP
+  - COMMA
+  - IDENT: FTST
+  - COMMA
+  - IDENT: FWAIT
+  - COMMA
+  - IDENT: FXAM
+  - COMMA
+  - IDENT: FXCH
+  - COMMA
+  - IDENT: FXTRACT
+  - COMMA
+  - IDENT: FYL2X
+  - COMMA
+  - IDENT: FYL2XP1
+  - COMMA
+  - IDENT: HLT
+  - COMMA
+  - IDENT: IDIV
+  - COMMA
+  - IDENT: IMUL
+  - COMMA
+  - IDENT: INC
+  - COMMA
+  - IDENT: INSB
+  - COMMA
+  - IDENT: INSW
+  - COMMA
+  - IDENT: INT
+  - COMMA
+  - IDENT: INTO
+  - COMMA
+  - IDENT: IRET
+  - COMMA
+  - IDENT: JA
+  - COMMA
+  - IDENT: JAE
+  - COMMA
+  - IDENT: JB
+  - COMMA
+  - IDENT: JBE
+  - COMMA
+  - IDENT: JC
+  - COMMA
+  - IDENT: JCXZ
+  - COMMA
+  - IDENT: JE
+  - COMMA
+  - IDENT: JG
+  - COMMA
+  - IDENT: JGE
+  - COMMA
+  - IDENT: JL
+  - COMMA
+  - IDENT: JLE
+  - COMMA
+  - IDENT: JMP
+  - COMMA
+  - IDENT: JNA
+  - COMMA
+  - IDENT: JNAE
+  - COMMA
+  - IDENT: JNB
+  - COMMA
+  - IDENT: JNBE
+  - COMMA
+  - IDENT: JNC
+  - COMMA
+  - IDENT: JNE
+  - COMMA
+  - IDENT: JNG
+  - COMMA
+  - IDENT: JNGE
+  - COMMA
+  - IDENT: JNL
+  - COMMA
+  - IDENT: JNLE
+  - COMMA
+  - IDENT: JNO
+  - COMMA
+  - IDENT: JNP
+  - COMMA
+  - IDENT: JNS
+  - COMMA
+  - IDENT: JNZ
+  - COMMA
+  - IDENT: JO
+  - COMMA
+  - IDENT: JP
+  - COMMA
+  - IDENT: JPE
+  - COMMA
+  - IDENT: JPO
+  - COMMA
+  - IDENT: JS
+  - COMMA
+  - IDENT: JZ
+  - COMMA
+  - IDENT: LAHF
+  - COMMA
+  - IDENT: LAR
+  - COMMA
+  - IDENT: LDS
+  - COMMA
+  - IDENT: LEA
+  - COMMA
+  - IDENT: LEAVE
+  - COMMA
+  - IDENT: LES
+  - COMMA
+  - IDENT: LGDT
+  - COMMA
+  - IDENT: LIDT
+  - COMMA
+  - IDENT: LLDT
+  - COMMA
+  - IDENT: LMSW
+  - COMMA
+  - IDENT: LOCK
+  - COMMA
+  - IDENT: LODSB
+  - COMMA
+  - IDENT: LODSW
+  - COMMA
+  - IDENT: LOOP
+  - COMMA
+  - IDENT: LOOPE
+  - COMMA
+  - IDENT: LOOPNE
+  - COMMA
+  - IDENT: LOOPNZ
+  - COMMA
+  - IDENT: LOOPZ
+  - COMMA
+  - IDENT: LSL
+  - COMMA
+  - IDENT: LTR
+  - COMMA
+  - IDENT: MOV
+  - COMMA
+  - IDENT: MOVSB
+  - COMMA
+  - IDENT: MOVSW
+  - COMMA
+  - IDENT: MUL
+  - COMMA
+  - IDENT: NEG
+  - COMMA
+  - IDENT: NOP
+  - COMMA
+  - IDENT: OUT
+  - COMMA
+  - IDENT: OUTSB
+  - COMMA
+  - IDENT: OUTSW
+  - COMMA
+  - IDENT: POP
+  - COMMA
+  - IDENT: POPA
+  - COMMA
+  - IDENT: POPF
+  - COMMA
+  - IDENT: PUSH
+  - COMMA
+  - IDENT: PUSHA
+  - COMMA
+  - IDENT: PUSHF
+  - COMMA
+  - IDENT: RCL
+  - COMMA
+  - IDENT: RCR
+  - COMMA
+  - IDENT: REP
+  - COMMA
+  - IDENT: REPE
+  - COMMA
+  - IDENT: REPNE
+  - COMMA
+  - IDENT: REPNZ
+  - COMMA
+  - IDENT: REPZ
+  - COMMA
+  - IDENT: RET
+  - COMMA
+  - IDENT: RETF
+  - COMMA
+  - IDENT: RETN
+  - COMMA
+  - IDENT: ROL
+  - COMMA
+  - IDENT: ROR
+  - COMMA
+  - IDENT: SAHF
+  - COMMA
+  - IDENT: SAL
+  - COMMA
+  - IDENT: SAR
+  - COMMA
+  - IDENT: SBB
+  - COMMA
+  - IDENT: SCASB
+  - COMMA
+  - IDENT: SCASW
+  - COMMA
+  - IDENT: SEGCS
+  - COMMA
+  - IDENT: SEGDS
+  - COMMA
+  - IDENT: SEGES
+  - COMMA
+  - IDENT: SEGSS
+  - COMMA
+  - IDENT: SGDT
+  - COMMA
+  - IDENT: SIDT
+  - COMMA
+  - IDENT: SLDT
+  - COMMA
+  - IDENT: SMSW
+  - COMMA
+  - IDENT: STC
+  - COMMA
+  - IDENT: STD
+  - COMMA
+  - IDENT: STI
+  - COMMA
+  - IDENT: STOSB
+  - COMMA
+  - IDENT: STOSW
+  - COMMA
+  - IDENT: STR
+  - COMMA
+  - IDENT: SUB
+  - COMMA
+  - IDENT: TEST
+  - COMMA
+  - IDENT: VERR
+  - COMMA
+  - IDENT: VERW
+  - COMMA
+  - IDENT: WAIT
+  - COMMA
+  - IDENT: XCHG
+  - COMMA
+  - IDENT: XLAT
+  - SEMI
+  - BEGIN
+  - ASM
+  - ASM_INSTRUCTION: AAA
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: AAD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: AAM
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: AAS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: ADC
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: ADD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: ARPL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: BOUND
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CALL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CBW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CLC
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CLD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CLI
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CLTS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CMC
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CMP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CMPSB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CMPSW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: CWD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: DAA
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: DAS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: DB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: DD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: DEC
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: DW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: ENTER
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: F2XM1
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FABS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FADD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FADDP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FBLD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FBSTP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FCHS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FCLEX
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FCOM
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FCOMP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FCOMPP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FDECSTP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FDISI
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FDIV
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FDIVP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FDIVR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FDIVRP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FENI
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FFREE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FIADD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FICOM
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FICOMP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FIDIV
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FIDIVR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FILD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FIMUL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FINCSTP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FINIT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FIST
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FISTP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FISUB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FISUBR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FLD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FLD1
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FLDCW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FLDENV
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FLDL2E
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FLDL2T
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FLDLG2
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FLDLN2
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FLDPI
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FLDZ
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FMUL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FMULP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FNCLEX
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FNDISI
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FNENI
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FNINIT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FNOP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FNSAVE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FNSTCW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FNSTENV
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FNSTSW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FPATAN
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FPREM
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FPTAN
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FRNDINT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FRSTOR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSAVE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSCALE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSETPM
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSQRT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FST
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSTCW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSTENV
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSTP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSTSW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSUB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSUBP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSUBR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FSUBRP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FTST
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FWAIT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FXAM
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FXCH
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FXTRACT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FYL2X
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: FYL2XP1
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: HLT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: IDIV
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: IMUL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: INC
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: INSB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: INSW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: INT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: INTO
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: IRET
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JA
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JAE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JBE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JC
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JCXZ
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JG
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JGE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JLE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JMP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNA
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNAE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNBE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNC
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNG
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNGE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNLE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNO
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JNZ
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JO
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JPE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JPO
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: JZ
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LAHF
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LAR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LDS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LEA
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LEAVE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LES
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LGDT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LIDT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LLDT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LMSW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LOCK
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LODSB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LODSW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LOOP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LOOPE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LOOPNE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LOOPNZ
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LOOPZ
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LSL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: LTR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: MOV
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: MOVSB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: MOVSW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: MUL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: NEG
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: NOP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: OUT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: OUTSB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: OUTSW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: POP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: POPA
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: POPF
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: PUSH
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: PUSHA
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: PUSHF
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: RCL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: RCR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: REP
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: REPE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: REPNE
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: REPNZ
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: REPZ
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: RET
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: RETF
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: RETN
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: ROL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: ROR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SAHF
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SAL
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SAR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SBB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SCASB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SCASW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SEGCS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SEGDS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SEGES
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SEGSS
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SGDT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SIDT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SLDT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SMSW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: STC
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: STD
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: STI
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: STOSB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: STOSW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: STR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: SUB
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: TEST
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: VERR
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: VERW
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: WAIT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: XCHG
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - ASM_INSTRUCTION: XLAT
+  - ASM_SYMBOL: ":"
+  - ASM_END
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - INTEGER: 1
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "1"

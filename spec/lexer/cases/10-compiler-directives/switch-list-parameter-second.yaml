@@ -1,0 +1,15 @@
+description: "{$R+,C+}: the second item in a list is a parameter directive's letter."
+source: |
+  program P;
+  {$R+,C+}
+  begin
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

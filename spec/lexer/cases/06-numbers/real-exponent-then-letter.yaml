@@ -1,0 +1,21 @@
+description: "'1ex': digits, 'e' and a letter."
+source: |
+  program P;
+  const
+    C = 1ex;
+  begin
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - REAL: 1e
+  - IDENT: X
+compile:
+  error: 85
+  line: 3
+  column: 9
+  message: "\";\" expected."

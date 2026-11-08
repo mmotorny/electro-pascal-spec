@@ -1,0 +1,39 @@
+description: "'&' and a 32-character Pascal variable's name."
+source: |
+  program P;
+  var
+    A2345678901234567890123456789012: Word;
+  begin
+    A2345678901234567890123456789012 := 0;
+    asm
+      mov ax, 1
+      mov &A2345678901234567890123456789012, ax
+    end;
+    Write(A2345678901234567890123456789012)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: A2345678901234567890123456789012
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: A2345678901234567890123456789012
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 1
+  - ASM_END
+  - ASM_INSTRUCTION: MOV
+compile:
+  error: 3
+  line: 8
+  column: 9
+  message: Unknown identifier.

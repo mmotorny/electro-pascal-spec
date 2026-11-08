@@ -1,0 +1,16 @@
+description: "{$M 16384x,0,655360}: a letter right after a number."
+source: |
+  program P;
+  {$M 16384x,0,655360}
+  begin
+    Write(1)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 17
+  line: 2
+  column: 10
+  message: Invalid compiler directive.

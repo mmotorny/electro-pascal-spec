@@ -1,0 +1,21 @@
+description: The statement part's begin is in an include file and its end.
+  in the program.
+source: |
+  program P;
+  {$I BODY.INC}
+    Write(1)
+  end.
+files:
+  BODY.INC: |
+    begin
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+compile:
+  error: 10
+  line: 2
+  column: 1
+  file: BODY.INC
+  message: Unexpected end of file.

@@ -1,0 +1,27 @@
+description: A statement that stops after its comma, with blanks before the
+  line end.
+source: "program P;\nvar\n  W: Word;\nbegin\n  W := 0;\n  asm\n    mov ax,   \n    4\n    mov W, ax\n  end;\n  Write(W)\nend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_END
+compile:
+  error: 5
+  line: 7
+  column: 15
+  message: Syntax error.

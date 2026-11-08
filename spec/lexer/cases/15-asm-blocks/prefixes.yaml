@@ -1,0 +1,63 @@
+description: Every prefix, each followed by nop, then an unknown identifier
+  so that the program doesn't compile and isn't run.
+source: |
+  program P;
+  begin
+    asm
+      lock nop
+      rep nop
+      repe nop
+      repne nop
+      repnz nop
+      repz nop
+      segcs nop
+      segds nop
+      seges nop
+      segss nop
+      mov ax, Unknown
+    end;
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - ASM
+  - ASM_INSTRUCTION: LOCK
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
+  - ASM_INSTRUCTION: REP
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
+  - ASM_INSTRUCTION: REPE
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
+  - ASM_INSTRUCTION: REPNE
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
+  - ASM_INSTRUCTION: REPNZ
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
+  - ASM_INSTRUCTION: REPZ
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
+  - ASM_INSTRUCTION: SEGCS
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
+  - ASM_INSTRUCTION: SEGDS
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
+  - ASM_INSTRUCTION: SEGES
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
+  - ASM_INSTRUCTION: SEGSS
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+compile:
+  error: 3
+  line: 14
+  column: 13
+  message: Unknown identifier.
