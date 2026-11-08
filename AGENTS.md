@@ -32,7 +32,7 @@ build it.
 
 - A case's `compile` and `output` are written only by
   `bazel run //spec:record`, never by hand. Run it after adding or changing
-  cases, and keep `bazel test //spec:cases_test` passing.
+  cases, and keep `bazel test //spec:cases_test //spec:tpc_test` passing.
 - When a recorded result disagrees with the spec's text or a case's
   `tokens`, the recorded result is right: fix the text or the tokens,
   or record the behaviour as a quirk.

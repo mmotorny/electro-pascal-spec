@@ -77,8 +77,13 @@ The spec lives in [`spec/`](spec). It starts with the lexer,
 tokens the spec expects, and what compiling and running it with `TPC` gave;
 [`spec/case.schema.yaml`](spec/case.schema.yaml) defines the format.
 
-- `bazel run //spec:record` runs every case through `TPC` on the reference
-  machine and writes the verdicts and outputs into the cases.
+- `bazel run //spec:record [-- case or directory ...]` runs cases through
+  `TPC` on the reference machine and writes what compiling and running
+  them gives into the cases.
+- `bazel test //spec:tpc_test` runs every case through `TPC` the same way
+  and fails if any case's `compile` or `output` differs from what `TPC`
+  gives. It changes nothing. Bazel reruns it only when a case, the
+  reference machine or the tools change.
 - `bazel test //spec:cases_test` checks, without running `TPC`, that every
   case is well formed and recorded, that every rule's links name existing
   cases and every case is linked from a rule, and that the rules the spec

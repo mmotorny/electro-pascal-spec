@@ -22,6 +22,32 @@ python_tool(
     ],
 )
 
+# Runs every case through TPC on the reference machine and fails if any
+# case's compile or output differs from what TPC gives. Records nothing.
+python_test(
+    name = "tpc_test",
+    size = "medium",
+    data = [
+        "MACHINE.json",
+        "//machine:disk",
+        "//spec/lexer:cases",
+        "//third_party/mtools",
+        "//third_party/qemu:qemu-system-i386",
+    ],
+    fixed_args = [
+        "--qemu=$(rootpath //third_party/qemu:qemu-system-i386)",
+        "--mtools=$(rootpath //third_party/mtools)",
+        "--disk=$(rootpath //machine:disk)",
+        "--check",
+    ],
+    main = "record.py",
+    srcs = [
+        "cases.py",
+        "//machine:probe.py",
+        "//machine:qmp.py",
+    ],
+)
+
 # Compares the cases' tokens with a capture of TPC's tokens:
 # bazel run //spec:compare -- CAPTURED.json [--write]
 python_tool(
