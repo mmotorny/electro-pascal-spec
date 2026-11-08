@@ -74,7 +74,10 @@ plugin header.
 
 The spec lives in [`spec/`](spec). It starts with the lexer,
 [`spec/lexer.md`](spec/lexer.md), backed by test cases in
-`spec/lexer/cases/`. Each case is a YAML file holding a small program (and
+`spec/lexer/cases/`. Where `TPC` gives up (its capacity limits, and inputs
+it fails on, such as one it never finishes compiling) is in
+[`spec/lexer-limits.md`](spec/lexer-limits.md), apart from the behaviour
+an implementation must match. Each case is a YAML file holding a small program (and
 any include files it reads), the tokens `TPC` reads in it, and what
 compiling and running it with `TPC` gave, including any error message;
 [`spec/case.schema.yaml`](spec/case.schema.yaml) defines the format.

@@ -54,14 +54,16 @@ python_test(
     ],
 )
 
-# Checks that every case is well formed, recorded and cited by lexer.md, and
-# that the real-value rules in lexer.md hold for the cases. Doesn't run TPC.
+# Checks that every case is well formed, recorded and cited by lexer.md or
+# lexer-limits.md, and that the real-value rules in lexer.md give the cases'
+# values. Doesn't run TPC.
 python_test(
     name = "cases_test",
     size = "small",
     data = [
         "//spec:case.schema.yaml",
         "//spec:lexer.md",
+        "//spec:lexer-limits.md",
         "//spec/lexer:cases",
     ],
     main = "check_cases.py",

@@ -105,13 +105,7 @@ output: "7"
 - A file is a sequence of bytes. Line feed (10) ends a line, alone or after
   a carriage return. Carriage return (13) does not: a file with CR alone is
   one long line ([lf-ends-a-line](lexer/cases/01-separators/lf-ends-a-line.yaml), [crlf-ends-a-line](lexer/cases/01-separators/crlf-ends-a-line.yaml), [cr-does-not-end-a-line](lexer/cases/01-separators/cr-does-not-end-a-line.yaml)).
-- A line may hold at most 127 characters, not counting CRs. A tab counts as
-  one character ([line-127](lexer/cases/11-program-lines/line-127.yaml), [line-127-crlf](lexer/cases/11-program-lines/line-127-crlf.yaml), [line-127-two-crs](lexer/cases/11-program-lines/line-127-two-crs.yaml), [line-127-with-cr-inside](lexer/cases/11-program-lines/line-127-with-cr-inside.yaml), [line-127-tab](lexer/cases/11-program-lines/line-127-tab.yaml)).
-- A longer line is error 11 at column 128, and no token on that line is
-  listed ([line-128](lexer/cases/11-program-lines/line-128.yaml), [line-128-tab](lexer/cases/11-program-lines/line-128-tab.yaml), [line-128-with-cr-inside](lexer/cases/11-program-lines/line-128-with-cr-inside.yaml)). This
-  happens wherever the line is: inside a comment, an unterminated string or
-  text skipped by `{$IFDEF}` too
-  ([line-128-in-comment-before-end](lexer/cases/11-program-lines/line-128-in-comment-before-end.yaml), [line-128-in-string](lexer/cases/11-program-lines/line-128-in-string.yaml), [line-128-in-skipped-text](lexer/cases/11-program-lines/line-128-in-skipped-text.yaml)).
+- Lines have a length limit; see [limits](lexer-limits.md#source-text).
 - NUL (0) bytes are ignored, as if they weren't in the file: `pro`, NUL, `gram` is `program`, a NUL between two digits or inside
   a quoted string disappears, and NULs don't count toward the line length.
   So are carriage returns: `pro`, CR, `gram` is `program` too, and CRs take
@@ -216,12 +210,9 @@ are not reserved: each is an `IDENT` ([not-reserved-*](lexer/cases/04-reserved-w
   The digits after `.` and after `E` may be missing: `1.`, `1.e5`, `1e`,
   `1e+` and `1e-` are all accepted, and a missing exponent counts as 0
   ([real-no-fraction-digits](lexer/cases/06-numbers/real-no-fraction-digits.yaml), [real-dot-exponent](lexer/cases/06-numbers/real-dot-exponent.yaml), [real-exponent-no-digits](lexer/cases/06-numbers/real-exponent-no-digits.yaml), [real-exponent-plus-no-digits](lexer/cases/06-numbers/real-exponent-plus-no-digits.yaml), [real-exponent-minus-no-digits](lexer/cases/06-numbers/real-exponent-minus-no-digits.yaml)).
-  The exponent's digits are read only while its value stays at most 9999,
-  and the next digit starts a new token: `1e12345` is `REAL(1e1234)` then
-  `INTEGER(5)`
-  ([real-exponent-4-digits](lexer/cases/06-numbers/real-exponent-4-digits.yaml), [real-exponent-1000](lexer/cases/06-numbers/real-exponent-1000.yaml), [real-exponent-9999](lexer/cases/06-numbers/real-exponent-9999.yaml), [real-exponent-10000](lexer/cases/06-numbers/real-exponent-10000.yaml), [real-exponent-5-digits](lexer/cases/06-numbers/real-exponent-5-digits.yaml), [real-exponent-5-digits-small](lexer/cases/06-numbers/real-exponent-5-digits-small.yaml)).
   Leading zeros in the exponent don't count
-  ([real-exponent-leading-zeros-9999](lexer/cases/06-numbers/real-exponent-leading-zeros-9999.yaml)). A number can't start with `.`
+  ([real-exponent-leading-zeros-9999](lexer/cases/06-numbers/real-exponent-leading-zeros-9999.yaml)), but
+  its value has a [limit](lexer-limits.md#numbers). A number can't start with `.`
   ([real-no-integer-digits](lexer/cases/06-numbers/real-no-integer-digits.yaml)). A value too large for Extended, as
   [computed](#real-values) by `TPC`, is error 6, just after the number
   ([real-overflow](lexer/cases/06-numbers/real-overflow.yaml)); a value that fits
@@ -441,11 +432,8 @@ nothing. A name that can't be a symbol, such as `/D1X`, is error 130
 token
 ([d-option](lexer/cases/10-compiler-directives/d-option.yaml), [d-option-lower-case](lexer/cases/10-compiler-directives/d-option-lower-case.yaml), [d-option-two](lexer/cases/10-compiler-directives/d-option-two.yaml), [d-option-comma](lexer/cases/10-compiler-directives/d-option-comma.yaml), [d-option-empty](lexer/cases/10-compiler-directives/d-option-empty.yaml), [d-option-digit-first](lexer/cases/10-compiler-directives/d-option-digit-first.yaml)).
 
-Counting each
-defined symbol, these four included, as its length plus one, the total may
-be at most 1024. A `{$DEFINE}` that would go over is error 127 at its name.
-Removing a symbol, even a predefined one, lowers the total
-([symbols-full](lexer/cases/10-compiler-directives/symbols-full.yaml), [symbols-over](lexer/cases/10-compiler-directives/symbols-over.yaml), [symbols-undef-frees](lexer/cases/10-compiler-directives/symbols-undef-frees.yaml), [symbols-undef-frees-over](lexer/cases/10-compiler-directives/symbols-undef-frees-over.yaml)).
+The defined symbols have a size limit; see
+[limits](lexer-limits.md#conditional-symbols).
 
 ### Conditional compilation
 
@@ -497,7 +485,7 @@ with the rest of the directive's line. Include files may include others
 - The name is the text after the `I` and any blanks, up to the next blank,
   `*` or `}`; text after a blank is ignored. Its letters are read in upper
   case, other characters as they are, and only its first 79 characters are
-  kept. A line end ends the name too, and the comment then goes on on the
+  kept ([name-79-characters](lexer/cases/14-include-files/name-79-characters.yaml)). A line end ends the name too, and the comment then goes on on the
   next line ([name-at-line-end](lexer/cases/14-include-files/name-at-line-end.yaml)). A name without a `.` gets `.PAS`, and
   `{$I}` alone looks for `.PAS`; a name with a `.` has an extension even
   when nothing follows it, so `{$I BODY.}` reads the file `BODY`
@@ -505,23 +493,13 @@ with the rest of the directive's line. Include files may include others
   part of the name, and so is a `)`: `{$I:DEFS.INC}` looks for the file
   `:DEFS.INC`, not `DEFS.INC`, and in `(*$L B) ! *)` the name is `B)`
   ([paren-l-no-close](lexer/cases/10-compiler-directives/paren-l-no-close.yaml))
-  ([lower-case-name](lexer/cases/14-include-files/lower-case-name.yaml), [name-then-text](lexer/cases/14-include-files/name-then-text.yaml), [name-ends-at-star](lexer/cases/14-include-files/name-ends-at-star.yaml), [name-with-colon](lexer/cases/14-include-files/name-with-colon.yaml), [i-colon-missing](lexer/cases/14-include-files/i-colon-missing.yaml), [name-79-characters](lexer/cases/14-include-files/name-79-characters.yaml), [default-extension](lexer/cases/14-include-files/default-extension.yaml), [default-extension-only](lexer/cases/14-include-files/default-extension-only.yaml), [no-name](lexer/cases/14-include-files/no-name.yaml), [name-tilde](lexer/cases/14-include-files/name-tilde.yaml)).
+  ([lower-case-name](lexer/cases/14-include-files/lower-case-name.yaml), [name-then-text](lexer/cases/14-include-files/name-then-text.yaml), [name-ends-at-star](lexer/cases/14-include-files/name-ends-at-star.yaml), [name-with-colon](lexer/cases/14-include-files/name-with-colon.yaml), [i-colon-missing](lexer/cases/14-include-files/i-colon-missing.yaml), [default-extension](lexer/cases/14-include-files/default-extension.yaml), [default-extension-only](lexer/cases/14-include-files/default-extension-only.yaml), [no-name](lexer/cases/14-include-files/no-name.yaml), [name-tilde](lexer/cases/14-include-files/name-tilde.yaml)).
 - A missing file is error 15, just after the directive; the message names
   the file that was looked for ([missing-file](lexer/cases/14-include-files/missing-file.yaml)).
-- Include files may nest as long as, counting 20 plus the length of its
-  name for every file open at once, the total is at most 6144. The names
-  counted are the program's name as given to `TPC`, and each include
-  file's name as read from its directive, with `.PAS` added when it has
-  none. With the 12-character names that the cases' programs have, 218
-  nested files with 8-character names are allowed (32 + 218 × 28 = 6136)
-  and 219 aren't; 191 with 12-character names are (exactly 6144) and 192
-  aren't; and 235 with 6-character names are and 236 aren't, whether or not
-  their directives give the `.PAS`. The include file that goes over is
-  error 18 just after its directive, in the file that includes it. A file
-  that includes itself ends the same way
-  ([depth-218-short-names](lexer/cases/14-include-files/depth-218-short-names.yaml), [depth-219-short-names](lexer/cases/14-include-files/depth-219-short-names.yaml), [depth-191-long-names](lexer/cases/14-include-files/depth-191-long-names.yaml), [depth-192-long-names](lexer/cases/14-include-files/depth-192-long-names.yaml), [depth-23?-*](lexer/cases/14-include-files/), [includes-itself](lexer/cases/14-include-files/includes-itself.yaml)).
+- How deeply include files may nest has a
+  [limit](lexer-limits.md#include-files).
 - Each file is read on its own terms: its own lines, with error 11 for a
-  long one, and ^Z ending just that file. Its last line needs no line end
+  long one (see [limits](lexer-limits.md#source-text)), and ^Z ending just that file. Its last line needs no line end
   ([long-line-in-include](lexer/cases/14-include-files/long-line-in-include.yaml), [ctrl-z-ends-include](lexer/cases/14-include-files/ctrl-z-ends-include.yaml), [no-final-line-end](lexer/cases/14-include-files/no-final-line-end.yaml)).
   An error is reported in the file it is in, at that file's line
   ([error-in-include](lexer/cases/14-include-files/error-in-include.yaml), [error-after-include](lexer/cases/14-include-files/error-after-include.yaml)).
@@ -540,11 +518,8 @@ with the rest of the directive's line. Include files may include others
   ([include-in-skipped-text](lexer/cases/14-include-files/include-in-skipped-text.yaml)).
 - `{$I}` inside any statement part is error 118, just after the directive,
   whether or not the file exists ([in-statement](lexer/cases/14-include-files/in-statement.yaml), [in-procedure-body](lexer/cases/14-include-files/in-procedure-body.yaml)).
-- The program can't end in an include file: with the main `begin … end.`
-  in one, it is error 10 at the `.` ([final-end-in-include](lexer/cases/14-include-files/final-end-in-include.yaml)). Nor can a statement part go on past
-  the end of the include file it begins in: with `begin` in an include
-  file and the rest in the program, it is error 10 at the line after the
-  include file's last line ([statement-part-begins-in-include](lexer/cases/14-include-files/statement-part-begins-in-include.yaml)).
+- Include files limit where the program and its statement parts may end;
+  see [limits](lexer-limits.md#include-files).
 
 ### Overlays
 
@@ -725,9 +700,8 @@ it accepts, and how it encodes them, are not covered.
   missing, as in `mov ax, end`, it is error 5 at `end` ([end-in-operand](lexer/cases/15-asm-blocks/end-in-operand.yaml)).
   Character 233 before `end` is a [blank](#blanks-in-a-statement), so
   `end` still ends the block ([high-character-before-end](lexer/cases/15-asm-blocks/high-character-before-end.yaml)).
-- `end` followed directly by DEL (127) at the start of a statement makes
-  `TPC` loop forever: it never finishes compiling the program
-  ([end-then-del](lexer/cases/15-asm-blocks/end-then-del.yaml)).
+- For `end` followed directly by DEL, see
+  [limits](lexer-limits.md#asm-blocks).
 - `end` inside a string is part of the string ([end-in-string](lexer/cases/15-asm-blocks/end-in-string.yaml)).
 
 ### Blanks in a statement
@@ -977,7 +951,5 @@ the file is named
 
 ## Not covered yet
 
-- `CPU87` on a machine without a floating-point unit: QEMU always has
-  one, so no case shows it undefined.
-- Whether the units a program uses affect the [limit on nested include
-  files](#include-files).
+- `CPU87` on a machine without a floating-point unit: the cases run on
+  QEMU, which always has one.

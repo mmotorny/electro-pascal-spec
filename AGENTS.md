@@ -62,12 +62,20 @@ build it.
   bugs, such as hangs. Record them with cases all the same, and say only
   what `TPC` does, never why: an explanation of a limit or a bug brings
   `TPC`'s workings into what a clean-room implementer reads. Leave it to
-  the implementation repo to decide whether to match them. A limit
-  that changes what a valid program means (such as which digits of a real
-  count, or where a long identifier is cut) is behaviour and stays in the
-  main file. Where the main file meets a limit, it says so in a line and
-  links to the limits file. Bring borderline calls to the user rather
-  than deciding them.
+  the implementation repo to decide whether to match them. To tell them
+  apart:
+  - It is a limit if `TPC` stops, with an error or a hang, a program
+    that would otherwise compile: no compiled program can depend on it.
+    The longest line and the number of files that may be open are
+    limits.
+  - Everything else is behaviour, for the main file: anything a compiled
+    program can depend on, even by mistake, such as where a long
+    identifier is cut, or a typo that `TPC` let through. Which of two
+    errors an invalid program gets is behaviour too.
+
+  Where the main file meets a limit, it says so in a line and links to
+  the limits file. Bring borderline calls to the user rather than
+  deciding them.
 - Describe in a case's `description` what its input is and what it shows,
   never why `TPC` behaves that way inside.
 - Write cases as small, complete programs of our own, laid out over lines

@@ -3,9 +3,10 @@
 Every case must match spec/case.schema.yaml and have a recorded verdict
 (run `bazel run //harness:record` after adding or changing a case).
 
-Every link from spec/lexer.md into lexer/cases/ must name an existing case,
-or, for a link to a folder, have text that is a pattern matching at least
-one case in it; and every case must be cited by some link.
+Every link from spec/lexer.md or spec/lexer-limits.md into lexer/cases/
+must name an existing case, or, for a link to a folder, have text that is
+a pattern matching at least one case in it; and every case must be cited
+by some link.
 
 Every case in 13-real-values must have the value that the arithmetic in
 spec/lexer.md ("Real values") gives (see check_real_values).
@@ -21,6 +22,9 @@ import jsonschema
 import yaml
 
 import cases
+
+# The spec files whose links cite the cases.
+SPEC_FILES = ["lexer.md", "lexer-limits.md"]
 
 
 def schema_checker(root):
@@ -38,31 +42,33 @@ def check(case, checker):
     return problems
 
 
-def check_citations(spec_path, found):
-    """Problems with the spec's links to cases, as (where, problem) pairs."""
-    spec_dir = os.path.dirname(spec_path)
-    with open(spec_path, encoding="utf-8") as f:
-        text = f.read()
+def check_citations(spec_paths, found):
+    """Problems with the spec files' links to cases, as (where, problem) pairs."""
     cited, problems = set(), []
-    for label, target in re.findall(r"\[([^\]]+)\]\((lexer/cases/[^)]*)\)", text):
-        path = os.path.normpath(os.path.join(spec_dir, target))
-        if target.endswith(cases.EXTENSION):
-            if os.path.isfile(path):
-                cited.add(path)
-            else:
-                problems.append(("lexer.md", f"link to missing case {target}"))
-        elif any(c in label for c in "*?["):
-            matches = [c.path for c in found
-                       if os.path.dirname(c.path) == path and fnmatch.fnmatch(c.name, label)]
-            if matches:
-                cited.update(matches)
-            else:
-                problems.append(("lexer.md", f"pattern {label} matches no case in {target}"))
-        elif target.rstrip("/") != "lexer/cases":
-            problems.append(("lexer.md", f"link to {target} should name a case or a pattern"))
+    for spec_path in spec_paths:
+        spec_dir, name = os.path.dirname(spec_path), os.path.basename(spec_path)
+        with open(spec_path, encoding="utf-8") as f:
+            text = f.read()
+        for label, target in re.findall(r"\[([^\]]+)\]\((lexer/cases/[^)]*)\)", text):
+            path = os.path.normpath(os.path.join(spec_dir, target))
+            if target.endswith(cases.EXTENSION):
+                if os.path.isfile(path):
+                    cited.add(path)
+                else:
+                    problems.append((name, f"link to missing case {target}"))
+            elif any(c in label for c in "*?["):
+                matches = [c.path for c in found
+                           if os.path.dirname(c.path) == path and fnmatch.fnmatch(c.name, label)]
+                if matches:
+                    cited.update(matches)
+                else:
+                    problems.append((name, f"pattern {label} matches no case in {target}"))
+            elif target.rstrip("/") != "lexer/cases":
+                problems.append((name, f"link to {target} should name a case or a pattern"))
+    names = " or ".join(os.path.basename(p) for p in spec_paths)
     for case in found:
         if case.path not in cited:
-            problems.append((case.path, "not cited in lexer.md"))
+            problems.append((case.path, f"not cited in {names}"))
     return problems
 
 
@@ -260,7 +266,7 @@ def main():
         if os.path.basename(os.path.dirname(case.path)) == "13-real-values":
             problems += [(case.path, p) for p in check_real_values(case)]
     problems += [("lexer.md", p) for p in check_powers_of_ten()]
-    problems += check_citations(os.path.join(root, "lexer.md"), found)
+    problems += check_citations([os.path.join(root, f) for f in SPEC_FILES], found)
     for where, problem in problems:
         print(f"{os.path.relpath(where, root) if os.path.isabs(where) else where}: {problem}")
     print(f"{len(found)} cases, {len(problems)} problems")

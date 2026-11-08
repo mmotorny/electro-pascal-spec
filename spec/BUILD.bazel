@@ -4,4 +4,5 @@ exports_files([
     "MACHINE.json",
     "case.schema.yaml",
     "lexer.md",
+    "lexer-limits.md",
 ])
