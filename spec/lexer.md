@@ -3,11 +3,11 @@
 How `TPC.EXE` (Borland Pascal 7.01, real-mode command-line compiler) splits a
 source file into tokens. Every rule ends with links to the cases in
 [`lexer/cases/`](lexer/cases) that show it, and every case is linked from
-some rule; `bazel test //spec:cases_test` checks both. A link whose text
+some rule; `bazel test //harness:cases_test` checks both. A link whose text
 holds a `*` or `?` stands for all the cases in its folder that match it. A
 case's `tokens`, `compile` and `output` are recorded from the real compiler
 and are the final word; where this text and a case disagree, the case is
-right and this text needs fixing. `bazel test //spec:tpc_test` checks that
+right and this text needs fixing. `bazel test //harness:tpc_test` checks that
 every case still matches what `TPC` gives.
 
 Between them, the cases take both sides of every branch in `TPC`'s scanner
@@ -515,7 +515,7 @@ Each case here prints the exact 80-bit Extended value of a real literal.
 `TPC`'s conversion is not correctly rounded, so an implementation has to
 reproduce `TPC`'s own arithmetic. That arithmetic isn't known yet
 (issue #10). What is known, and checked against every case here by
-`bazel test //spec:cases_test`:
+`bazel test //harness:cases_test`:
 
 - Only the first 19 significant digits count; any digits after them are
   ignored, as if they were 0

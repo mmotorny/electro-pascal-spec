@@ -1,14 +1,14 @@
 """Runs spec cases through TPC and writes what it gives into the cases.
 
-Usage: bazel run //spec:record [-- case or directory ...]
-       bazel test //spec:tpc_test
+Usage: bazel run //harness:record [-- case or directory ...]
+       bazel test //harness:tpc_test
 
 With no case or directory, takes every case under spec/. Records each
 case's tokens (captured from TPC's scanner by machine/tokens.py), compile
 and output (from machine/probe.py), prints the cases that changed, and
 writes spec/MACHINE.json: what the results ran on.
 
-With --check (as //spec:tpc_test runs it), changes nothing: prints every case
+With --check (as //harness:tpc_test runs it), changes nothing: prints every case
 whose tokens, compile or output differ from what TPC gives, and fails if any
 do.
 """
@@ -35,10 +35,9 @@ def main():
     args = parser.parse_args()
 
     # Under bazel test there is no workspace: the cases are in the runfiles.
-    spec = os.path.dirname(os.path.abspath(__file__))
-    workspace = os.environ.get("BUILD_WORKSPACE_DIRECTORY", os.path.dirname(spec))
-    if "BUILD_WORKSPACE_DIRECTORY" in os.environ:
-        spec = os.path.join(workspace, "spec")
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    workspace = os.environ.get("BUILD_WORKSPACE_DIRECTORY", root)
+    spec = os.path.join(workspace, "spec")
     base = os.environ.get("BUILD_WORKING_DIRECTORY", workspace)
     paths = [os.path.join(base, p) for p in args.paths] or [spec]
     selected = []

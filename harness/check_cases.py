@@ -1,7 +1,7 @@
 """Checks the cases and how spec/lexer.md cites them, without running TPC.
 
 Every case must match spec/case.schema.yaml and have a recorded verdict
-(run `bazel run //spec:record` after adding or changing a case).
+(run `bazel run //harness:record` after adding or changing a case).
 
 Every link from spec/lexer.md into lexer/cases/ must name an existing case,
 or, for a link to a folder, have text that is a pattern matching at least
@@ -34,7 +34,7 @@ def check(case, checker):
     problems = [f"{'/'.join(map(str, e.absolute_path)) or 'case'}: {e.message}"
                 for e in checker.iter_errors(case.data)]
     if case.data.get("compile") is None:
-        problems.append("no recorded verdict; run bazel run //spec:record")
+        problems.append("no recorded verdict; run bazel run //harness:record")
     return problems
 
 
@@ -147,7 +147,7 @@ def check_real_values(case):
 
 
 def main():
-    root = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+    root = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "spec")
     problems = []
     found = cases.find(root)
     checker = schema_checker(root)

@@ -35,10 +35,15 @@ build it.
 
 ## Spec cases
 
+- Keep `spec/` to what a clean-room implementer reads or runs: the spec's
+  text, its cases, the case schema and `MACHINE.json`. Tools that make or
+  check the cases go in `harness/`, and tools that drive the reference
+  machine in `machine/`.
+
 - A case's `tokens`, `compile` and `output` are written only by
-  `bazel run //spec:record`, never by hand: write the `description` and
+  `bazel run //harness:record`, never by hand: write the `description` and
   the `source`, then record. Keep
-  `bazel test //spec:cases_test //spec:tpc_test` passing.
+  `bazel test //harness:cases_test //harness:tpc_test` passing.
 - When a recorded result disagrees with the spec's text, the recorded
   result is right: fix the text, or record the behaviour as a quirk.
 - Describe in a case's `description` what its input is and what it shows,

@@ -1,0 +1,69 @@
+# Tools that make and check the spec's cases. The spec itself is in //spec.
+load("//machine:python_tool.bzl", "python_test", "python_tool")
+
+# Runs the spec's cases through TPC and writes its tokens, verdict and output
+# into each case:
+# bazel run //harness:record [-- case or directory ...]
+python_tool(
+    name = "record",
+    data = [
+        "//machine:disk",
+        "//third_party/mtools",
+        "//third_party/qemu:qemu-system-i386",
+    ],
+    fixed_args = [
+        "--qemu=$(rootpath //third_party/qemu:qemu-system-i386)",
+        "--mtools=$(rootpath //third_party/mtools)",
+        "--disk=$(rootpath //machine:disk)",
+    ],
+    main = "record.py",
+    srcs = [
+        "cases.py",
+        "//machine:gdbremote.py",
+        "//machine:probe.py",
+        "//machine:qmp.py",
+        "//machine:tokens.py",
+    ],
+)
+
+# Runs every case through TPC on the reference machine and fails if any
+# case's tokens, compile or output differ from what TPC gives. Records nothing.
+python_test(
+    name = "tpc_test",
+    size = "medium",
+    data = [
+        "//spec:MACHINE.json",
+        "//machine:disk",
+        "//spec/lexer:cases",
+        "//third_party/mtools",
+        "//third_party/qemu:qemu-system-i386",
+    ],
+    fixed_args = [
+        "--qemu=$(rootpath //third_party/qemu:qemu-system-i386)",
+        "--mtools=$(rootpath //third_party/mtools)",
+        "--disk=$(rootpath //machine:disk)",
+        "--check",
+    ],
+    main = "record.py",
+    srcs = [
+        "cases.py",
+        "//machine:gdbremote.py",
+        "//machine:probe.py",
+        "//machine:qmp.py",
+        "//machine:tokens.py",
+    ],
+)
+
+# Checks that every case is well formed, recorded and cited by lexer.md, and
+# that the real-value rules in lexer.md hold for the cases. Doesn't run TPC.
+python_test(
+    name = "cases_test",
+    size = "small",
+    data = [
+        "//spec:case.schema.yaml",
+        "//spec:lexer.md",
+        "//spec/lexer:cases",
+    ],
+    main = "check_cases.py",
+    srcs = ["cases.py"],
+)

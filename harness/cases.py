@@ -26,7 +26,7 @@ A case is a YAML file holding one mapping (see spec/case.schema.yaml):
                end of the program or the error: a kind alone, or a mapping
                from a kind to its value.
   compile      what compiling the source with TPC gives, written only by
-               `bazel run //spec:record`:
+               `bazel run //harness:record`:
                "ok", or a mapping with "error" (the error number), "line"
                and "column" (1-based) when TPC gives a position, "file" when
                the error is in one of the files rather than the program, and

@@ -77,16 +77,18 @@ The spec lives in [`spec/`](spec). It starts with the lexer,
 any include files it reads), the tokens `TPC` delivers for it, and what
 compiling and running it with `TPC` gave, including any error message;
 [`spec/case.schema.yaml`](spec/case.schema.yaml) defines the format.
+`spec/` holds only what a clean-room implementation reads; the tools that
+make and check the cases are in [`harness/`](harness).
 
-- `bazel run //spec:record [-- case or directory ...]` runs cases through
+- `bazel run //harness:record [-- case or directory ...]` runs cases through
   `TPC` on the reference machine and writes what it gives into them: the
   tokens its scanner delivers, whether the program compiles, and what it
   prints.
-- `bazel test //spec:tpc_test` runs every case through `TPC` the same way
+- `bazel test //harness:tpc_test` runs every case through `TPC` the same way
   and fails if any case's `tokens`, `compile` or `output` differ from what
   `TPC` gives. It changes nothing. Bazel reruns it only when a case, the
   reference machine or the tools change.
-- `bazel test //spec:cases_test` checks, without running `TPC`, that every
+- `bazel test //harness:cases_test` checks, without running `TPC`, that every
   case is well formed and recorded, that every rule's links name existing
   cases and every case is linked from a rule, and that the rules the spec
   gives for real values hold for the recorded values.
