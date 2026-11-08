@@ -1,4 +1,4 @@
-description: "A carriage return alone is a blank, not a line end: the error is reported on line 1."
+description: "A carriage return alone doesn't end a line: the error is reported on line 1."
 source: "program P;\rbegin\r  WriteLn(1)\r  WriteLn(2);\rend.\r"
 tokens:
   - PROGRAM

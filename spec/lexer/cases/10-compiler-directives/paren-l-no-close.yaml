@@ -1,5 +1,4 @@
-description: (*$L B) does not end at its ); the missing B.OBJ is reported
-  instead.
+description: "(*$L B) does not end at its ): the name is B), and the missing B).OBJ is reported instead."
 source: |
   program P;
   (*$L B) ! *)

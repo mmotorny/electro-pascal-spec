@@ -1,4 +1,4 @@
-description: "An exponent with five digits: only four are read."
+description: "An exponent written with five digits, four of them leading zeros: all five are read."
 source: |
   program P;
   const C = 1e00001;

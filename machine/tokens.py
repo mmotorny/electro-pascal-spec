@@ -145,6 +145,8 @@ class Capture:
                 regs = self._gdb.registers()
                 try:
                     self._handle(regs)
+                except (EOFError, OSError):
+                    raise  # The machine has gone, as after a hang: the capture just ends.
                 except Exception as e:  # Keep the machine going; reported by the caller.
                     if self.error is None:
                         self.error = e

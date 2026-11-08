@@ -1,4 +1,4 @@
-description: A colon right after I is part of the name.
+description: "A colon right after I is part of the name: {$I:DEFS.INC} looks for :DEFS.INC, which isn't DEFS.INC."
 source: |
   program P;
   {$I:DEFS.INC}

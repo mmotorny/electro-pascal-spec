@@ -507,7 +507,9 @@ with the rest of the directive's line. Include files may include others
   `{$I}` alone looks for `.PAS`; a name with a `.` has an extension even
   when nothing follows it, so `{$I BODY.}` reads the file `BODY`
   ([name-dot-without-extension](lexer/cases/14-include-files/name-dot-without-extension.yaml)). A colon right after the `I` is
-  part of the name
+  part of the name, and so is a `)`: `{$I:DEFS.INC}` looks for the file
+  `:DEFS.INC`, not `DEFS.INC`, and in `(*$L B) ! *)` the name is `B)`
+  ([paren-l-no-close](lexer/cases/10-compiler-directives/paren-l-no-close.yaml))
   ([lower-case-name](lexer/cases/14-include-files/lower-case-name.yaml), [name-then-text](lexer/cases/14-include-files/name-then-text.yaml), [name-ends-at-star](lexer/cases/14-include-files/name-ends-at-star.yaml), [name-with-colon](lexer/cases/14-include-files/name-with-colon.yaml), [i-colon-missing](lexer/cases/14-include-files/i-colon-missing.yaml), [name-79-characters](lexer/cases/14-include-files/name-79-characters.yaml), [default-extension](lexer/cases/14-include-files/default-extension.yaml), [default-extension-only](lexer/cases/14-include-files/default-extension-only.yaml), [no-name](lexer/cases/14-include-files/no-name.yaml), [name-tilde](lexer/cases/14-include-files/name-tilde.yaml)).
 - A missing file is error 15, just after the directive; the message names
   the file that was looked for ([missing-file](lexer/cases/14-include-files/missing-file.yaml)).
@@ -650,15 +652,18 @@ it accepts, and how it encodes them, are not covered.
   The prefixes are `lock rep repe repne repnz repz segcs segds seges
   segss` ([prefixes](lexer/cases/15-asm-blocks/prefixes.yaml), [prefix-then-instruction](lexer/cases/15-asm-blocks/prefix-then-instruction.yaml)). Any other such word is
   `ASM_RESERVED`, `ASM_NUMBER` or `ASM_STRING` as anywhere else, and
-  otherwise `ASM_WORD`, as for a label
+  otherwise `ASM_WORD`. The word's kind is the same when it is a label:
+  `aaa:` is `ASM_INSTRUCTION` and `@@x:` is `ASM_WORD`, and the label's `:`
+  is `ASM_SYMBOL`
   ([register-first](lexer/cases/15-asm-blocks/register-first.yaml), [number-first](lexer/cases/15-asm-blocks/number-first.yaml), [word-characters](lexer/cases/15-asm-blocks/word-characters.yaml), [label-starting-with-e](lexer/cases/15-asm-blocks/label-starting-with-e.yaml), [two-labels](lexer/cases/15-asm-blocks/two-labels.yaml), [end-then-digit](lexer/cases/15-asm-blocks/end-then-digit.yaml)).
   Elsewhere, an instruction's name is an identifier
   ([instruction-as-variable](lexer/cases/15-asm-blocks/instruction-as-variable.yaml)).
 - Elsewhere, one of the [reserved words](#words) is `ASM_RESERVED`
   ([reserved-*](lexer/cases/15-asm-blocks/), [operator-*](lexer/cases/15-asm-blocks/)).
 - Any other word that isn't a number is `ASM_IDENT`: it names a Pascal
-  identifier, and its value leaves out a leading `&`
-  ([ampersand-register-name](lexer/cases/15-asm-blocks/ampersand-register-name.yaml), [instruction-as-variable](lexer/cases/15-asm-blocks/instruction-as-variable.yaml)).
+  identifier or a label, `@@x` included, and its value leaves out a
+  leading `&`
+  ([ampersand-register-name](lexer/cases/15-asm-blocks/ampersand-register-name.yaml), [instruction-as-variable](lexer/cases/15-asm-blocks/instruction-as-variable.yaml), [word-characters](lexer/cases/15-asm-blocks/word-characters.yaml)).
 - A number is `ASM_NUMBER`, and a string is `ASM_STRING`, after `db` or
   not ([decimal](lexer/cases/15-asm-blocks/decimal.yaml), [hex-dollar](lexer/cases/15-asm-blocks/hex-dollar.yaml), [db-string](lexer/cases/15-asm-blocks/db-string.yaml), [string-two](lexer/cases/15-asm-blocks/string-two.yaml)). Any other
   character is `ASM_SYMBOL` ([symbol-*](lexer/cases/15-asm-blocks/), [paren-not-comment](lexer/cases/15-asm-blocks/paren-not-comment.yaml), [close-brace](lexer/cases/15-asm-blocks/close-brace.yaml)).
@@ -670,10 +675,10 @@ it accepts, and how it encodes them, are not covered.
 - A token that the assembler can't use where it stands is delivered, and
   the error follows it:
   - a first word that isn't an instruction and has no `:` after it: error
-    5 just after the word
+    5 just after the word, with no token after it delivered
     ([register-first](lexer/cases/15-asm-blocks/register-first.yaml), [number-first](lexer/cases/15-asm-blocks/number-first.yaml), [end-then-digit](lexer/cases/15-asm-blocks/end-then-digit.yaml), [semicolon-is-not-a-comment](lexer/cases/15-asm-blocks/semicolon-is-not-a-comment.yaml));
   - a first word with `:` after it that isn't a declared label, a register
-    included: error 3 just after the word ([label-undeclared](lexer/cases/15-asm-blocks/label-undeclared.yaml), [register-as-label](lexer/cases/15-asm-blocks/register-as-label.yaml));
+    included: error 3 just after the word, with its `:` not delivered ([label-undeclared](lexer/cases/15-asm-blocks/label-undeclared.yaml), [register-as-label](lexer/cases/15-asm-blocks/register-as-label.yaml));
   - a second label after a label: error 5 at its start ([two-labels](lexer/cases/15-asm-blocks/two-labels.yaml));
   - a symbol the operands can't take: error 5 at it ([symbol-*](lexer/cases/15-asm-blocks/), [close-brace](lexer/cases/15-asm-blocks/close-brace.yaml)).
 - A statement that ends before its operands are complete gives its
