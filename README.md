@@ -77,12 +77,18 @@ expects and `TPC`'s recorded verdict and program output.
 
 - `bazel run //spec:record` runs every case through `TPC` on the reference
   machine and writes the verdicts and outputs into the cases.
-- `bazel test //spec:cases_test` checks that every case is well formed and
-  recorded, without running `TPC`.
+- `bazel test //spec:cases_test` checks, without running `TPC`, that every
+  case is well formed and recorded, that every rule's links name existing
+  cases and every case is linked from a rule, and that the rules the spec
+  gives for real values hold for the recorded values.
 - `python3 spec/compare.py CAPTURED.json` compares the cases' `tokens:`
   lines with a dump of the tokens `TPC` actually delivered, in the spec's
   notation. The dump comes from a capture tool that is not part of this
   repo.
+
+Where Borland's documents disagree with `TPC`, the spec follows `TPC` and
+doesn't mention them. The disagreements are collected in
+[`notes/discrepancies.md`](notes/discrepancies.md).
 
 ## Fuzzing
 

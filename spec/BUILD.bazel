@@ -22,12 +22,15 @@ python_tool(
     ],
 )
 
-# Checks that every case is well formed and has a recorded verdict. Doesn't
-# run TPC.
+# Checks that every case is well formed, recorded and cited by lexer.md, and
+# that the real-value rules in lexer.md hold for the cases. Doesn't run TPC.
 python_test(
     name = "cases_test",
     size = "small",
-    data = ["//spec/lexer:cases"],
+    data = [
+        "lexer.md",
+        "//spec/lexer:cases",
+    ],
     main = "check_cases.py",
     srcs = ["cases.py"],
 )

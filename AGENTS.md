@@ -43,6 +43,17 @@ build it.
   that way inside.
 - Write cases as small, complete programs of our own. When a case shows a
   value, make the program print it so `output:` records it.
+- Every rule in the spec ends with links to the cases that show it, and
+  every case is linked from some rule; a link to a folder, with a pattern
+  such as `reserved-*` as its text, cites the cases matching it.
+  `cases_test` checks both. A claim no case can show belongs under "Not
+  covered yet", not in the rules.
+- Say exactly what `TPC` does: no "about", "often" or "as far as the cases
+  go". Where a rule summarises the cases (such as the rounding of real
+  values), make `cases_test` check it against them.
+- The spec describes only `TPC`. Where Borland's documents say something
+  else, don't mention them in the spec; add an entry to
+  [`notes/discrepancies.md`](notes/discrepancies.md), in our own words.
 
 ## Facts boundary
 
