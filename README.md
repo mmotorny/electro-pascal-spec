@@ -15,7 +15,7 @@ Developed on macOS (Apple Silicon) with [Homebrew](https://brew.sh).
 | QEMU | latest | `brew install qemu` | Runs MS-DOS 6.22 and Borland Pascal 7.01 as the reference machine |
 | Python 3 | latest | `xcode-select --install` | Drives the installers on the reference machine |
 | mtools | latest | `brew install mtools` | Copies files to and from the reference machine's disk |
-| Antigravity CLI | latest | see antigravity.google | `agy`, which runs the independent review of pull requests (see `AGENTS.md`) |
+| Antigravity CLI | latest | see antigravity.google | `agy`, which runs the independent review of commits before they are pushed (see `AGENTS.md`) |
 
 Tools aren't pinned: keep them up to date with `brew upgrade`.
 

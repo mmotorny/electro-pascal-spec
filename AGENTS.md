@@ -110,17 +110,20 @@ Why the boundary is drawn here:
 
 ## Review
 
-Everything goes to `main` through a pull request that has passed review
-against the facts boundary. The reviewer is independent of the author: Gemini
-4 Argon, run through the Antigravity CLI in a fresh clone of the PR's
-branch, so it sees only what the PR would publish. Its checklist is
-[`review/facts-boundary.md`](review/facts-boundary.md). Post its verdict on
-the PR as a comment, and merge only on PASS.
+Nothing is pushed to `main` until it has passed review against the facts
+boundary. The reviewer is independent of the author: Gemini 4 Argon, run
+through the Antigravity CLI in a separate worktree of the commits to push,
+so it sees only what they would publish (no `dirty/`, no build outputs). It
+may read the whole repo and search the web. Its checklist is
+[`review/facts-boundary.md`](review/facts-boundary.md). Push only on PASS;
+on FAIL, fix the problems and review again.
 
-Run it from a fresh clone (replace BRANCH and the clone folder):
+Commit locally, then review the commits not yet on `origin/main` (replace
+DIR with a scratch folder):
 
 ```
-git clone --quiet --branch BRANCH https://github.com/mmotorny/electro-pascal-spec.git DIR
-cd DIR && git fetch --quiet origin main && git diff origin/main...HEAD > REVIEW.diff
+git fetch --quiet origin && git worktree add --quiet --detach DIR HEAD
+cd DIR && git diff origin/main...HEAD > REVIEW.diff
 agy --model gemini-4-argon-high --sandbox --print "$(cat review/facts-boundary.md)"
+cd - && git worktree remove --force DIR
 ```

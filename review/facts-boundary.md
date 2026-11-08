@@ -1,14 +1,15 @@
-You are reviewing a pull request to a public repository that specifies the
+You are reviewing changes to a public repository that specifies the
 Pascal dialect of Borland Pascal 7.01 by observing its compiler, `TPC.EXE`.
 Its contributors also reverse-engineer `TPC.EXE` privately. Your job is to
-check that this pull request publishes only facts, not Borland's expression
+check that these changes publish only facts, not Borland's expression
 and not raw reverse-engineering results. Read AGENTS.md ("Facts boundary")
 for the rules.
 
-The changes are in the file `REVIEW.diff` in the current folder (the diff
-from `main` to this pull request's branch). Read it, and read the changed
-files in full where needed. You don't need to run any commands. Check each
-change against these questions:
+The changes are in the file `REVIEW.diff` in the current folder: the diff
+between the published `main` and the commits about to be pushed. Read it.
+You may read any file in this repository, for example to see a changed file
+in full, and search the web, for example to check whether a piece of text
+comes from Borland's manuals. Check each change against these questions:
 
 1. Does it contain Borland's expression: code (Pascal, assembly or machine
    code from `TPC.EXE` or Borland's libraries), disassembly, or text copied or
