@@ -109,15 +109,25 @@ OPTION = re.compile(r"[/-][A-Za-z0-9$_.:;=+,\\-]*")
 
 
 def unpack(source):
-    """A probe's (program, extra files, TPC options). A source is the program
-    as bytes, or (bytes, {file name: bytes}) or (bytes, files, [option, ...])."""
+    """A probe's (program, extra files, TPC options, files to compile first).
+    A source is the program as bytes, or (bytes, {file name: bytes}), or that
+    plus [option, ...], or that plus [file name, ...]: extra files that TPC
+    compiles, in that order and with no options, before the program."""
     if not isinstance(source, tuple):
-        return source, {}, []
-    main, extra, options = (source + ([],))[:3]
+        return source, {}, [], []
+    main, extra, options, first = (source + ([], []))[:4]
     for option in options:
         if not OPTION.fullmatch(option):
             raise ValueError(f"bad TPC option {option!r}")
-    return main, extra, options
+    for file_name in first:
+        if file_name not in extra:
+            raise ValueError(f"file to compile first {file_name!r} isn't among the extra files")
+    return main, extra, options, first
+
+
+def precompile(source):
+    """The lines that compile a probe's files to compile first (see unpack)."""
+    return [f"{TPC} {file_name} > NUL" for file_name in unpack(source)[3]]
 
 
 def command(name, source):
@@ -130,7 +140,7 @@ def lay_out(tools, floppy, workdir, names, sources):
     the extra files it brings (see unpack)."""
     tree = os.path.join(workdir, "P")
     for name, source in zip(names, sources):
-        main, extra, _ = unpack(source)
+        main, extra, _, _ = unpack(source)
         folder = os.path.join(tree, name)
         os.makedirs(folder)
         with open(os.path.join(folder, name + ".PAS"), "wb") as f:
@@ -155,7 +165,7 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
     lay_out(tools, floppy, workdir, names, sources)
     script = ["@ECHO OFF", "A:"]
     for name, source in zip(names, sources):
-        script += [f"CD \\P\\{name}", f"ECHO COMPILING {name}"]
+        script += [f"CD \\P\\{name}"] + precompile(source) + [f"ECHO COMPILING {name}"]
         if coverage:
             script.append("A:\\MARK")
         script += [command(name, source)]

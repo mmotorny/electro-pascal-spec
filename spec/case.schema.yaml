@@ -5,6 +5,9 @@ description: 'One case of the spec: a YAML file holding this mapping. Strings th
   to U+00FF.'
 type: object
 additionalProperties: false
+dependentRequired:
+  precompile:
+    - files
 required:
   - description
   - source
@@ -35,6 +38,15 @@ properties:
       pattern: ^[A-Z0-9_]{1,8}(\.[A-Z0-9_]{1,3})?$
     additionalProperties:
       $ref: '#/$defs/bytes'
+  precompile:
+    description: Names of files among files that TPC compiles, in this order
+      and with no options, before the program, such as units the program
+      needs compiled already.
+    type: array
+    minItems: 1
+    items:
+      type: string
+      pattern: ^[A-Z0-9_]{1,8}(\.[A-Z0-9_]{1,3})?$
   tokens:
     description: The tokens TPC's scanner delivers, in order, up to the end of the
       program or up to the token where TPC reports an error. A token is its kind
@@ -109,7 +121,9 @@ $defs:
             # Special symbols
             PLUS, MINUS, STAR, SLASH, EQ, NE, LT, LE, GT, GE, LPAREN,
             RPAREN, LBRACKET, RBRACKET, DOT, DOTDOT, COMMA, COLON, SEMI,
-            ASSIGN, CARET, AT
+            ASSIGN, CARET, AT,
+            # The end of a statement in an asm block
+            ASM_END
           ]
       - description: 'An identifier: its first 63 characters, in upper case.'
         type: object
@@ -147,3 +161,41 @@ $defs:
         properties:
           STRING:
             $ref: '#/$defs/bytes'
+      - description: 'A word in an asm block: the first 32 characters of an
+          instruction, a reserved word, a Pascal identifier (without its &), or
+          a first word that is not an instruction; in upper case.'
+        type: object
+        additionalProperties: false
+        minProperties: 1
+        maxProperties: 1
+        patternProperties:
+          ^ASM_(INSTRUCTION|RESERVED|IDENT|WORD)$:
+            type: string
+            pattern: ^[A-Z0-9_@$&?]{1,32}$
+      - description: 'A number in an asm block: its value.'
+        type: object
+        additionalProperties: false
+        required:
+          - ASM_NUMBER
+        properties:
+          ASM_NUMBER:
+            type: integer
+            minimum: 0
+            maximum: 4294967295
+      - description: 'A string in an asm block: its characters.'
+        type: object
+        additionalProperties: false
+        required:
+          - ASM_STRING
+        properties:
+          ASM_STRING:
+            $ref: '#/$defs/bytes'
+      - description: 'A symbol in an asm block: its character.'
+        type: object
+        additionalProperties: false
+        required:
+          - ASM_SYMBOL
+        properties:
+          ASM_SYMBOL:
+            type: string
+            pattern: ^[\u0000-\u00ff]$

@@ -72,12 +72,20 @@ output: "7"
   | `DOT` `DOTDOT` `COMMA` `COLON` `SEMI` | `.` `..` `,` `:` `;` | none |
   | `ASSIGN` | `:=` | none |
   | `CARET` `AT` | `^` `@` | none |
+  | `ASM_INSTRUCTION` `ASM_RESERVED` `ASM_IDENT` `ASM_WORD` | a word in an [`asm` block](#tokens-in-a-block) | its first 32 characters, in upper case |
+  | `ASM_NUMBER` | a number in an `asm` block | its value, 0 to 4294967295 |
+  | `ASM_STRING` | a string in an `asm` block | its characters, one per byte |
+  | `ASM_SYMBOL` | a symbol in an `asm` block | its character |
+  | `ASM_END` | the end of a statement in an `asm` block | none |
 
 - `options`, when present, lists options for `TPC`'s command line, such as
   `/M` (build the units the program uses from their sources) or `/DNAME`.
 - `files`, when present, holds more files beside the program, such as
   include files: DOS file names in upper case, each mapped to its
   contents, written like `source`.
+- `precompile`, when present, names some of those files, which `TPC`
+  compiles first, in that order and with no options, such as a unit the
+  program needs already compiled. Only the program's compile is recorded.
 - `compile` is what compiling the source with `TPC` gives: `ok`; `hang`
   when `TPC` never finishes compiling it; or the error number with the line and column `TPC` reports it at, the file it
   is in when that isn't the program, and `TPC`'s message:
@@ -509,6 +517,12 @@ Errors:
   `Crt`: error 144 ([o-unit-not-overlay](lexer/cases/10-compiler-directives/o-unit-not-overlay.yaml), [o-without-overlay-unit](lexer/cases/10-compiler-directives/o-without-overlay-unit.yaml));
 - `{$O name}` in a unit: error 17 ([o-in-unit](lexer/cases/10-compiler-directives/o-in-unit.yaml)).
 
+`{$O}` is checked the same way while `TPC` looks for a run-time error
+address (its `/F` option): `{$O Foo}` is accepted, and the compile ends
+with `/F`'s error 117, "Target address not found", when the address isn't
+in the program; `{$O Crt}` is still error 144
+([o-find-mode](lexer/cases/10-compiler-directives/o-find-mode.yaml), [o-find-mode-not-overlay](lexer/cases/10-compiler-directives/o-find-mode-not-overlay.yaml)).
+
 ### `)` ending a `(*$` directive
 
 In a directive written with `(*$`, a `)` directly after the directive's
@@ -538,12 +552,39 @@ the other parameter directives (`{$L}` included), `{$IFDEF}`, `{$IFNDEF}`,
 ## `asm` blocks
 
 After the reserved word `asm`, the text up to the block's `end` is read by
-`TPC`'s built-in assembler, not by the Pascal lexer. No tokens are
-delivered for it: the token after `ASM` is the one after the block's `end`
+`TPC`'s built-in assembler, with a scanner of its own, not by the Pascal
+lexer. Its tokens come after `ASM`, and the block's `end` isn't one: the
+token after them is the Pascal token after the block's `end`
 ([block](lexer/cases/15-asm-blocks/block.yaml), [empty-block](lexer/cases/15-asm-blocks/empty-block.yaml)). The body of an `assembler` procedure is such a
 block too ([assembler-procedure](lexer/cases/15-asm-blocks/assembler-procedure.yaml)). This section says how the assembler
-splits a block into statements and words. Which instructions and operands
+splits a block into statements and tokens. Which instructions and operands
 it accepts, and how it encodes them, are not covered.
+
+### Tokens in a block
+
+- Each statement gives its tokens and then one `ASM_END`, however the
+  statement ended: at `;`, a line end, `{`, `(*` or the word `end`
+  ([block](lexer/cases/15-asm-blocks/block.yaml), [semicolons](lexer/cases/15-asm-blocks/semicolons.yaml), [brace-comment-between](lexer/cases/15-asm-blocks/brace-comment-between.yaml), [paren-star-comment-between](lexer/cases/15-asm-blocks/paren-star-comment-between.yaml), [end-after-statement](lexer/cases/15-asm-blocks/end-after-statement.yaml)).
+  A statement with no tokens gives no `ASM_END` either, such as character
+  233 alone before `end` ([high-character-before-end](lexer/cases/15-asm-blocks/high-character-before-end.yaml)).
+- The first word of a statement, and the word after a label or a prefix,
+  is `ASM_INSTRUCTION` when it is an instruction, a prefix, `db`, `dw` or
+  `dd`, and `ASM_WORD` when it isn't, as for a label
+  ([block](lexer/cases/15-asm-blocks/block.yaml), [prefix-then-instruction](lexer/cases/15-asm-blocks/prefix-then-instruction.yaml), [db-string](lexer/cases/15-asm-blocks/db-string.yaml), [word-characters](lexer/cases/15-asm-blocks/word-characters.yaml), [label-starting-with-e](lexer/cases/15-asm-blocks/label-starting-with-e.yaml), [two-labels](lexer/cases/15-asm-blocks/two-labels.yaml), [end-then-digit](lexer/cases/15-asm-blocks/end-then-digit.yaml)).
+  Elsewhere, an instruction's name is an identifier
+  ([instruction-as-variable](lexer/cases/15-asm-blocks/instruction-as-variable.yaml)).
+- One of the [reserved words](#words) is `ASM_RESERVED`, in the first
+  word of a statement too ([reserved-*](lexer/cases/15-asm-blocks/), [operator-*](lexer/cases/15-asm-blocks/), [register-first](lexer/cases/15-asm-blocks/register-first.yaml)).
+- Any other word that isn't a number is `ASM_IDENT`: it names a Pascal
+  identifier, and its value leaves out a leading `&`
+  ([ampersand-register-name](lexer/cases/15-asm-blocks/ampersand-register-name.yaml), [instruction-as-variable](lexer/cases/15-asm-blocks/instruction-as-variable.yaml)). A word that names
+  no identifier is error 3, and gives no token
+  ([two-statements-no-separator](lexer/cases/15-asm-blocks/two-statements-no-separator.yaml), [identifier-39-characters](lexer/cases/15-asm-blocks/identifier-39-characters.yaml), [pascal-reserved-word-as-operand](lexer/cases/15-asm-blocks/pascal-reserved-word-as-operand.yaml)).
+- A number is `ASM_NUMBER`, and a string is `ASM_STRING`, after `db` or
+  not ([decimal](lexer/cases/15-asm-blocks/decimal.yaml), [hex-dollar](lexer/cases/15-asm-blocks/hex-dollar.yaml), [db-string](lexer/cases/15-asm-blocks/db-string.yaml), [string-two](lexer/cases/15-asm-blocks/string-two.yaml)). Any other
+  character is `ASM_SYMBOL` ([symbol-*](lexer/cases/15-asm-blocks/), [paren-not-comment](lexer/cases/15-asm-blocks/paren-not-comment.yaml), [close-brace](lexer/cases/15-asm-blocks/close-brace.yaml)).
+- As in Pascal text, a number or string with an error in it gives no token
+  ([bad-decimal-digit](lexer/cases/15-asm-blocks/bad-decimal-digit.yaml), [decimal-over](lexer/cases/15-asm-blocks/decimal-over.yaml), [string-unterminated](lexer/cases/15-asm-blocks/string-unterminated.yaml)).
 
 ### Statements
 
@@ -745,6 +786,4 @@ reproduce `TPC`'s own arithmetic. That arithmetic isn't known yet
   and how they are encoded.
 - `CPU87` on a machine without a floating-point unit: QEMU always has
   one, so no case shows it undefined.
-- `{$O name}` while `TPC` looks for a run-time error (its `/F` option),
-  which needs a unit compiled beforehand.
 - The exact value of real literals (see [real values](#real-values)).

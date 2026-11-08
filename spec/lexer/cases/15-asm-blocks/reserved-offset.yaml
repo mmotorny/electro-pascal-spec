@@ -27,6 +27,14 @@ tokens:
   - INTEGER: 5
   - SEMI
   - ASM
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 7
+  - ASM_END
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: OFFSET
+  - ASM_SYMBOL: ","
 compile:
   error: 5
   line: 8

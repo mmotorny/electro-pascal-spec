@@ -26,6 +26,12 @@ tokens:
   - INTEGER: 0
   - SEMI
   - ASM
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: WORD
+  - ASM_RESERVED: PTR
+  - ASM_IDENT: L
+  - ASM_SYMBOL: ","
+  - ASM_SYMBOL: (
 compile:
   error: 76
   line: 7

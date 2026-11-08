@@ -28,6 +28,11 @@ tokens:
   - IDENT: ASSEMBLER
   - SEMI
   - ASM
+  - ASM_INSTRUCTION: DB
+  - ASM_NUMBER: 5
+  - ASM_SYMBOL: ","
+  - ASM_STRING: Hello
+  - ASM_END
   - SEMI
   - BEGIN
   - IDENT: WRITE

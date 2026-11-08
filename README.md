@@ -94,7 +94,8 @@ make and check the cases are in [`harness/`](harness).
   cases and every case is linked from a rule, and that the rules the spec
   gives for real values hold for the recorded values.
 - `bazel run //machine:tokens -- file ...` prints the tokens `TPC`'s
-  scanner delivers for Pascal files or cases. It watches `TPC` through
+  scanner delivers for Pascal files or cases, and inside `asm` blocks those
+  of its built-in assembler's scanner. It watches `TPC` through
   QEMU's gdbstub, using a few facts about `TPC`'s internals gathered at the
   top of `machine/tokens.py`.
 

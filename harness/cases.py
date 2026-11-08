@@ -24,6 +24,9 @@ A case is a YAML file holding one mapping (see spec/case.schema.yaml):
   files        optional: more files beside the program, such as include
                files, as a mapping from DOS file names (upper case, 8.3) to
                their contents, byte for byte like source.
+  precompile   optional: names of some of those files, which TPC compiles,
+               in that order and with no options, before the program; for
+               units that the program needs compiled already.
   tokens       the tokens the spec says TPC's scanner delivers, up to the
                end of the program or the error: a kind alone, or a mapping
                from a kind to its value.
@@ -51,7 +54,7 @@ import re
 import yaml
 
 EXTENSION = ".yaml"
-FIELDS = ("description", "options", "source", "files", "tokens", "compile", "output")
+FIELDS = ("description", "options", "source", "files", "precompile", "tokens", "compile", "output")
 VERDICT_FIELDS = ("error", "line", "column", "file", "message")
 WIDTH = 76
 
@@ -104,10 +107,17 @@ class Case:
         return list(self.data.get("options") or [])
 
     @property
+    def precompile(self):
+        return list(self.data.get("precompile") or [])
+
+    @property
     def input(self):
         """What to give machine/probe.py and machine/tokens.py: the source, or
-        (source, files, options) when the case has files or options."""
-        return (self.source, self.files, self.options) if self.files or self.options else self.source
+        (source, files, options, precompile) when the case has files or
+        options."""
+        if self.files or self.options:
+            return (self.source, self.files, self.options, self.precompile)
+        return self.source
 
     @property
     def output(self):
@@ -191,7 +201,10 @@ def plain_ok(text):
         return False
     if NOT_STRING_12.fullmatch(text):
         return False
-    return yaml.safe_load("x: " + text) == {"x": text}
+    try:
+        return yaml.safe_load("x: " + text) == {"x": text}
+    except yaml.YAMLError:  # Such as "=", which PyYAML reads as a special tag.
+        return False
 
 
 def quoted(text):
@@ -272,6 +285,9 @@ def dump(data):
             lines += text_value(key, value)
         elif key == "options":
             lines.append("options:")
+            lines += [f"  - {scalar(o)}" for o in value]
+        elif key == "precompile":
+            lines.append("precompile:")
             lines += [f"  - {scalar(o)}" for o in value]
         elif key == "files":
             lines.append("files:")

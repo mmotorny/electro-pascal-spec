@@ -28,6 +28,26 @@ tokens:
   - INTEGER: 0
   - SEMI
   - ASM
+  - ASM_INSTRUCTION: JMP
+  - ASM_IDENT: "@@A?$&@B"
+  - ASM_END
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 1
+  - ASM_END
+  - ASM_WORD: "@@A?$&@B"
+  - ASM_SYMBOL: ":"
+  - ASM_INSTRUCTION: MOV
+  - ASM_RESERVED: AX
+  - ASM_SYMBOL: ","
+  - ASM_NUMBER: 2
+  - ASM_END
+  - ASM_INSTRUCTION: MOV
+  - ASM_IDENT: W
+  - ASM_SYMBOL: ","
+  - ASM_RESERVED: AX
+  - ASM_END
   - SEMI
   - IDENT: WRITE
   - LPAREN

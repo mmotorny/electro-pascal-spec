@@ -10,6 +10,8 @@ tokens:
   - SEMI
   - BEGIN
   - ASM
+  - ASM_INSTRUCTION: NOP
+  - ASM_END
 compile:
   error: 10
   line: 5

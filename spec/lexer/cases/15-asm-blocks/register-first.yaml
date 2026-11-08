@@ -25,6 +25,7 @@ tokens:
   - INTEGER: 0
   - SEMI
   - ASM
+  - ASM_RESERVED: AX
 compile:
   error: 5
   line: 7

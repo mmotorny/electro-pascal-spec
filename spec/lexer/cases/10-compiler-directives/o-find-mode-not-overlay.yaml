@@ -1,0 +1,45 @@
+description: "{$O Crt} while TPC looks for a run-time error address (/F)."
+options:
+  - /F0000:0000
+source: |
+  {$F+}
+  program P;
+  uses Overlay, Crt, Foo;
+  {$O Crt}
+  var
+    Name: string;
+  begin
+    Name := ParamStr(0);
+    OvrInit(Copy(Name, 1, Length(Name) - 4) + '.OVR');
+    Hello
+  end.
+files:
+  FOO.PAS: |
+    {$O+,F+}
+    unit Foo;
+    interface
+    procedure Hello;
+    implementation
+    procedure Hello;
+    begin
+      Write('hi')
+    end;
+    end.
+precompile:
+  - FOO.PAS
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - USES
+  - IDENT: OVERLAY
+  - COMMA
+  - IDENT: CRT
+  - COMMA
+  - IDENT: FOO
+  - SEMI
+compile:
+  error: 144
+  line: 4
+  column: 5
+  message: Cannot overlay this unit.

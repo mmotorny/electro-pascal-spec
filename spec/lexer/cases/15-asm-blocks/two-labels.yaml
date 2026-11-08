@@ -26,6 +26,9 @@ tokens:
   - INTEGER: 0
   - SEMI
   - ASM
+  - ASM_WORD: "@@A"
+  - ASM_SYMBOL: ":"
+  - ASM_WORD: "@@B"
 compile:
   error: 5
   line: 7

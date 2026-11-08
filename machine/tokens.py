@@ -70,6 +70,29 @@ SYMBOLS = {
 # Reserved words have kinds of their own, which TPC keeps in a table in its
 # load image: entries of a 2-byte link, the kind, the length and the word.
 KEYWORD_TABLE = (0x8D74, 0x8F24)
+# The built-in assembler, which reads asm blocks with a scanner of its own. Its
+# code segment starts this many paragraphs into the load image.
+ASM_SEG = 0x0C97
+# Breakpoints, as offsets in that segment.
+ASM_STATEMENT = 0x0006    # The assembler starts on a statement.
+ASM_EXIT = 0x07F8         # Its scanner has a token; DH is the token's kind.
+# The scanner's state, in the assembler's stack frame, as offsets from BP.
+A_TEXT = -0x12            # Far pointer to the text being read.
+A_START = -0x14           # Offset of the token's first character.
+A_CLASS = -0x19           # What the raw token is: A_SYMBOL, A_WORD or A_STRING.
+A_SYMBOL, A_WORD, A_STRING = 0, 1, 2
+A_RAW = -0x6C             # A symbol: length byte, then its character.
+A_UPPER = -0x8E           # A word in upper case: length byte, then the characters.
+A_VALUE = -0x36           # A number's value: 32 bits.
+A_CHARS = -0x10E          # A string's characters: length byte, then the characters.
+A_FRAME = -0x110          # Covers all of them.
+# Kinds the assembler's scanner gives tokens.
+A_END = 0x3B              # The statement has ended.
+A_INSTRUCTION = 0x41
+A_NUMBER = 0x64           # Strings too, which are numbers outside db.
+A_IDENT = 0x6B            # A Pascal identifier.
+A_FIRST = 0x01            # The first word of a statement isn't an instruction.
+A_RESERVED = set(range(0x43, 0x51)) | {0x65, 0x66}  # Registers, operators, sizes.
 # Where probe.machine_info and spec/MACHINE.json keep TPC.EXE's hash.
 TPC_EXE = "BP\\BIN\\TPC.EXE"
 
@@ -103,7 +126,10 @@ class Capture:
         self._gdb = GdbRemote(sock_path)
         base = LOAD_SEG * 16
         self._entry, self._scan, self._rescan = base + ENTRY, base + SCAN_EXIT, base + RESCAN_EXIT
-        for a in (self._entry, self._scan, self._rescan):
+        asm = base + ASM_SEG * 16
+        self._ds = None
+        self._statement = []  # The current asm statement's tokens.
+        for a in (self._entry, self._scan, self._rescan, asm + ASM_STATEMENT, asm + ASM_EXIT):
             self._gdb.set_breakpoint(a)
         self._thread = threading.Thread(target=self._loop, daemon=True)
         self._gdb.cont()
@@ -131,6 +157,9 @@ class Capture:
 
     def _handle(self, regs):
         cs, ip = regs["cs"], regs["eip"] & 0xFFFF
+        if cs == LOAD_SEG + ASM_SEG and self.runs:
+            self._handle_asm(regs, ip)
+            return
         if cs != LOAD_SEG:
             return  # Only TPC runs at this place: the batch runs nothing else.
         if ip == ENTRY:
@@ -138,6 +167,7 @@ class Capture:
             return
         if not self.runs:
             return
+        self._ds = regs["ds"]
         ds = regs["ds"] * 16
         lo, hi = DS_WINDOW
         w = self._gdb.read_memory(ds + lo, hi - lo)
@@ -167,9 +197,55 @@ class Capture:
         else:
             self.runs[-1].append(token)
 
+    def _handle_asm(self, regs, ip):
+        """A token of an asm block. The assembler asks for the end of a
+        statement again after it has had it: only the first counts, and a
+        statement with no other token gives none."""
+        if ip == ASM_STATEMENT:
+            self._statement = []
+            return
+        if ip != ASM_EXIT or self._ds is None:
+            return
+        frame = (regs["ss"] * 16 + (regs["ebp"] & 0xFFFF) + A_FRAME) & 0xFFFFF
+        f = self._gdb.read_memory(frame, -A_FRAME)
+        at = lambda off: off - A_FRAME
+        word = lambda off: struct.unpack_from("<H", f, at(off))[0]
+        counted = lambda off: f[at(off) + 1:at(off) + 1 + f[at(off)]].decode("latin-1")
+        kind, cls = (regs["edx"] >> 8) & 0xFF, f[at(A_CLASS)]
+        if kind == A_END:  # Whatever the class: it can be the last token's.
+            if not self._statement or self._statement[-1]["asm"] == "ASM_END":
+                return
+            token = {"asm": "ASM_END"}
+        elif cls == A_STRING and kind == A_NUMBER:
+            token = {"asm": "ASM_STRING", "string": counted(A_CHARS)}
+        elif cls == A_SYMBOL and kind == f[at(A_RAW) + 1]:
+            token = {"asm": "ASM_SYMBOL", "string": chr(kind)}
+        elif cls == A_WORD and kind == A_NUMBER:
+            token = {"asm": "ASM_NUMBER", "integer": struct.unpack_from("<I", f, at(A_VALUE))[0]}
+        elif cls == A_WORD and kind == A_IDENT:
+            name = counted(A_UPPER)  # A_RAW loses its & in a way that garbles it.
+            token = {"asm": "ASM_IDENT", "ident": name[1:] if name.startswith("&") else name}
+        elif cls == A_WORD and kind in {A_INSTRUCTION, A_FIRST} | A_RESERVED:
+            name = {A_INSTRUCTION: "ASM_INSTRUCTION", A_FIRST: "ASM_WORD"}.get(kind, "ASM_RESERVED")
+            token = {"asm": name, "ident": counted(A_UPPER)}
+        else:
+            raise RuntimeError(f"asm token of kind {kind:#x}, class {cls} this tool doesn't know")
+        record = self._gdb.read_memory(self._ds * 16 + DS_WINDOW[0], DS_WINDOW[1] - DS_WINDOW[0])
+        rec = self._gdb.read_memory(self._ds * 16 + struct.unpack_from("<H", record, V_FILEREC - DS_WINDOW[0])[0], 0x13 + 80)
+        text_seg = word(A_TEXT + 2)
+        token.update(line=struct.unpack_from("<H", rec, 2)[0], file=rec[0x13:0x13 + rec[0x12]].decode("latin-1"),
+                     column=word(A_START) - V_LINEBUF + 1 if text_seg == self._ds else None, text=None)
+        if token["asm"] == "ASM_END":
+            token["column"] = None  # Often still the position of the token before.
+        self._statement.append(token)
+        self.runs[-1].append(token)
+
 
 def spec_token(token, words):
     """A raw token in the form of a case's tokens."""
+    if "asm" in token:
+        value = next((token[k] for k in ("ident", "integer", "string") if k in token), None)
+        return token["asm"] if value is None else {token["asm"]: value}
     kind = token["kind"]
     if kind == IDENT_KIND:
         return {"IDENT": token["ident"].upper()[:63]}
@@ -198,6 +274,7 @@ def run_batch(tools, disk, sources, workdir, first=0):
     for name, source in zip(names, sources):
         script += [
             f"CD \\P\\{name}",
+            *probe.precompile(source),
             f"ECHO COMPILING {name}",
             probe.command(name, source),
             f"IF ERRORLEVEL 1 ECHO 1> {name}.ERL",
@@ -228,8 +305,15 @@ def run_batch(tools, disk, sources, workdir, first=0):
     if cap.error:
         raise cap.error
     done = names.index(hung) if hung else len(names)
-    if len(cap.runs) != done + bool(hung):
-        raise RuntimeError(f"saw {len(cap.runs)} TPC runs for {done + bool(hung)} files; has TPC's load "
+    # Each probe's files to compile first make TPC runs of their own, before
+    # the probe's: keep only the probe's.
+    runs, at = [], 0
+    for source in sources[:done + bool(hung)]:
+        at += len(probe.unpack(source)[3])
+        runs.append(cap.runs[at] if at < len(cap.runs) else None)
+        at += 1
+    if at != len(cap.runs) or None in runs:
+        raise RuntimeError(f"saw {len(cap.runs)} TPC runs where {at} were due; has TPC's load "
                            "address changed?")
     # Every token takes up source text, so two in a row at the same place mean
     # that a breakpoint hit was seen twice.
@@ -242,7 +326,7 @@ def run_batch(tools, disk, sources, workdir, first=0):
     os.makedirs(out)
     tools.mtool("mcopy", "-s", "-n", "-i", floppy, "::/P", out + "/")
     results = []
-    for name, tokens in zip(names[:done], cap.runs):
+    for name, tokens in zip(names[:done], runs):
         with open(os.path.join(out, "P", name, name + ".OUT"), "rb") as f:
             output = f.read().decode("cp437")
         # TPC adds the compile time when it's 0.1 s or more, which breakpoints
@@ -254,7 +338,7 @@ def run_batch(tools, disk, sources, workdir, first=0):
     if hung:
         # The tokens TPC's scanner delivered before it stopped making progress.
         qmp.log(f"{hung}: TPC hasn't finished after {probe.HANG_SECONDS} s; reporting a hang")
-        results.append({"verdict": "hang", "raw_tokens": cap.runs[done]})
+        results.append({"verdict": "hang", "raw_tokens": runs[done]})
         rest = sources[done + 1:]
         if rest:
             results += run_batch(tools, disk, rest, os.path.join(workdir, "rest"), first + done + 1)
@@ -319,7 +403,7 @@ def main():
             data = case["source"].encode("latin-1")
             if case.get("files") or case.get("options"):
                 files = {k: v.encode("latin-1") for k, v in (case.get("files") or {}).items()}
-                data = (data, files, case.get("options") or [])
+                data = (data, files, case.get("options") or [], case.get("precompile") or [])
         sources.append(data)
     with open(args.machine) as f:
         tpc_sha256 = json.load(f)["sha256"][TPC_EXE]
