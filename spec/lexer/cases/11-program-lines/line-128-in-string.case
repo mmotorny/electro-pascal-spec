@@ -1,0 +1,7 @@
+# A 128-character line holding an unterminated string: the line is too long before the string is read.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 11 at 2:128
+---
+program P;
+const S = 'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+begin end.

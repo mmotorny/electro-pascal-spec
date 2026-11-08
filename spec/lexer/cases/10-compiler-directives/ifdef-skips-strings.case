@@ -1,4 +1,4 @@
-# Skipped text isn't scanned for strings: a lone apostrophe is fine.
+# In skipped text an apostrophe starts a string that runs to the end of the line, so the {$ENDIF} after it doesn't count.
 tokens: PROGRAM IDENT(P) SEMI
 tpc: error 129 at 2:1
 ---

@@ -1,0 +1,9 @@
+# Text right after a switch's sign, without a comma or blank, is ignored: {$R-B+} doesn't set B.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(2) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) RPAREN END DOT
+tpc: ok
+output: '2'
+---
+program P;
+{$R-B+}
+{$IFOPT B+} const A = 1; {$ENDIF}
+const A = 2; begin Write(A) end.

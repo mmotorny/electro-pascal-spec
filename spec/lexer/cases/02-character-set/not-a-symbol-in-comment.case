@@ -1,0 +1,6 @@
+# Those characters, DEL and characters above 127 are allowed in a comment.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; { ! " % & ? \ ` | ~  é } begin end.

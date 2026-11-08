@@ -1,0 +1,6 @@
+# {$D} with arbitrary text.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; {$D any text, even !@#} begin end.

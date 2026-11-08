@@ -45,8 +45,9 @@ string. For example `'Line 1'#13#10`.
   (13) does not: a file with CR alone is one long line
   ([separators](lexer/cases/01-separators)).
 - A line may hold at most 127 characters, not counting CRs. A tab counts as
-  one character. A longer line is error 11 at column 128, wherever it is,
-  even inside a comment ([program lines](lexer/cases/11-program-lines)).
+  one character. A longer line is error 11 at column 128, wherever it is:
+  inside a comment, an unterminated string or text skipped by `{$IFDEF}`
+  too ([program lines](lexer/cases/11-program-lines)).
   The error comes before any token on that line is delivered. The Language
   Guide's figure of 126 is wrong.
 - NUL (0) bytes are dropped as a line is read, as if they weren't in the
@@ -78,8 +79,9 @@ string. For example `'Line 1'#13#10`.
 
 - Reserved words and identifiers are made of the letters A–Z and a–z, the
   digits 0–9 and the underscore. Case doesn't matter.
-- Characters 128 to 255 are allowed only inside strings and comments.
-  Elsewhere they are a syntax error (error 5)
+- The printable characters ``! " % & ? \ ` | ~``, DEL (127) and the
+  characters 128 to 255 are allowed only inside strings and comments.
+  Elsewhere each is error 5, and no token is delivered for it
   ([character set](lexer/cases/02-character-set)).
 
 ## Special symbols
@@ -131,15 +133,17 @@ virtual` are ordinary identifiers to the lexer.
   right after it is error 7.
 - **Reals** are digits, then a fraction (`.` and digits), an exponent
   (`E` or `e`, an optional sign and digits), or both. Unlike the syntax
-  diagrams, the digits after `.` and after `E` may be missing: `1.`, `1.e5`
-  and `1e` are all accepted, and a missing exponent counts as 0. The
+  diagrams, the digits after `.` and after `E` may be missing: `1.`, `1.e5`,
+  `1e`, `1e+` and `1e-` are all accepted, and a missing exponent counts
+  as 0. The
   exponent's digits are read only while its value stays at most 9999, and
   the next digit starts a new token: `1e12345` is `REAL(1e1234)` then
   `INTEGER(5)`. Leading zeros in the exponent don't count. A number can't
   start with `.`. A value beyond the Extended range is error 6, just after
   the number.
-- `1..2` is `1`, `..`, `2`: a `.` directly followed by another `.` doesn't
-  make a real.
+- `1..2` is `1`, `..`, `2`, and `1.)` is `1`, `.)`: a `.` directly
+  followed by another `.` or by `)` doesn't make a real. `1. )` is
+  `REAL(1.)` and `)`.
 
 ## Labels
 
@@ -216,8 +220,10 @@ so `{$M16384}` has the unknown name `M16384`. The name is one of:
 - a conditional directive name (`DEFINE`, `UNDEF`, `IFDEF`, `IFNDEF`,
   `IFOPT`, `ELSE`, `ENDIF`);
 - a list of switches, each a switch letter and `+` or `-`, separated by
-  commas with no blanks: `{$R+,X-}`. Anything after the list and a blank
-  is ignored;
+  commas with no blanks: `{$R+,X-}`. A blank after a comma is error 17.
+  Anything after the last sign that isn't a comma is ignored, a blank or
+  not: `{$R+ text}` is accepted, and `{$R-B+}` turns R off and leaves B
+  alone;
 - a parameter directive letter (`C D G I L M O R S`) and its parameter.
   For `C`, `D`, `G`, `R` and `S` the parameter is any text up to the end of
   the comment, nothing at all included, and is ignored: `{$R}` is accepted.

@@ -1,0 +1,5 @@
+# A blank after the comma in a switch list.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 1:17
+---
+program P; {$R+, X+} begin end.

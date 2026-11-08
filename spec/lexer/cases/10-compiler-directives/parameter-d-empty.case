@@ -1,0 +1,6 @@
+# {$D} with nothing after it.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P; {$D} begin end.

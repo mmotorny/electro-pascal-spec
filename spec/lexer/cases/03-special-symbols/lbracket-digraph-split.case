@@ -1,0 +1,5 @@
+# A blank inside (. splits it into ( and a dot.
+tokens: PROGRAM IDENT(P) SEMI VAR IDENT(A) COLON ARRAY LPAREN
+tpc: error 92 at 1:24
+---
+program P; var A: array( .1..2.) of Integer; begin end.
