@@ -1,0 +1,10 @@
+# (*$IFDEF X) for a defined X does not end at its ).
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P;
+{$DEFINE X}
+(*$IFDEF X) ! *)
+{$ENDIF}
+begin end.

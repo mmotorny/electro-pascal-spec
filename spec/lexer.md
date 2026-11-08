@@ -219,10 +219,11 @@ so `{$M16384}` has the unknown name `M16384`. The name is one of:
   commas with no blanks: `{$R+,X-}`. Anything after the list and a blank
   is ignored;
 - a parameter directive letter (`C D G I L M O R S`) and its parameter.
-  Most take a file name or other text, which may be anything, including
-  nothing at all: `{$R}` and `{$L:X.OBJ}` are accepted (a missing file is
-  error 15, but that's not the lexer's business). `M` takes numbers, see
-  [memory sizes](#memory-sizes).
+  For `C`, `D`, `G`, `R` and `S` the parameter is any text up to the end of
+  the comment, nothing at all included, and is ignored: `{$R}` is accepted.
+  `I` and `L` take a file name, and `{$L:X.OBJ}` is accepted (a missing
+  file is error 15, but that's not the lexer's business). `O` takes a unit
+  name. `M` takes numbers, see [memory sizes](#memory-sizes).
 
 Anything else is error 17, at the column of the offending item: a blank
 right after `$`, an unknown name such as `{$FOO}` or `{$Z+}`, a switch
@@ -269,8 +270,9 @@ letters, digits and underscores, with case not mattering and only the first
 or one starting with a digit, is error 2 where the name should start. This
 goes for `{$UNDEF}`, `{$IFDEF}` and `{$IFNDEF}` too.
 
-`VER70`, `MSDOS`, `CPU86` and `CPU87` are defined from the start (on the
-reference machine); `VER60`, `DPMI` and `WINDOWS` are not. The defined
+`VER70`, `MSDOS`, `CPU86` and `CPU87` are defined from the start;
+`VER60`, `DPMI` and `WINDOWS` are not. The reference machine has a
+floating-point unit; whether `CPU87` depends on one is untested. The defined
 symbols, these four included, share 1024 bytes, each taking its length
 plus one. A `{$DEFINE}` that doesn't fit is error 127 at its name.
 Removing a symbol, even a predefined one, makes room again.
@@ -316,35 +318,50 @@ directive, before `TPC` looks for the file.
 ### `)` ending a `(*$` directive
 
 In a directive written with `(*$`, a `)` directly after the directive's
-last item sometimes ends the comment, as `*)` would. The cases have found
-these, and no other directives have been seen to do it:
+last item ends the comment, as `*)` would, in exactly these cases:
 
 - `(*$M stack,heapmin,heapmax)`, when `heapmax` in paragraphs (rounded up)
-  is 42 more than a multiple of 256: 672 bytes, 42 paragraphs, ends the
-  comment, and 688 bytes, 43 paragraphs, doesn't.
+  is 42 more than a multiple of 256: 672 bytes (42 paragraphs) and 4768
+  bytes (298 paragraphs) end the comment, and 688 bytes (43 paragraphs)
+  doesn't.
 - `(*$UNDEF name)`, when `name` is defined and 42 characters long.
 - `(*$DEFINE name)`, when `name` isn't defined yet and, once it is, the
   defined symbols take up 222 more than a multiple of 256 bytes, counted as
   under [conditional symbols](#conditional-symbols).
 - `(*$R)` in skipped text. In compiled text, `(*$R)` stays open.
 
+All other directives stay open past such a `)`: switches and switch lists,
+the other parameter directives (`{$L}` included), `{$IFDEF}`, `{$IFNDEF}`,
+`{$IFOPT}`, `{$ELSE}`, `{$ENDIF}`, `{$DEFINE}` of a defined symbol and
+`{$UNDEF}` of an undefined one. `{$O}` is untested, as it needs units.
+
 ## Real values
 
 ([real values](lexer/cases/13-real-values))
 
 Each case here prints the exact 80-bit Extended value of a real literal.
-`TPC`'s conversion is not correctly rounded: it is often a few units off in
-the last place, so an implementation has to reproduce `TPC`'s own
-arithmetic. That arithmetic isn't known yet (issue #10). What is known:
+`TPC`'s conversion is not correctly rounded, so an implementation has to
+reproduce `TPC`'s own arithmetic. That arithmetic isn't known yet
+(issue #10). What is known:
 
-- The largest accepted value is about `1.1897314e4932`. The largest
-  Extended value itself, `1.18973149535723176502e4932`, is already error 6.
-- Values below the smallest normal Extended value (about
-  `3.3621e-4932`) become 0. There are no denormals.
 - Only the first 19 significant digits count; any digits after them are
-  ignored, as if they were 0.
-- Scaling by a positive power of ten is exact as far as the cases go
-  (up to 10^27); scaling by a negative power is where the result goes off.
+  ignored, as if they were 0. Below, N is those digits read as an integer,
+  without trailing zeros, and k is the power of ten that scales N to the
+  literal's value.
+- A literal whose first 19 digits are above the largest Extended value
+  (`1.18973149535723176502…e4932`) is error 6. So
+  `1.189731495357231764e4932` is the largest accepted literal and
+  `1.189731495357231765e4932` is an error, and so is the largest Extended
+  value itself written to 20 digits.
+- A literal whose first 19 digits are below the smallest normal Extended
+  value (`3.36210314311209350626…e-4932`) becomes 0. There are no
+  denormals. So `3.362103143112093507e-4932` is the smallest literal that
+  isn't 0, and `3.362103143112093506e-4932` is 0.
+- Every case with k from 0 to 27 is correctly rounded (19 cases). 10^27 is
+  the largest power of ten that Extended holds exactly. Of the cases with k
+  above 27, 5 of 21 are correctly rounded and the rest are off by one unit
+  in the last place, either way. Of the cases with k below 0, 38 of 66 are
+  correctly rounded and the rest are off by −10 to +2 units.
 
 ## Not covered yet
 
@@ -356,6 +373,8 @@ arithmetic. That arithmetic isn't known yet (issue #10). What is known:
   How the file name is read (where it ends, its case, its length) shows
   only in error 15's message, which the cases don't record.
 - `{$O unit}`, which needs units.
+- Whether `CPU87` is predefined on a machine without a floating-point
+  unit.
 - The exact value of real literals (see [real values](#real-values)).
 - Why real overflow is reported just after the number, while integer
   overflow is reported at the digit that overflows.

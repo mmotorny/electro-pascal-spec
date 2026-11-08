@@ -1,0 +1,9 @@
+# (*$DEFINE X) for an X already defined does not end at its ).
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P;
+{$DEFINE X}
+(*$DEFINE X) ! *)
+begin end.
