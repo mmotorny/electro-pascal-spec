@@ -227,8 +227,9 @@ are ordinary identifiers to the lexer ([not-reserved-*](lexer/cases/04-reserved-
   ([real-exponent-4-digits](lexer/cases/06-numbers/real-exponent-4-digits.yaml), [real-exponent-1000](lexer/cases/06-numbers/real-exponent-1000.yaml), [real-exponent-9999](lexer/cases/06-numbers/real-exponent-9999.yaml), [real-exponent-10000](lexer/cases/06-numbers/real-exponent-10000.yaml), [real-exponent-5-digits](lexer/cases/06-numbers/real-exponent-5-digits.yaml), [real-exponent-5-digits-small](lexer/cases/06-numbers/real-exponent-5-digits-small.yaml)).
   Leading zeros in the exponent don't count
   ([real-exponent-leading-zeros-9999](lexer/cases/06-numbers/real-exponent-leading-zeros-9999.yaml)). A number can't start with `.`
-  ([real-no-integer-digits](lexer/cases/06-numbers/real-no-integer-digits.yaml)). A value beyond the Extended range is
-  error 6, just after the number ([real-overflow](lexer/cases/06-numbers/real-overflow.yaml)); a value that fits
+  ([real-no-integer-digits](lexer/cases/06-numbers/real-no-integer-digits.yaml)). A value too large for Extended, as
+  [computed](#real-values) by `TPC`, is error 6, just after the number
+  ([real-overflow](lexer/cases/06-numbers/real-overflow.yaml)); a value that fits
   Extended is a valid token even where it doesn't fit the type it is used
   as ([real-huge](lexer/cases/06-numbers/real-huge.yaml)).
 - `1..2` is `1`, `..`, `2`, and `1.)` is `1`, `.)`: a `.` directly
@@ -854,33 +855,106 @@ Every other character is a symbol by itself. `! # % \ ^ = < > | ~` and
 ## Real values
 
 Each case here prints the exact 80-bit Extended value of a real literal.
-`TPC`'s conversion is not correctly rounded, so an implementation has to
-reproduce `TPC`'s own arithmetic. That arithmetic isn't known yet
-(issue #10). What is known, and checked against every case here by
-`bazel test //harness:cases_test`:
+`TPC` doesn't round correctly: it computes the value with the arithmetic
+below, and an implementation has to do the same to get the same bits.
+`bazel test //harness:cases_test` computes every case's value this way
+and checks it against the recorded one.
 
-- Only the first 19 significant digits count; any digits after them are
-  ignored, as if they were 0
-  ([digits-*](lexer/cases/13-real-values/), [long-mantissa](lexer/cases/13-real-values/long-mantissa.yaml), [many-integer-digits](lexer/cases/13-real-values/many-integer-digits.yaml), [third](lexer/cases/13-real-values/third.yaml), [leading-zeros](lexer/cases/13-real-values/leading-zeros.yaml), [trailing-zeros-exponent](lexer/cases/13-real-values/trailing-zeros-exponent.yaml)).
-  Below, N is those digits read as an integer, without trailing zeros, and
-  k is the power of ten that scales N to the literal's value.
-- A literal whose first 19 digits are `1.189731495357231765e4932` or
-  more is error 6, although that is still a little below the largest
-  Extended value, `1.18973149535723176502…e4932`. So
-  `1.189731495357231764e4932` is the largest accepted literal, and the
-  largest Extended value written to 20 digits is an error
-  ([largest-accepted](lexer/cases/13-real-values/largest-accepted.yaml), [largest-accepted-plus-1](lexer/cases/13-real-values/largest-accepted-plus-1.yaml), [max](lexer/cases/13-real-values/max.yaml), [limit-1_1897314e4932](lexer/cases/13-real-values/limit-1_1897314e4932.yaml), [limit-1_189731e4932](lexer/cases/13-real-values/limit-1_189731e4932.yaml), [limit-1_18973e4932](lexer/cases/13-real-values/limit-1_18973e4932.yaml), [limit-1_1897e4932](lexer/cases/13-real-values/limit-1_1897e4932.yaml), [limit-1_189e4932](lexer/cases/13-real-values/limit-1_189e4932.yaml), [limit-1_18e4932](lexer/cases/13-real-values/limit-1_18e4932.yaml), [limit-1_1e4932](lexer/cases/13-real-values/limit-1_1e4932.yaml), [limit-1e4932](lexer/cases/13-real-values/limit-1e4932.yaml)).
-- A literal whose first 19 digits are below the smallest normal Extended
-  value (`3.36210314311209350626…e-4932`) becomes 0. There are no
-  denormals. So `3.362103143112093507e-4932` is the smallest literal that
-  isn't 0, and `3.362103143112093506e-4932` is 0
-  ([smallest-nonzero](lexer/cases/13-real-values/smallest-nonzero.yaml), [smallest-nonzero-minus-1](lexer/cases/13-real-values/smallest-nonzero-minus-1.yaml), [min-normal](lexer/cases/13-real-values/min-normal.yaml), [denormal](lexer/cases/13-real-values/denormal.yaml), [underflow](lexer/cases/13-real-values/underflow.yaml), [limit-1em4000](lexer/cases/13-real-values/limit-1em4000.yaml), [limit-1em4400](lexer/cases/13-real-values/limit-1em4400.yaml), [limit-1em4900](lexer/cases/13-real-values/limit-1em4900.yaml), [limit-1em4920](lexer/cases/13-real-values/limit-1em4920.yaml), [limit-1em4930](lexer/cases/13-real-values/limit-1em4930.yaml), [limit-1em4931](lexer/cases/13-real-values/limit-1em4931.yaml), [limit-2em4932](lexer/cases/13-real-values/limit-2em4932.yaml), [limit-3em4932](lexer/cases/13-real-values/limit-3em4932.yaml), [limit-3_4em4932](lexer/cases/13-real-values/limit-3_4em4932.yaml), [limit-4em4932](lexer/cases/13-real-values/limit-4em4932.yaml), [limit-5em4932](lexer/cases/13-real-values/limit-5em4932.yaml)).
-- With k from 0 to 27, the value is correctly rounded
-  ([one](lexer/cases/13-real-values/one.yaml), [halfway](lexer/cases/13-real-values/halfway.yaml), [scale-up-*](lexer/cases/13-real-values/)). 10^27 is the largest power of ten that
-  Extended holds exactly. With k above 27, it is at most one unit in the
-  last place off, either way. With k below 0, it is from 10 units below to
-  2 units above the correctly rounded value
-  ([tenth](lexer/cases/13-real-values/tenth.yaml), [scale-??](lexer/cases/13-real-values/), [random-*](lexer/cases/13-real-values/)).
+In this section an Extended value is a pair (m, e) of a 64-bit integer m
+with its top bit set and an exponent e, for the value m × 2^(e − 63); 0 is
+a value of its own. The cases print (m, e) as 10 bytes, most significant
+first: a sign bit of 0, e + 16383 in 15 bits, then m; 0 is ten zero bytes.
+β is 2^16, and the words of a 64-bit integer X are the
+16-bit integers x3, x2, x1 and x0 with X = x3·β³ + x2·β² + x1·β + x0.
+Every division below rounds down.
+
+### The digits
+
+`TPC` reads the digits of the integer part and then of the fraction into
+an integer N, starting from 0: each digit d makes N = 10·N + d, but only
+while N is below 922112023704109056; once N has reached that, the
+remaining digits are skipped. So N is below 2^63, and it keeps its
+trailing zeros. k is the exponent (0 when there is none), minus the number
+of fraction digits read into N, plus the number of integer digits
+skipped; skipped fraction digits don't change k. The literal's value is N × 10^k, computed as described next.
+
+So only the first 19 significant digits count, or only the first 18 when
+those, read as an integer, are 922112023704109056 or more:
+`9221120237041090551e0` keeps its last digit, while
+`9221120237041090561e0` is read as `9221120237041090560`
+([digits-*](lexer/cases/13-real-values/), [long-mantissa](lexer/cases/13-real-values/long-mantissa.yaml), [many-integer-digits](lexer/cases/13-real-values/many-integer-digits.yaml), [third](lexer/cases/13-real-values/third.yaml), [leading-zeros](lexer/cases/13-real-values/leading-zeros.yaml), [trailing-zeros-exponent](lexer/cases/13-real-values/trailing-zeros-exponent.yaml)).
+Trailing zeros change the result: `0.03` is N = 3, k = −2, but `0.0300000`
+is N = 3000000, k = −7, and the two differ in the last bits
+([hundredths](lexer/cases/13-real-values/hundredths.yaml), [hundredths-trailing-zeros](lexer/cases/13-real-values/hundredths-trailing-zeros.yaml), [power-of-two-zeros](lexer/cases/13-real-values/power-of-two-zeros.yaml)).
+
+### The value
+
+N becomes the Extended value (m, e) with m = N × 2^(63 − e), where e is
+the position of N's top bit ([digits-48-bits](lexer/cases/13-real-values/digits-48-bits.yaml)). Then, with P(n) the
+power of ten described below:
+
+- for k ≥ 0, the value is N ⊗ P(k);
+- for −4096 ≤ k < 0, it is N ⊘ P(−k);
+- for k < −4096, it is (N ⊘ P(4096)) ⊘ P(−k − 4096)
+
+([random-*](lexer/cases/13-real-values/), [scale-*](lexer/cases/13-real-values/), [one](lexer/cases/13-real-values/one.yaml), [halfway](lexer/cases/13-real-values/halfway.yaml), [tenth](lexer/cases/13-real-values/tenth.yaml), [third](lexer/cases/13-real-values/third.yaml)).
+
+A value 0 stays 0: 0 ⊘ y is 0, and so is 0 ⊗ y unless y is infinite.
+After every ⊗ and ⊘, including those that make P(n), a result
+whose e is below −16382, the exponent of the smallest normal Extended
+value, is 0; there are no denormals
+([zero](lexer/cases/13-real-values/zero.yaml), [zero-exponent-4932](lexer/cases/13-real-values/zero-exponent-4932.yaml), [min-normal](lexer/cases/13-real-values/min-normal.yaml), [denormal](lexer/cases/13-real-values/denormal.yaml), [underflow](lexer/cases/13-real-values/underflow.yaml), [smallest-nonzero](lexer/cases/13-real-values/smallest-nonzero.yaml), [smallest-nonzero-minus-1](lexer/cases/13-real-values/smallest-nonzero-minus-1.yaml), [limit-*em*](lexer/cases/13-real-values/)).
+A result whose e is above 16383 is infinite. An infinite result is error
+6, and so is 0 ⊗ P(k) when P(k) is infinite: `0e4932` is 0 and `0e4933`
+is error 6 ([zero-exponent-4933](lexer/cases/13-real-values/zero-exponent-4933.yaml), [largest-accepted](lexer/cases/13-real-values/largest-accepted.yaml), [largest-accepted-plus-1](lexer/cases/13-real-values/largest-accepted-plus-1.yaml), [max](lexer/cases/13-real-values/max.yaml), [limit-1_*](lexer/cases/13-real-values/), [limit-1e4932](lexer/cases/13-real-values/limit-1e4932.yaml)).
+P(n) is infinite from n = 4933, and x ⊘ y is 0 when y is infinite
+([exponent-minus-9999](lexer/cases/13-real-values/exponent-minus-9999.yaml)).
+
+So `1.189731495357231764e4932` is the largest literal accepted, a little
+below the largest Extended value, `1.18973149535723176502…e4932`, which
+written to 20 digits is error 6. `3.362103143112093507e-4932` is the
+smallest literal that isn't 0, and `3.362103143112093506e-4932` is 0.
+
+### Powers of ten
+
+P(n) starts as 10^(n mod 8), exactly. Then, for i from 0 up to 9, if bit
+i of n div 8 is set, P(n) becomes P(n) ⊗ T(i), where T(i) is the
+Extended value nearest to 10^(8·2^i). Once a product is infinite, P(n)
+is infinite. Before all this, an n above 4999 counts as 4999, so `1e8192` is error 6,
+not 1 ([exponent-8192](lexer/cases/13-real-values/exponent-8192.yaml)).
+
+### Multiplication
+
+x ⊗ y, for x = (a, ea) and y = (b, eb) neither 0 nor infinite, with words
+a3…a0 of a and b3…b0 of b:
+
+1. S is the sum of a_i·b_j·β^(i+j) over every pair i, j with i + j ≥ 2,
+   except i = j = 1, plus C·β², where C is the sum of a1·β + a0 when b1 is
+   2^15 or more, and b1·β + b0 when a1 is 2^15 or more, minus β² when
+   both are.
+2. s = S div β³. If s is below 2^79, s becomes 2·s and e = ea + eb;
+   otherwise e = ea + eb + 1.
+3. m = s div β, plus 1 if bit 15 of s is set. If that makes m = 2^64, m
+   becomes 2^63 and e grows by 1.
+
+x ⊗ y is infinite when x or y is infinite and the other isn't 0.
+
+### Division
+
+x ⊘ y, for x = (a, ea) and y = (b, eb) neither 0 nor infinite, with words
+as for multiplication:
+
+1. c is 1 if a3 ≥ b3, and 0 otherwise. t = c·β + q + 1, where
+   q = ((a3 − c·b3)·β + a2) div b3.
+2. R1 = t·b − a·β, which is never negative, and D = ((R1 div β²) div b3) + 1.
+3. R2 = (D·b div β − R1) mod β⁴, and E = ((R2 div β) div b3) + 1.
+4. R3 = (E·(b div β) div β − R2) mod β³.
+5. d = b3, plus 1 if b2 is 2^15 or more; d is below β for every T(i) and
+   P(n). With V = 2·R3 mod β³, F = (V div d)·2^7 + (V mod d) div 2^9.
+6. X = (t·β² − D·β + E)·2^24 − F. If X is 2^72 or more, X becomes
+   X div 2 and e = ea − eb; otherwise e = ea − eb − 1.
+7. m = X div 2^8, plus 1 if bit 7 of X is set. If that makes m = 2^64, m
+   becomes 2^63 and e grows by 1.
 
 ## Error messages
 
@@ -913,10 +987,7 @@ the file is named
 
 ## Not covered yet
 
-- Which instructions and operands an [`asm` block](#asm-blocks) accepts,
-  and how they are encoded.
 - `CPU87` on a machine without a floating-point unit: QEMU always has
   one, so no case shows it undefined.
-- The exact value of real literals (see [real values](#real-values)).
 - How the units a program uses change the [limit on nested include
   files](#include-files).
