@@ -1,0 +1,25 @@
+description: Without a floating-point unit, {$IFDEF CPU87} skips its text
+  and {$ELSE} compiles.
+source: |
+  program P;
+  begin
+    {$IFDEF CPU87}
+    Write('defined')
+    {$ELSE}
+    Write('undefined')
+    {$ENDIF}
+  end.
+fpu: false
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: undefined
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: undefined

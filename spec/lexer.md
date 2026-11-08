@@ -11,7 +11,7 @@ right and this text needs fixing. `bazel test //harness:tpc_test` checks that
 every case still matches what `TPC` gives.
 
 The cases are meant to show every lexical behaviour a single source file
-can reach, except as noted under [not covered yet](#not-covered-yet). A
+can reach; what they don't show yet is tracked as GitHub issues. A
 case's token list ends at the end of the program, or at the token where
 `TPC` reports an error. A token that is itself in error, such as a bad
 number, string or character, is not listed.
@@ -85,6 +85,9 @@ output: "7"
 - `precompile`, when present, names some of those files, which `TPC`
   compiles first, in that order and with no options, such as a unit the
   program needs already compiled. Their compiles add no tokens.
+- `fpu: false`, when present, means that `TPC` compiles the program, and
+  those files, on a machine without a floating-point unit; the compiled
+  program still runs on the reference machine.
 - `compile` is what compiling the source with `TPC` gives: `ok`; `hang`
   when `TPC` never finishes compiling it; or the error number with the line and column `TPC` reports it at, the file it
   is in when that isn't the program, and `TPC`'s message:
@@ -422,8 +425,8 @@ This goes for `{$UNDEF}`, `{$IFDEF}` and `{$IFNDEF}` too
 `VER70`, `MSDOS`, `CPU86` and `CPU87` are defined from the start;
 `VER60`, `DPMI` and `WINDOWS` are not
 ([predefined-symbols](lexer/cases/10-compiler-directives/predefined-symbols.yaml), [not-predefined-symbols](lexer/cases/10-compiler-directives/not-predefined-symbols.yaml)). `CPU87` is defined when
-`TPC` finds a floating-point unit as it starts, as it does on the reference
-machine; nothing else turns it on or off.
+`TPC` runs on a machine with a floating-point unit, and not otherwise
+([cpu87-with-fpu](lexer/cases/10-compiler-directives/cpu87-with-fpu.yaml), [cpu87-without-fpu](lexer/cases/10-compiler-directives/cpu87-without-fpu.yaml), [predefined-symbols-no-fpu](lexer/cases/10-compiler-directives/predefined-symbols-no-fpu.yaml)).
 
 `TPC`'s `/D` option defines more symbols before the program is read: names
 separated by `;` or `,`, read like those of `{$DEFINE}`. `/D` alone defines
@@ -948,8 +951,3 @@ the file is named
 | 129 | ENDIF directive missing. | [ifdef-unterminated](lexer/cases/10-compiler-directives/ifdef-unterminated.yaml) |
 | 130 | Error in initial conditional defines. | [d-option-digit-first](lexer/cases/10-compiler-directives/d-option-digit-first.yaml) |
 | 144 | Cannot overlay this unit. | [o-without-overlay-unit](lexer/cases/10-compiler-directives/o-without-overlay-unit.yaml) |
-
-## Not covered yet
-
-- `CPU87` on a machine without a floating-point unit: the cases run on
-  QEMU, which always has one ([#14](https://github.com/mmotorny/electro-pascal-spec/issues/14)).

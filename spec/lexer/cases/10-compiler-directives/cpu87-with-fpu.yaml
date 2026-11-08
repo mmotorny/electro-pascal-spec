@@ -1,0 +1,23 @@
+description: With a floating-point unit, {$IFDEF CPU87} compiles its text.
+source: |
+  program P;
+  begin
+    {$IFDEF CPU87}
+    Write('defined')
+    {$ELSE}
+    Write('undefined')
+    {$ENDIF}
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: defined
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: defined

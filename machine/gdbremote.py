@@ -101,6 +101,11 @@ class GdbRemote:
             size -= n
         return out
 
+    def write_memory(self, addr, data):
+        r = self.request(f"M{addr:x},{len(data):x}:{data.hex()}")
+        if r != "OK":
+            raise RuntimeError(f"write {addr:#x}: {r}")
+
     def registers(self):
         """i386 registers: eax ecx edx ebx esp ebp esi edi eip eflags cs ss ds es fs gs."""
         r = bytes.fromhex(self.request("g")[:16 * 8])

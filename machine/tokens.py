@@ -100,6 +100,13 @@ A_NUMBER = 0x64           # Also the kind of a string; A_CLASS tells them apart.
 A_IDENT = 0x6B            # A Pascal identifier.
 A_FIRST = 0x01            # The first word of a statement isn't an instruction.
 A_RESERVED = set(range(0x43, 0x51)) | {0x65, 0x66}  # Registers, operators, sizes.
+# Where TPC has just tested for a floating-point unit (reached either way),
+# and the bit it sets in V_FLAGS when it found one. For a case with
+# fpu: false, NoFpu clears the bit there.
+FPU_TESTED = 0x5C33       # In the load image, like ENTRY.
+V_FLAGS = 0x2C66          # In TPC's data segment (byte).
+FLAG_FPU = 0x80
+DS_FROM_CS = 0x10D2       # TPC's data segment, in paragraphs from LOAD_SEG.
 # Where probe.machine_info and spec/MACHINE.json keep TPC.EXE's hash.
 TPC_EXE = "BP\\BIN\\TPC.EXE"
 
@@ -124,10 +131,52 @@ def reserved_words(tools, disk, workdir):
     return words
 
 
-class Capture:
-    """Handles the gdbstub of one machine; collects raw tokens per TPC run."""
+def hide_fpu(gdb, regs):
+    """At FPU_TESTED, makes TPC go on as if it had found no floating-point unit."""
+    if regs["ds"] != LOAD_SEG + DS_FROM_CS:
+        raise RuntimeError(f"stopped at the FPU test with DS {regs['ds']:#x}: is this TPC?")
+    at = regs["ds"] * 16 + V_FLAGS
+    flags = gdb.read_memory(at, 1)[0]
+    gdb.write_memory(at, bytes([flags & ~FLAG_FPU & 0xFF]))
+
+
+class NoFpu:
+    """Makes every TPC run on one machine compile as on a machine without a
+    floating-point unit, through the machine's gdbstub."""
 
     def __init__(self, sock_path):
+        self.hits = 0
+        self.error = None
+        self._gdb = GdbRemote(sock_path)
+        self._gdb.set_breakpoint(LOAD_SEG * 16 + FPU_TESTED)
+        self._thread = threading.Thread(target=self._loop, daemon=True)
+        self._gdb.cont()
+        self._thread.start()
+
+    def close(self):
+        self._gdb.close()
+
+    def _loop(self):
+        try:
+            while True:
+                self._gdb.wait_stop()
+                regs = self._gdb.registers()
+                if regs["cs"] == LOAD_SEG and regs["eip"] & 0xFFFF == FPU_TESTED:
+                    hide_fpu(self._gdb, regs)
+                    self.hits += 1
+                self._gdb.cont(regs["cs"] * 16 + (regs["eip"] & 0xFFFF))
+        except (EOFError, OSError):
+            pass
+        except Exception as e:
+            self.error = e
+            self._gdb.close()
+
+
+class Capture:
+    """Handles the gdbstub of one machine; collects raw tokens per TPC run.
+    With fpu=False, every TPC run compiles as without a floating-point unit."""
+
+    def __init__(self, sock_path, fpu=True):
         self.runs = []
         self.error = None
         self._gdb = GdbRemote(sock_path)
@@ -136,7 +185,10 @@ class Capture:
         asm = base + ASM_SEG * 16
         self._ds = None
         self._statement = []  # The current asm statement's tokens.
-        for a in (self._entry, self._scan, self._rescan, asm + ASM_STATEMENT, asm + ASM_EXIT):
+        points = [self._entry, self._scan, self._rescan, asm + ASM_STATEMENT, asm + ASM_EXIT]
+        if not fpu:
+            points.append(base + FPU_TESTED)
+        for a in points:
             self._gdb.set_breakpoint(a)
         self._thread = threading.Thread(target=self._loop, daemon=True)
         self._gdb.cont()
@@ -173,6 +225,9 @@ class Capture:
             return  # Only TPC runs at this place: the batch runs nothing else.
         if ip == ENTRY:
             self.runs.append([])
+            return
+        if ip == FPU_TESTED:
+            hide_fpu(self._gdb, regs)
             return
         if not self.runs:
             return
@@ -273,7 +328,12 @@ def spec_token(token, words):
 
 
 def run_batch(tools, disk, sources, workdir, first=0):
-    """Compiles up to probe.BATCH_SIZE sources on one machine, capturing raw tokens."""
+    """Compiles up to probe.BATCH_SIZE sources on one machine, capturing raw
+    tokens. The sources all have an FPU, or all don't (see probe.unpack)."""
+    fpu = {probe.has_fpu(s) for s in sources}
+    if len(fpu) != 1:
+        raise ValueError("a batch's sources must all have an FPU or all not")
+    fpu = fpu.pop()
     os.makedirs(workdir, exist_ok=True)
     floppy = os.path.join(workdir, "probes.img")
     tools.mtool("mformat", "-C", "-f", "1440", "-i", floppy, "::")
@@ -302,7 +362,7 @@ def run_batch(tools, disk, sources, workdir, first=0):
                                           "-gdb", "chardev:gdb0", "-S"])
     cap = None
     try:
-        cap = Capture(sock)
+        cap = Capture(sock, fpu)
         m.wait_prompt("C:\\>", timeout=60)
         m.type("A:\\RUN\n")
         hung = probe.wait_batch(m, names)
@@ -363,7 +423,7 @@ def run(tools, disk, sources, tpc_sha256, jobs=None):
     spec/MACHINE.json records it. Raises if the reference disk's differs."""
     jobs = jobs or os.cpu_count() or 1
     size = max(1, min(probe.BATCH_SIZE, -(-len(sources) // jobs)))
-    batches = [sources[i:i + size] for i in range(0, len(sources), size)]
+    batches = probe.batches_of(sources, size)
     with tempfile.TemporaryDirectory(prefix="cap") as work:
         info = probe.machine_info(tools, disk, work)
         found = info["sha256"][TPC_EXE]
@@ -375,17 +435,19 @@ def run(tools, disk, sources, tpc_sha256, jobs=None):
         def one(i):
             d = os.path.join(work, f"b{i}")
             os.makedirs(d)
-            qmp.log(f"batch {i + 1}/{len(batches)}: {len(batches[i])} files")
+            first, batch = batches[i]
+            qmp.log(f"batch {i + 1}/{len(batches)}: {len(batch)} files")
             for attempt in range(3):
                 try:
-                    return run_batch(tools, disk, batches[i], os.path.join(d, str(attempt)), first=i * size)
+                    return run_batch(tools, disk, [sources[n] for n in batch], os.path.join(d, str(attempt)),
+                                     first=first)
                 except (RuntimeError, TimeoutError) as e:
                     if attempt == 2:
                         raise
                     qmp.log(f"batch {i + 1}: {e}; retrying")
 
         with concurrent.futures.ThreadPoolExecutor(jobs) as pool:
-            results = [r for batch in pool.map(one, range(len(batches))) for r in batch]
+            results = probe.in_order(len(sources), batches, pool.map(one, range(len(batches))))
     for result in results:
         result["tokens"] = [spec_token(t, words) for t in result.pop("raw_tokens")]
     return info, results

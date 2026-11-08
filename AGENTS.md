@@ -90,8 +90,8 @@ build it.
 - Every rule in the spec ends with links to the cases that show it, and
   every case is linked from some rule; a link to a folder, with a pattern
   such as `reserved-*` as its text, cites the cases matching it.
-  `cases_test` checks both. A claim no case can show belongs under "Not
-  covered yet", not in the rules.
+  `cases_test` checks both. A claim no case can show belongs in a GitHub
+  issue, not in the rules.
 - Say exactly what `TPC` does: no "about", "often" or "as far as the cases
   go". Where a rule summarises the cases (such as the rounding of real
   values), make `cases_test` check it against them.
@@ -189,7 +189,7 @@ large changes:
    folder. Tell it to:
    - read nothing outside `DIR`: not this repo, `dirty/`, Bazel outputs,
      Borland's files, or the web on how Turbo Pascal behaves;
-   - write `scan(source, files, options, precompile)` in `DIR` (the
+   - write `scan(source, files, options, precompile, fpu)` in `DIR` (the
      interface is in `harness/clean_room.py`);
    - report every place the text is missing, ambiguous or contradicts
      itself, with the reading it chose, and anything it relied on that the

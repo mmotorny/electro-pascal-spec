@@ -27,6 +27,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import struct
 import subprocess
 import sys
@@ -109,20 +110,26 @@ OPTION = re.compile(r"[/-][A-Za-z0-9$_.:;=+,\\-]*")
 
 
 def unpack(source):
-    """A probe's (program, extra files, TPC options, files to compile first).
-    A source is the program as bytes, or (bytes, {file name: bytes}), or that
-    plus [option, ...], or that plus [file name, ...]: extra files that TPC
-    compiles, in that order and with no options, before the program."""
+    """A probe's (program, extra files, TPC options, files to compile first,
+    fpu). A source is the program as bytes, or (bytes, {file name: bytes}), or
+    that plus [option, ...], or that plus [file name, ...]: extra files that
+    TPC compiles, in that order and with no options, before the program; or
+    that plus False, for TPC to compile as on a machine without a
+    floating-point unit."""
     if not isinstance(source, tuple):
-        return source, {}, [], []
-    main, extra, options, first = (source + ([], []))[:4]
+        return source, {}, [], [], True
+    main, extra, options, first, fpu = (source + ([], [], True))[:5]
     for option in options:
         if not OPTION.fullmatch(option):
             raise ValueError(f"bad TPC option {option!r}")
     for file_name in first:
         if file_name not in extra:
             raise ValueError(f"file to compile first {file_name!r} isn't among the extra files")
-    return main, extra, options, first
+    return main, extra, options, first, fpu
+
+
+def has_fpu(source):
+    return unpack(source)[4]
 
 
 def precompile(source):
@@ -140,7 +147,7 @@ def lay_out(tools, floppy, workdir, names, sources):
     the extra files it brings (see unpack)."""
     tree = os.path.join(workdir, "P")
     for name, source in zip(names, sources):
-        main, extra, _, _ = unpack(source)
+        main, extra = unpack(source)[:2]
         folder = os.path.join(tree, name)
         os.makedirs(folder)
         with open(os.path.join(folder, name + ".PAS"), "wb") as f:
@@ -154,11 +161,19 @@ def lay_out(tools, floppy, workdir, names, sources):
 
 
 def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
-    """Compiles up to BATCH_SIZE sources on one machine.
+    """Compiles up to BATCH_SIZE sources on one machine. The sources all have
+    an FPU, or all don't (see unpack).
 
     Probes are numbered from `first`, so that TPC's output, which names the
     file, doesn't depend on how a run was split into batches.
     """
+    fpu = {has_fpu(s) for s in sources}
+    if len(fpu) != 1:
+        raise ValueError("a batch's sources must all have an FPU or all not")
+    return _run_batch(tools, disk, sources, workdir, first, coverage, fpu.pop())
+
+
+def _run_batch(tools, disk, sources, workdir, first, coverage, fpu):
     floppy = os.path.join(workdir, "probes.img")
     tools.mtool("mformat", "-C", "-f", "1440", "-i", floppy, "::")
     names = [probe_name(first + n) for n in range(len(sources))]
@@ -193,15 +208,36 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
         lo, hi = coverage["range"]
         extra = ["-plugin", f"{coverage['plugin']},out={edges_file},lo={lo},hi={hi}"]
 
+    sockdir = no_fpu = None
+    if not fpu:
+        import tokens  # Knows where TPC tests for an FPU; it imports this module.
+        # A short socket path: Unix socket paths are limited to about 100 bytes.
+        sockdir = tempfile.mkdtemp(prefix="fpu", dir="/tmp")
+        sock = os.path.join(sockdir, "gdb")
+        extra += ["-chardev", f"socket,id=gdb0,path={sock},server=on,wait=off",
+                  "-gdb", "chardev:gdb0", "-S"]
     m = Machine(tools.qemu, workdir, disk, floppy=floppy, snapshot=True, floppy_writable=True,
                 boot="c", extra_args=extra)
     try:
+        if not fpu:
+            no_fpu = tokens.NoFpu(sock)
         m.wait_prompt("C:\\>", timeout=60)
         m.type("A:\\RUN\n")
         hung = wait_batch(m, names)
     finally:
         m.quit()
+        if no_fpu:
+            no_fpu.close()
+        if sockdir:
+            shutil.rmtree(sockdir, ignore_errors=True)
     done = names.index(hung) if hung else len(names)
+    if no_fpu:
+        if no_fpu.error:
+            raise no_fpu.error
+        due = sum(len(unpack(s)[3]) + 1 for s in sources[:done])
+        if no_fpu.hits < due:
+            raise RuntimeError(f"TPC tested for an FPU {no_fpu.hits} times where {due} compiles ran; "
+                               "has TPC's load address changed?")
 
     out = os.path.join(workdir, "out")
     os.makedirs(out)
@@ -319,7 +355,7 @@ def run(tools, disk, sources, jobs=None, coverage=None, coverage_range=None):
     """
     jobs = jobs or os.cpu_count() or 1
     size = max(1, min(BATCH_SIZE, -(-len(sources) // jobs)))  # Spread over all machines.
-    batches = [sources[i:i + size] for i in range(0, len(sources), size)]
+    batches = batches_of(sources, size)
     with tempfile.TemporaryDirectory() as work:
         info = machine_info(tools, disk, work)
         if coverage:
@@ -328,12 +364,33 @@ def run(tools, disk, sources, jobs=None, coverage=None, coverage_range=None):
         def one(i):
             d = os.path.join(work, f"batch{i}")
             os.makedirs(d)
-            log(f"batch {i + 1}/{len(batches)}: {len(batches[i])} probes")
-            return run_batch(tools, disk, batches[i], d, first=i * size, coverage=coverage)
+            first, batch = batches[i]
+            log(f"batch {i + 1}/{len(batches)}: {len(batch)} probes")
+            return run_batch(tools, disk, [sources[n] for n in batch], d, first=first, coverage=coverage)
 
         with concurrent.futures.ThreadPoolExecutor(jobs) as pool:
-            results = [r for batch in pool.map(one, range(len(batches))) for r in batch]
+            results = in_order(len(sources), batches, pool.map(one, range(len(batches))))
     return info, results
+
+
+def batches_of(sources, size):
+    """[(first, [index, ...]), ...]: batches of at most `size` sources, those
+    with an FPU apart from those without. `first` numbers the batch's probes,
+    which stay in the sources' order."""
+    out = []
+    for fpu in (True, False):
+        chosen = [n for n, s in enumerate(sources) if has_fpu(s) == fpu]
+        out += [(chosen[i], chosen[i:i + size]) for i in range(0, len(chosen), size)]
+    return out
+
+
+def in_order(count, batches, batch_results):
+    """The results of batches_of's batches, in the sources' order."""
+    results = [None] * count
+    for (_, batch), got in zip(batches, batch_results):
+        for n, result in zip(batch, got):
+            results[n] = result
+    return results
 
 
 def main():

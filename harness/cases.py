@@ -27,6 +27,10 @@ A case is a YAML file holding one mapping (see spec/case.schema.yaml):
   precompile   optional: names of some of those files, which TPC compiles,
                in that order and with no options, before the program; for
                units that the program needs compiled already.
+  fpu          optional: false when TPC compiles the program, and the files
+               it compiles first, as on a machine without a floating-point
+               unit. The compiled program still runs on the reference
+               machine.
   tokens       the tokens TPC reads in the program, up to the
                end of the program or the error: a kind alone, or a mapping
                from a kind to its value.
@@ -54,7 +58,8 @@ import re
 import yaml
 
 EXTENSION = ".yaml"
-FIELDS = ("description", "options", "source", "files", "precompile", "tokens", "compile", "output")
+FIELDS = ("description", "options", "source", "files", "precompile", "fpu", "tokens", "compile",
+          "output")
 VERDICT_FIELDS = ("error", "line", "column", "file", "message")
 WIDTH = 76
 
@@ -111,12 +116,16 @@ class Case:
         return list(self.data.get("precompile") or [])
 
     @property
+    def fpu(self):
+        return self.data.get("fpu", True)
+
+    @property
     def input(self):
         """What to give machine/probe.py and machine/tokens.py: the source, or
-        (source, files, options, precompile) when the case has files or
-        options."""
-        if self.files or self.options:
-            return (self.source, self.files, self.options, self.precompile)
+        (source, files, options, precompile, fpu) when the case has files,
+        options or no FPU."""
+        if self.files or self.options or not self.fpu:
+            return (self.source, self.files, self.options, self.precompile, self.fpu)
         return self.source
 
     @property
@@ -305,6 +314,10 @@ def dump(data):
                     if not plain_ok(token):
                         raise ValueError(f"bad token kind {token!r}")
                     lines.append(f"  - {token}")
+        elif key == "fpu":
+            if value is not False:
+                raise ValueError(f"fpu can only be false, not {value!r}")
+            lines.append("fpu: false")
         elif key == "compile":
             if value in ("ok", "hang"):
                 lines.append(f"compile: {value}")

@@ -9,11 +9,11 @@ read the rules and the cases' sources but not what TPC gave.
 
 score imports FILE, which must define
 
-    scan(source, files, options, precompile) -> {"tokens": [...], "compile": ...}
+    scan(source, files, options, precompile, fpu) -> {"tokens": [...], "compile": ...}
 
 taking a case's program as bytes, its other files as {DOS name: bytes}, its
-TPC options and the files it compiles first, and giving the token list and
-compile outcome in the cases' notation (see spec/case.schema.yaml). It runs
+TPC options, the files it compiles first and whether TPC has an FPU, and
+giving the token list and compile outcome in the cases' notation (see spec/case.schema.yaml). It runs
 every case and prints, per folder, how many give:
 
   exact        the case's tokens and compile outcome;
@@ -79,7 +79,7 @@ def score(spec, path, verbose):
     for case in cases.find(spec):
         folder = os.path.basename(os.path.dirname(case.path))
         try:
-            kind, detail = classify(case, module.scan(case.source, case.files, case.options, case.precompile))
+            kind, detail = classify(case, module.scan(case.source, case.files, case.options, case.precompile, case.fpu))
         except Exception:
             kind, detail = "crash", traceback.format_exc().strip().splitlines()[-1]
         tally[folder][kind] += 1

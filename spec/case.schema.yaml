@@ -47,8 +47,13 @@ properties:
     items:
       type: string
       pattern: ^[A-Z0-9_]{1,8}(\.[A-Z0-9_]{1,3})?$
+  fpu:
+    description: false when TPC compiles the program, and the files it
+      compiles first, as on a machine without a floating-point unit. The
+      compiled program still runs on the reference machine.
+    const: false
   tokens:
-    description: The tokens TPC's scanner delivers, in order, up to the end of the
+    description: The tokens TPC reads, in order, up to the end of the
       program or up to the token where TPC reports an error. A token is its kind
       alone, or a mapping from its kind to its value.
     type: array

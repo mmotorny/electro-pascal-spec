@@ -1,0 +1,44 @@
+description: The program of predefined-symbols, compiled without a
+  floating-point unit.
+source: |
+  program P;
+  {$IFDEF VER70} const A = 1; {$ENDIF}
+  {$IFDEF MSDOS} const B = 2; {$ENDIF}
+  {$IFDEF CPU86} const C = 3; {$ENDIF}
+  {$IFDEF CPU87} const D = 4; {$ENDIF}
+  begin Write(A, B, C, D) end.
+fpu: false
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: A
+  - EQ
+  - INTEGER: 1
+  - SEMI
+  - CONST
+  - IDENT: B
+  - EQ
+  - INTEGER: 2
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 3
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: A
+  - COMMA
+  - IDENT: B
+  - COMMA
+  - IDENT: C
+  - COMMA
+  - IDENT: D
+compile:
+  error: 3
+  line: 6
+  column: 22
+  message: Unknown identifier.
