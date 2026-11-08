@@ -18,3 +18,4 @@ compile:
   error: 85
   line: 2
   column: 13
+  message: "\";\" expected."

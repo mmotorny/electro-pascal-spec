@@ -1,0 +1,25 @@
+description: A (* comment still open at the end of an include file.
+source: |
+  program P;
+  {$I DEFS.INC} *)
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    const C = 7; (* open
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+compile:
+  error: 10
+  line: 2
+  column: 1
+  file: DEFS.INC
+  message: Unexpected end of file.

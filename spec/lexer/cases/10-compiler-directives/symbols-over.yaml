@@ -28,3 +28,4 @@ compile:
   error: 127
   line: 17
   column: 10
+  message: Too many conditional symbols.

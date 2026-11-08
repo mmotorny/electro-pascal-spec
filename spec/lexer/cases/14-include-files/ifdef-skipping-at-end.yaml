@@ -1,0 +1,20 @@
+description: Text skipped by {$IFDEF} up to the end of an include file.
+source: |
+  program P;
+  {$I DEFS.INC} {$ENDIF} const C = 7;
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    {$IFDEF X} const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 129
+  line: 2
+  column: 1
+  file: DEFS.INC
+  message: ENDIF directive missing.

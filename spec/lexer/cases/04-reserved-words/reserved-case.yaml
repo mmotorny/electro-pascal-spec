@@ -11,3 +11,4 @@ compile:
   error: 2
   line: 1
   column: 16
+  message: Identifier expected.

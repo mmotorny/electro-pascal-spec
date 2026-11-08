@@ -1,0 +1,26 @@
+description: A 128-character line in an include file.
+source: |
+  program P;
+  {$I DEFS.INC}
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    const C = 7;
+    {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+compile:
+  error: 11
+  line: 2
+  column: 128
+  file: DEFS.INC
+  message: Line too long.

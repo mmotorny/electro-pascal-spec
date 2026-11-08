@@ -17,3 +17,4 @@ compile:
   error: 92
   line: 2
   column: 13
+  message: "\"[\" or \"(.\" expected."

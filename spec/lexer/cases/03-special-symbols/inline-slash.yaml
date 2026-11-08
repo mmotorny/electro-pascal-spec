@@ -1,0 +1,27 @@
+description: An inline directive with two bytes separated by /.
+source: |
+  program P;
+  procedure Q; inline($90/$90);
+  begin
+    Q
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - PROCEDURE
+  - IDENT: Q
+  - SEMI
+  - INLINE
+  - LPAREN
+  - INTEGER: 144
+  - SLASH
+  - INTEGER: 144
+  - RPAREN
+  - SEMI
+  - BEGIN
+  - IDENT: Q
+  - END
+  - DOT
+compile: ok
+output: ""

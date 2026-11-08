@@ -17,3 +17,4 @@ compile:
   error: 4
   line: 4
   column: 3
+  message: Duplicate identifier (AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAX).

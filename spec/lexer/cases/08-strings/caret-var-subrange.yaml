@@ -21,3 +21,4 @@ compile:
   error: 19
   line: 2
   column: 10
+  message: Undefined type in pointer definition (A).

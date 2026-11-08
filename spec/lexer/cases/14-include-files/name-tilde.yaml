@@ -1,0 +1,15 @@
+description: "Only letters are read in upper case: {$I a~b} looks for A~B.PAS."
+source: |
+  program P;
+  {$I a~b}
+  begin
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 15
+  line: 2
+  column: 9
+  message: File not found (A~B.PAS).

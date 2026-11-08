@@ -1,0 +1,37 @@
+description: Two include directives on one line.
+source: |
+  program P;
+  {$I A.INC}{$I B.INC}
+  begin
+    Write(C, E)
+  end.
+files:
+  A.INC: |
+    const C = 7;
+  B.INC: |
+    const E = 1;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - CONST
+  - IDENT: E
+  - EQ
+  - INTEGER: 1
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - COMMA
+  - IDENT: E
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "71"

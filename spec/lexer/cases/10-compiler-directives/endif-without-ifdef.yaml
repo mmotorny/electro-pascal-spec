@@ -10,3 +10,4 @@ compile:
   error: 128
   line: 2
   column: 3
+  message: Misplaced conditional directive.

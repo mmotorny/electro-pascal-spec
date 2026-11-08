@@ -1,0 +1,28 @@
+description: "{$I DEFS.INC} reads DEFS.INC in place of the directive."
+source: |
+  program P;
+  {$I DEFS.INC}
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

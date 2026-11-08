@@ -1,0 +1,25 @@
+description: "A token doesn't continue into an include file: 1, then the include's 3."
+source: |
+  program P;
+  const C = 1{$I DIGIT.INC}2;
+  begin
+    Write(C)
+  end.
+files:
+  DIGIT.INC: |-
+    3
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 1
+  - INTEGER: 3
+compile:
+  error: 85
+  line: 1
+  column: 1
+  file: DIGIT.INC
+  message: "\";\" expected."

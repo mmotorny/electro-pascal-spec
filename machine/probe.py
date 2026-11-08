@@ -63,20 +63,24 @@ class Tools:
         return result.stdout
 
 
-def parse_output(text):
-    """Turns TPC's output into a verdict."""
+def parse_output(text, main_file=None):
+    """Turns TPC's output into a verdict. An error in a file other than
+    main_file also gets "file": that file's name."""
     lines = text.replace("\r\n", "\n").split("\n")
     for i, line in enumerate(lines):
         # Progress lines like "P0001.PAS(1)" are overwritten with \r.
         line = line.rsplit("\r", 1)[-1]
-        match = re.match(r"^\S+\((\d+)\): Error (\d+): (.*)$", line)
+        match = re.match(r"^(\S+)\((\d+)\): Error (\d+): (.*)$", line)
         if match:
             column = None
             if i + 2 < len(lines) and "^" in lines[i + 2]:
                 column = lines[i + 2].index("^") + 1
-            return {"verdict": "error", "code": int(match.group(2)),
-                    "line": int(match.group(1)), "column": column,
-                    "message": match.group(3)}
+            result = {"verdict": "error", "code": int(match.group(3)),
+                      "line": int(match.group(2)), "column": column,
+                      "message": match.group(4)}
+            if main_file and match.group(1).upper() != main_file.upper():
+                result["file"] = match.group(1).upper()
+            return result
         match = re.match(r"^(?:\S+: )?Error (\d+): (.*)$", line)
         if match:
             return {"verdict": "error", "code": int(match.group(1)), "line": None,
@@ -87,6 +91,33 @@ def parse_output(text):
     return {"verdict": "unknown"}
 
 
+# Extra files a probe may bring along: DOS 8.3 names, in upper case.
+FILE_NAME = re.compile(r"[A-Z0-9_]{1,8}(\.[A-Z0-9_]{1,3})?")
+
+
+def probe_name(n):
+    """The name of probe number n: its folder on the floppy and its main file."""
+    return f"P{n:07}"
+
+
+def lay_out(tools, floppy, workdir, names, sources):
+    """Puts each probe in its own folder, A:\\P\\<name>\\, as <name>.PAS plus
+    the extra files it brings. A source is bytes, or (bytes, {name: bytes})."""
+    tree = os.path.join(workdir, "P")
+    for name, source in zip(names, sources):
+        main, extra = source if isinstance(source, tuple) else (source, {})
+        folder = os.path.join(tree, name)
+        os.makedirs(folder)
+        with open(os.path.join(folder, name + ".PAS"), "wb") as f:
+            f.write(main)
+        for file_name, data in extra.items():
+            if not FILE_NAME.fullmatch(file_name) or file_name.startswith("P0"):
+                raise ValueError(f"bad extra file name {file_name!r}")
+            with open(os.path.join(folder, file_name), "wb") as f:
+                f.write(data)
+    tools.mtool("mcopy", "-s", "-i", floppy, tree, "::/")
+
+
 def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
     """Compiles up to BATCH_SIZE sources on one machine.
 
@@ -95,13 +126,11 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
     """
     floppy = os.path.join(workdir, "probes.img")
     tools.mtool("mformat", "-C", "-f", "1440", "-i", floppy, "::")
-    tools.mtool("mmd", "-i", floppy, "::/P")
-    script = ["@ECHO OFF", "A:", "CD \\P"]
-    for n, source in enumerate(sources):
-        name = f"P{first + n:07}"
-        path = os.path.join(workdir, name + ".PAS")
-        with open(path, "wb") as f:
-            f.write(source)
+    names = [probe_name(first + n) for n in range(len(sources))]
+    lay_out(tools, floppy, workdir, names, sources)
+    script = ["@ECHO OFF", "A:"]
+    for name in names:
+        script.append(f"CD \\P\\{name}")
         if coverage:
             script.append("A:\\MARK")
         script += [f"{TPC} {name}.PAS > {name}.OUT"]
@@ -127,8 +156,6 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
         edges_file = os.path.join(workdir, "edges.txt")
         lo, hi = coverage["range"]
         extra = ["-plugin", f"{coverage['plugin']},out={edges_file},lo={lo},hi={hi}"]
-    tools.mtool("mcopy", "-i", floppy,
-                *[os.path.join(workdir, f"P{first + n:07}.PAS") for n in range(len(sources))], "::/P/")
 
     m = Machine(tools.qemu, workdir, disk, floppy=floppy, snapshot=True, floppy_writable=True,
                 boot="c", extra_args=extra)
@@ -139,9 +166,9 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
     finally:
         m.quit()
 
-    out_dir = os.path.join(workdir, "out")
-    os.makedirs(out_dir)
-    tools.mtool("mcopy", "-n", "-i", floppy, "::/P/*.OUT", "::/P/*.ERL", "::/P/*.RUN", out_dir + "/")
+    out = os.path.join(workdir, "out")
+    os.makedirs(out)
+    tools.mtool("mcopy", "-s", "-n", "-i", floppy, "::/P", out + "/")
     edges = []
     if coverage:
         with open(edges_file) as f:
@@ -150,13 +177,13 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
         # two markers, which is TPC compiling it.
         edges = [sorted(int(x, 16) for x in lines[2 * n + 1].split()) for n in range(len(sources))]
     results = []
-    for n in range(len(sources)):
-        name = f"P{first + n:07}"
+    for n, name in enumerate(names):
+        out_dir = os.path.join(out, "P", name)
         with open(os.path.join(out_dir, name + ".ERL"), "rb") as f:
             failed = bool(f.read().strip())
         with open(os.path.join(out_dir, name + ".OUT"), "rb") as f:
             output = f.read().decode("cp437")
-        result = parse_output(output)
+        result = parse_output(output, name + ".PAS")
         result["exit_code"] = 1 if failed else 0
         if coverage:
             result["coverage"] = edges[n]
@@ -215,7 +242,9 @@ def machine_info(tools, disk, workdir):
 
 
 def run(tools, disk, sources, jobs=None, coverage=None, coverage_range=None):
-    """Compiles each source (bytes) and returns (machine info, results).
+    """Compiles each source and returns (machine info, results). A source is
+    bytes, or (bytes, {file name: bytes}) for a program with extra files
+    beside it, such as include files.
 
     coverage: path to the coverage plugin, to record coverage.
     coverage_range: (lo, hi) linear addresses to count coverage in; default:

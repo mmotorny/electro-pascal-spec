@@ -1,0 +1,28 @@
+description: The name ends at a blank; text after it is ignored.
+source: |
+  program P;
+  {$I DEFS.INC more text}
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

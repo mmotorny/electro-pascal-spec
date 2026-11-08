@@ -26,7 +26,7 @@ comes from Borland's manuals. Check each change against these questions:
    spec's text or cases, which must describe behaviour only?
 4. Does it add implementation code to the spec (for example a lexer or parser
    written to behave like `TPC`), rather than harness tooling for building,
-   running, recording, comparing or fuzzing?
+   running, recording or comparing?
 5. Do test case descriptions (the `#` lines in `*.case` files) say why `TPC`
    behaves as it does in terms of its code, rather than what the input is and
    what it shows?

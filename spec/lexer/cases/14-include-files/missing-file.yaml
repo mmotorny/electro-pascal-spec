@@ -12,3 +12,4 @@ compile:
   error: 15
   line: 2
   column: 16
+  message: File not found (NOFILE.INC).

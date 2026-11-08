@@ -1,0 +1,19 @@
+description: "{$I DEFS} looks for DEFS.PAS, not DEFS.INC."
+source: |
+  program P;
+  {$I DEFS}
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 15
+  line: 2
+  column: 10
+  message: File not found (DEFS.PAS).

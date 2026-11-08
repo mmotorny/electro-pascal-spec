@@ -24,3 +24,4 @@ compile:
   error: 76
   line: 4
   column: 10
+  message: Constant out of range.

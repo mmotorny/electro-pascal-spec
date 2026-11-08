@@ -19,13 +19,18 @@ A case is a YAML file holding one mapping (see spec/case.schema.yaml):
   description  what the input is and what it shows.
   source       the program, byte for byte. Each character of the string is
                one byte, U+0000 to U+00FF.
+  files        optional: more files beside the program, such as include
+               files, as a mapping from DOS file names (upper case, 8.3) to
+               their contents, byte for byte like source.
   tokens       the tokens the spec says TPC's scanner delivers, up to the
                end of the program or the error: a kind alone, or a mapping
                from a kind to its value.
   compile      what compiling the source with TPC gives, written only by
                `bazel run //spec:record`:
-               "ok", or a mapping with "error" (the error number) and, when
-               TPC gives one, "line" and "column" (1-based).
+               "ok", or a mapping with "error" (the error number), "line"
+               and "column" (1-based) when TPC gives a position, "file" when
+               the error is in one of the files rather than the program, and
+               "message", TPC's error message.
   output       what the compiled program writes, also written only by the
                record tool; present only when the program compiles. One
                character per byte, like source.
@@ -43,7 +48,8 @@ import re
 import yaml
 
 EXTENSION = ".yaml"
-FIELDS = ("description", "source", "tokens", "compile", "output")
+FIELDS = ("description", "source", "files", "tokens", "compile", "output")
+VERDICT_FIELDS = ("error", "line", "column", "file", "message")
 WIDTH = 76
 
 
@@ -86,6 +92,17 @@ class Case:
         return self.data.get("compile")
 
     @property
+    def files(self):
+        """The extra files as {name: bytes}."""
+        return {k: v.encode("latin-1") for k, v in (self.data.get("files") or {}).items()}
+
+    @property
+    def input(self):
+        """What to give machine/probe.py and machine/tokens.py: the source, or
+        (source, files) when the case has files."""
+        return (self.source, self.files) if self.files else self.source
+
+    @property
     def output(self):
         """What the program wrote, as bytes, or None."""
         value = self.data.get("output")
@@ -120,6 +137,9 @@ def verdict(result):
         out = {"error": result["code"]}
         if result["line"]:
             out.update(line=result["line"], column=result["column"])
+        if result.get("file"):
+            out["file"] = result["file"]
+        out["message"] = result["message"]
         return out
     raise ValueError(f"TPC's verdict is {result['verdict']!r}")
 
@@ -133,6 +153,8 @@ def verdict_text(value):
     if value == "ok":
         return "ok"
     where = f" at {value['line']}:{value['column']}" if "line" in value else ""
+    if "file" in value:
+        where += f" in {value['file']}"
     return f"error {value['error']}{where}"
 
 
@@ -203,7 +225,7 @@ def folded(key, text):
 
 def block_ok(text):
     """Whether text can be a literal block scalar, read back exactly."""
-    if not text or not all(c in "\t\n" or " " <= c <= "~" for c in text):
+    if not text.strip("\n") or not all(c in "\t\n" or " " <= c <= "~" for c in text):
         return False
     lines = text.split("\n")
     if lines[0][:1] in (" ", "\t"):
@@ -211,14 +233,20 @@ def block_ok(text):
     return all(line == line.rstrip(" \t") for line in lines)
 
 
-def block(key, text):
+def block(key, text, indent=""):
     if text.endswith("\n\n"):
         indicator, body = "|+", text[:-1]
     elif text.endswith("\n"):
         indicator, body = "|", text[:-1]
     else:
         indicator, body = "|-", text
-    return [f"{key}: {indicator}"] + [("  " + line) if line else "" for line in body.split("\n")]
+    inner = indent + "  "
+    return [f"{indent}{key}: {indicator}"] + [(inner + line) if line else "" for line in body.split("\n")]
+
+
+def text_value(key, text, indent=""):
+    """key: text, as a literal block when it's plain text, else quoted."""
+    return block(key, text, indent) if block_ok(text) else [f"{indent}{key}: {quoted(text)}"]
 
 
 def dump(data):
@@ -234,7 +262,13 @@ def dump(data):
         if key == "description":
             lines += folded(key, value)
         elif key == "source":
-            lines += block(key, value) if block_ok(value) else [f"{key}: {quoted(value)}"]
+            lines += text_value(key, value)
+        elif key == "files":
+            lines.append("files:")
+            for name, text in value.items():
+                if not plain_ok(name):
+                    raise ValueError(f"bad file name {name!r}")
+                lines += text_value(name, text, "  ")
         elif key == "tokens":
             lines.append("tokens:" if value else "tokens: []")
             for token in value:
@@ -250,7 +284,7 @@ def dump(data):
                 lines.append("compile: ok")
             else:
                 lines.append("compile:")
-                lines += [f"  {k}: {value[k]}" for k in ("error", "line", "column") if k in value]
+                lines += [f"  {k}: {scalar(value[k])}" for k in VERDICT_FIELDS if k in value]
         else:
             lines.append(f"{key}: {scalar(value)}")
     text = "\n".join(lines) + "\n"

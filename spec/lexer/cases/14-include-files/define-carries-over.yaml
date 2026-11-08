@@ -1,0 +1,29 @@
+description: A symbol defined in an include file stays defined after it.
+source: |
+  program P;
+  {$I DEFS.INC}
+  {$IFDEF Y} const C = 7; {$ENDIF}
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    {$DEFINE Y}
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

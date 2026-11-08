@@ -65,6 +65,7 @@ python_tool(
     name = "tokens",
     data = [
         ":disk",
+        "//spec:MACHINE.json",
         "//third_party/mtools",
         "//third_party/qemu:qemu-system-i386",
     ],
@@ -72,6 +73,7 @@ python_tool(
         "--qemu=$(rootpath //third_party/qemu:qemu-system-i386)",
         "--mtools=$(rootpath //third_party/mtools)",
         "--disk=$(rootpath :disk)",
+        "--machine=$(rootpath //spec:MACHINE.json)",
     ],
     main = "tokens.py",
     srcs = [

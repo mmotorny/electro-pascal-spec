@@ -1,0 +1,23 @@
+description: An {$ENDIF} in an include file for an {$IFDEF} in the file that
+  includes it.
+source: |
+  program P;
+  {$DEFINE X} {$IFDEF X}
+  {$I DEFS.INC}
+  const C = 7;
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    {$ENDIF}
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 128
+  line: 1
+  column: 3
+  file: DEFS.INC
+  message: Misplaced conditional directive.

@@ -21,3 +21,4 @@ compile:
   error: 121
   line: 2
   column: 20
+  message: Invalid qualifier.

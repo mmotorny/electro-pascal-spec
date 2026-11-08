@@ -12,3 +12,4 @@ compile:
   error: 11
   line: 2
   column: 128
+  message: Line too long.

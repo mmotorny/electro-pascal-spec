@@ -1,0 +1,24 @@
+description: An include directive inside a procedure's statement part.
+source: |
+  program P;
+  procedure Q;
+  begin
+    {$I DEFS.INC}
+  end;
+  begin
+  end.
+files:
+  DEFS.INC: "\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - PROCEDURE
+  - IDENT: Q
+  - SEMI
+  - BEGIN
+compile:
+  error: 118
+  line: 4
+  column: 16
+  message: Include files are not allowed here.

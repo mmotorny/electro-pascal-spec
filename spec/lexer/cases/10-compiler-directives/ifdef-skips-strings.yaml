@@ -10,3 +10,4 @@ compile:
   error: 129
   line: 2
   column: 1
+  message: ENDIF directive missing.

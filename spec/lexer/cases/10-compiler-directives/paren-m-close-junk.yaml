@@ -13,3 +13,4 @@ compile:
   error: 5
   line: 2
   column: 19
+  message: Syntax error.

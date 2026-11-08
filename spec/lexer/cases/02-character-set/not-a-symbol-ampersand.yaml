@@ -12,3 +12,4 @@ compile:
   error: 5
   line: 2
   column: 1
+  message: Syntax error.

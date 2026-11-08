@@ -1,0 +1,17 @@
+description: A name of 85 characters is cut to its first 79; the message
+  shows the name looked for.
+source: |
+  program P;
+  {$I AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA}
+  begin
+    Write(C)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 15
+  line: 2
+  column: 91
+  message: File not found (AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.PAS).

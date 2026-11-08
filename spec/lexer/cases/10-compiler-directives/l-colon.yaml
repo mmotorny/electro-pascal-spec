@@ -15,3 +15,4 @@ compile:
   error: 15
   line: 4
   column: 4
+  message: File not found (:X.OBJ).

@@ -13,3 +13,4 @@ compile:
   error: 118
   line: 3
   column: 18
+  message: Include files are not allowed here.

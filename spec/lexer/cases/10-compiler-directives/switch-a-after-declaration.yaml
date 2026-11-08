@@ -18,3 +18,4 @@ compile:
   error: 17
   line: 3
   column: 3
+  message: Invalid compiler directive.

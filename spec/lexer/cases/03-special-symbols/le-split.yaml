@@ -17,3 +17,4 @@ compile:
   error: 42
   line: 3
   column: 10
+  message: Error in expression.

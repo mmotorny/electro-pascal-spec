@@ -10,3 +10,4 @@ compile:
   error: 5
   line: 1
   column: 16
+  message: Syntax error.

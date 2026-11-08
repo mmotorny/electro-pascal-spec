@@ -8,3 +8,4 @@ compile:
   error: 10
   line: 2
   column: 1
+  message: Unexpected end of file.

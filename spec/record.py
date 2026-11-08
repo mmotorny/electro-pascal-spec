@@ -46,9 +46,14 @@ def main():
         selected += [cases.Case(path)] if path.endswith(cases.EXTENSION) else cases.find(path)
 
     tools = probe.Tools(os.path.abspath(args.qemu), os.path.abspath(args.mtools))
-    sources = [c.source for c in selected]
+    sources = [c.input for c in selected]
     info, results = probe.run(tools, os.path.abspath(args.disk), sources)
-    _, captured = tokens.run(tools, os.path.abspath(args.disk), sources)
+    machine_file = os.path.join(spec, "MACHINE.json")
+    with open(machine_file) as f:
+        recorded = json.load(f)
+    # TPC.EXE must be the one MACHINE.json names: the token capture knows its
+    # internals. MACHINE.json is rewritten only after the capture succeeds.
+    _, captured = tokens.run(tools, os.path.abspath(args.disk), sources, recorded["sha256"][tokens.TPC_EXE])
     changed = 0
     for case, result, capture in zip(selected, results, captured):
         new = {"tokens": capture["tokens"], "compile": cases.verdict(result)}
@@ -67,10 +72,7 @@ def main():
         case.data.pop("output", None)
         case.data.update(new)
         case.save()
-    machine_file = os.path.join(spec, "MACHINE.json")
     if args.check:
-        with open(machine_file) as f:
-            recorded = json.load(f)
         if recorded != info:
             print(f"note: the cases were recorded on {recorded}, this run is on {info}")
         print(f"{len(selected)} cases, {changed} differ from TPC")

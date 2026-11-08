@@ -21,3 +21,4 @@ compile:
   error: 85
   line: 2
   column: 12
+  message: "\";\" expected."

@@ -72,14 +72,19 @@ output: "7"
   | `ASSIGN` | `:=` | none |
   | `CARET` `AT` | `^` `@` | none |
 
+- `files`, when present, holds more files beside the program, such as
+  include files: DOS file names in upper case, each mapped to its
+  contents, written like `source`.
 - `compile` is what compiling the source with `TPC` gives: `ok`, or the
-  error number with the line and column `TPC` reports it at:
+  error number with the line and column `TPC` reports it at, the file it
+  is in when that isn't the program, and `TPC`'s message:
 
   ```yaml
   compile:
     error: 5
     line: 1
     column: 16
+    message: Syntax error.
   ```
 
 - `output` is what the compiled program writes, one character per byte;
@@ -140,7 +145,8 @@ output: "7"
 Single characters `+ - * / = < > [ ] . , ( ) : ; ^ @` and pairs
 `<= >= <> := .. (. .)`
 ([arithmetic](lexer/cases/03-special-symbols/arithmetic.yaml), [relational](lexer/cases/03-special-symbols/relational.yaml), [brackets](lexer/cases/03-special-symbols/brackets.yaml), [caret-and-at](lexer/cases/03-special-symbols/caret-and-at.yaml)). `(.` and `.)` mean
-the same as `[` and `]` ([bracket-digraphs](lexer/cases/03-special-symbols/bracket-digraphs.yaml)). `{ } (* *)` delimit
+the same as `[` and `]` ([bracket-digraphs](lexer/cases/03-special-symbols/bracket-digraphs.yaml)). `/` is `SLASH` everywhere, the byte lists of
+`inline(...)` included ([inline-slash](lexer/cases/03-special-symbols/inline-slash.yaml)). `{ } (* *)` delimit
 [comments](#comments). `$` and `#` start [hex numbers](#numbers) and
 [control characters](#character-strings).
 
@@ -312,9 +318,9 @@ of:
   end of the comment is ignored, whatever it is and nothing at all
   included: `{$R}`, `{$R }` and `{$R=X}` are accepted
   ([parameter-c-text](lexer/cases/10-compiler-directives/parameter-c-text.yaml), [parameter-c-empty](lexer/cases/10-compiler-directives/parameter-c-empty.yaml), [parameter-d-text](lexer/cases/10-compiler-directives/parameter-d-text.yaml), [parameter-d-empty](lexer/cases/10-compiler-directives/parameter-d-empty.yaml), [parameter-g-text](lexer/cases/10-compiler-directives/parameter-g-text.yaml), [parameter-g-empty](lexer/cases/10-compiler-directives/parameter-g-empty.yaml), [parameter-s-text](lexer/cases/10-compiler-directives/parameter-s-text.yaml), [parameter-s-empty](lexer/cases/10-compiler-directives/parameter-s-empty.yaml), [switch-without-sign](lexer/cases/10-compiler-directives/switch-without-sign.yaml), [switch-r-blank](lexer/cases/10-compiler-directives/switch-r-blank.yaml), [r-equals](lexer/cases/10-compiler-directives/r-equals.yaml)).
-  `I` and `L` take a file name, even right after the letter; a missing
-  file is error 15, but that's not the lexer's business
-  ([include-missing-file](lexer/cases/10-compiler-directives/include-missing-file.yaml), [i-colon](lexer/cases/10-compiler-directives/i-colon.yaml), [l-colon](lexer/cases/10-compiler-directives/l-colon.yaml)). `O` takes a unit name.
+  `I` and `L` take a file name, read as described under
+  [include files](#include-files); a colon right after the letter is part
+  of it ([l-colon](lexer/cases/10-compiler-directives/l-colon.yaml)). `O` takes a unit name.
   `M` takes numbers, see [memory sizes](#memory-sizes)
   ([parameter-with-blank](lexer/cases/10-compiler-directives/parameter-with-blank.yaml)).
 
@@ -435,8 +441,47 @@ open at the end of the file is error 10, and a missing `{$ENDIF}` is error
 
 ### Include files
 
-`{$I name}` inside a statement part is error 118, just after the
-directive, before `TPC` looks for the file ([include-in-statement](lexer/cases/10-compiler-directives/include-in-statement.yaml)).
+`{$I name}` reads the named file in place of the directive, then goes on
+with the rest of the directive's line. Include files may include others
+([include](lexer/cases/14-include-files/include.yaml), [rest-of-line](lexer/cases/14-include-files/rest-of-line.yaml), [two-on-a-line](lexer/cases/14-include-files/two-on-a-line.yaml), [nested](lexer/cases/14-include-files/nested.yaml)).
+
+- The name is the text after the `I` and any blanks, up to the next blank,
+  `*` or `}`; text after a blank is ignored. Its letters are read in upper
+  case, other characters as they are, and only its first 79 characters are
+  kept. A name without an extension gets
+  `.PAS`, and `{$I}` alone looks for `.PAS`. A colon right after the `I` is
+  part of the name
+  ([lower-case-name](lexer/cases/14-include-files/lower-case-name.yaml), [name-then-text](lexer/cases/14-include-files/name-then-text.yaml), [name-ends-at-star](lexer/cases/14-include-files/name-ends-at-star.yaml), [name-with-colon](lexer/cases/14-include-files/name-with-colon.yaml), [i-colon-missing](lexer/cases/14-include-files/i-colon-missing.yaml), [name-79-characters](lexer/cases/14-include-files/name-79-characters.yaml), [default-extension](lexer/cases/14-include-files/default-extension.yaml), [default-extension-only](lexer/cases/14-include-files/default-extension-only.yaml), [no-name](lexer/cases/14-include-files/no-name.yaml), [name-tilde](lexer/cases/14-include-files/name-tilde.yaml)).
+- A missing file is error 15, just after the directive; the message names
+  the file that was looked for ([missing-file](lexer/cases/14-include-files/missing-file.yaml)).
+- Open include files share a limited room, and longer names take more of
+  it: 218 nested files with 8-character names fit but 219 don't, and 191
+  with 12-character names fit but 192 don't. The one that doesn't fit is
+  error 18 just after its directive, in the file that includes it. A file
+  that includes itself ends the same way
+  ([depth-218-short-names](lexer/cases/14-include-files/depth-218-short-names.yaml), [depth-219-short-names](lexer/cases/14-include-files/depth-219-short-names.yaml), [depth-191-long-names](lexer/cases/14-include-files/depth-191-long-names.yaml), [depth-192-long-names](lexer/cases/14-include-files/depth-192-long-names.yaml), [includes-itself](lexer/cases/14-include-files/includes-itself.yaml)).
+- Each file is read on its own terms: its own lines, with error 11 for a
+  long one, and ^Z ending just that file. Its last line needs no line end
+  ([long-line-in-include](lexer/cases/14-include-files/long-line-in-include.yaml), [ctrl-z-ends-include](lexer/cases/14-include-files/ctrl-z-ends-include.yaml), [no-final-line-end](lexer/cases/14-include-files/no-final-line-end.yaml)).
+  An error is reported in the file it is in, at that file's line
+  ([error-in-include](lexer/cases/14-include-files/error-in-include.yaml), [error-after-include](lexer/cases/14-include-files/error-after-include.yaml)).
+- Nothing crosses the end of an include file. A token ends there: in
+  `1{$I DIGIT.INC}2`, `1` and the include's first token are separate
+  tokens ([token-across-files](lexer/cases/14-include-files/token-across-files.yaml)). A comment still open there is error 10,
+  and a conditional still open there, compiled or skipped, is error 129,
+  both at the line after its last line, in the include file
+  ([comment-open-at-end](lexer/cases/14-include-files/comment-open-at-end.yaml), [brace-comment-open-at-end](lexer/cases/14-include-files/brace-comment-open-at-end.yaml), [ifdef-open-at-end](lexer/cases/14-include-files/ifdef-open-at-end.yaml), [ifdef-skipping-at-end](lexer/cases/14-include-files/ifdef-skipping-at-end.yaml)).
+  An `{$ENDIF}` in an include file can't close an `{$IFDEF}` of the file
+  that includes it: error 128 ([endif-closes-outer-ifdef](lexer/cases/14-include-files/endif-closes-outer-ifdef.yaml)).
+- Defined symbols and switches set in an include file stay set after it
+  ([define-carries-over](lexer/cases/14-include-files/define-carries-over.yaml), [switch-carries-over](lexer/cases/14-include-files/switch-carries-over.yaml)).
+- In skipped text, `{$I}` is skipped like any other directive
+  ([include-in-skipped-text](lexer/cases/14-include-files/include-in-skipped-text.yaml)).
+- `{$I}` inside any statement part is error 118, just after the directive,
+  before `TPC` looks for the file ([in-statement](lexer/cases/14-include-files/in-statement.yaml), [in-procedure-body](lexer/cases/14-include-files/in-procedure-body.yaml)).
+- The program can't end in an include file: with the main `begin … end.`
+  in one, `TPC` reads on to the include file's end and reports error 10
+  just after the `.` ([final-end-in-include](lexer/cases/14-include-files/final-end-in-include.yaml)).
 
 ### `)` ending a `(*$` directive
 
@@ -499,11 +544,6 @@ reproduce `TPC`'s own arithmetic. That arithmetic isn't known yet
 
 - The scanner inside `asm` blocks, which is a separate scanner: after `asm`,
   no further tokens reach the Pascal parser until the block's `end`.
-- Include files (`{$I name}`), beyond the rule that they can't start
-  inside a statement part. The cases are single files, so nesting, the
-  return to the including file and the limit on open files are untested.
-  How the file name is read (where it ends, its case, its length) shows
-  only in error 15's message, which the cases don't record.
 - `{$O unit}`, which needs units.
 - Whether `CPU87` is predefined on a machine without a floating-point
   unit.

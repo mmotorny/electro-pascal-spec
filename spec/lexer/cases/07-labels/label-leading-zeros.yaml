@@ -17,3 +17,4 @@ compile:
   error: 4
   line: 2
   column: 10
+  message: Duplicate identifier (0001).

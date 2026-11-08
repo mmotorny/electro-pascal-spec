@@ -7,3 +7,4 @@ compile:
   error: 11
   line: 1
   column: 128
+  message: Line too long.

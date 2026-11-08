@@ -10,3 +10,4 @@ compile:
   error: 17
   line: 2
   column: 9
+  message: Invalid compiler directive.

@@ -16,8 +16,10 @@ build it.
   (such as QEMU) and hashes of the key proprietary files (such as `BPC.EXE`
   and `TURBO.TPL`).
   The exception is a tool that relies on `TPC`'s internals: it must check
-  that `TPC.EXE` is the exact file its facts were taken from, by hash, and
-  refuse to run otherwise (as `machine/tokens.py` does).
+  that `TPC.EXE` is the exact file its facts were taken from and refuse to
+  run otherwise. `machine/tokens.py` checks against the hash in
+  `spec/MACHINE.json`, which `record` rewrites only after that check has
+  passed.
 - Don't wrap `bazel run` or `bazel build` commands in shell scripts, aliases
   or make targets. Document the Bazel command itself, in `README.md` for
   people or here for agents.
@@ -89,7 +91,7 @@ results may not.
   them.
 - **No implementation code in the spec**: the spec is prose and cases. Code
   in this repo is harness tooling only: building the machine, running,
-  recording, comparing and fuzzing.
+  recording and comparing.
 - Write the spec in your own words. Never copy prose, examples, syntax
   diagrams or the organisation of the manuals.
 - Don't use Borland, Turbo Pascal, Turbo Vision or MS-DOS in project names or
@@ -126,8 +128,6 @@ Why the boundary is drawn here:
   write a case for it.
 - **Test limits on both sides.** Where `TPC` compares against a constant (a
   length, a maximum value), add cases just below, at and just above it.
-- **Coverage-guided fuzzing** (`bazel run //fuzz`) finds what nobody thought
-  to ask. Turn each interesting find into a small case.
 - **Let the recorded result decide.** When a case disagrees with the spec's
   text, the case is right.
 

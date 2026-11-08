@@ -9,3 +9,4 @@ compile:
   error: 17
   line: 1
   column: 14
+  message: Invalid compiler directive.

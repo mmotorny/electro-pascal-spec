@@ -73,8 +73,9 @@ plugin header.
 
 The spec lives in [`spec/`](spec). It starts with the lexer,
 [`spec/lexer.md`](spec/lexer.md), backed by test cases in
-`spec/lexer/cases/`. Each case is a YAML file holding a small program, the
-tokens the spec expects, and what compiling and running it with `TPC` gave;
+`spec/lexer/cases/`. Each case is a YAML file holding a small program (and
+any include files it reads), the tokens `TPC` delivers for it, and what
+compiling and running it with `TPC` gave, including any error message;
 [`spec/case.schema.yaml`](spec/case.schema.yaml) defines the format.
 
 - `bazel run //spec:record [-- case or directory ...]` runs cases through
@@ -97,14 +98,6 @@ tokens the spec expects, and what compiling and running it with `TPC` gave;
 Where Borland's documents disagree with `TPC`, the spec follows `TPC` and
 doesn't mention them. The disagreements are collected in
 [`notes/discrepancies.md`](notes/discrepancies.md).
-
-## Fuzzing
-
-`bazel run //fuzz -- --out DIR [--rounds N]` mutates the spec's cases and
-keeps every mutant that makes `TPC` run code no earlier input reached,
-shrinks each one, and writes them to `DIR` with their verdicts. These finds
-are candidates for new cases. `--range-file` limits coverage to an address
-range, to focus on one part of `TPC`.
 
 ## IDE help as text
 

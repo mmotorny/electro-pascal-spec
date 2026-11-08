@@ -1,0 +1,16 @@
+description: "{$I} without a name looks for .PAS."
+source: |
+  program P;
+  {$I}
+  begin
+    Write(C)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 15
+  line: 2
+  column: 5
+  message: File not found (.PAS).

@@ -16,7 +16,6 @@ Prints one line per file, or with --out writes JSON: {"machine": ...,
 
 import argparse
 import concurrent.futures
-import hashlib
 import json
 import os
 import re
@@ -34,8 +33,8 @@ from gdbremote import GdbRemote
 #
 # Facts about TPC's internals, needed to watch its scanner: where in its load
 # image to stop, where in its data segment the token is, and how it numbers
-# token kinds. They hold only for this TPC.EXE, which run() checks first:
-TPC_SHA256 = "72211facc2159c758fd6db2a6076517568d82654f1a6b92539745af50274e3f0"
+# token kinds. They hold only for the TPC.EXE whose SHA-256 spec/MACHINE.json
+# records, which run() checks first.
 
 # Paragraph where TPC's load image starts when run from probe.py's batch file.
 LOAD_SEG = 0x4B8
@@ -43,9 +42,6 @@ LOAD_SEG = 0x4B8
 ENTRY = 0x0000            # TPC starts.
 SCAN_EXIT = 0x8301        # The scanner has a token; its kind is stored.
 RESCAN_EXIT = 0x8524      # A caret token was scanned again as a character string.
-# SHA-256 of the 9 bytes of code just before SCAN_EXIT, to tell TPC from other
-# programs (such as the compiled probe) that load at the same place.
-SCAN_EXIT_CHECK = (SCAN_EXIT - 3, 9, "00eabec346a782c50c577fa96e9808d77215d4b5eb718243cc40cfada37796b8")
 # Variables in TPC's data segment.
 DS_WINDOW = (0x2C60, 0x2FA0)  # Covers all of them; read in one go.
 V_FILEREC = 0x2C78        # Pointer to the current file's record: +2 line number (word),
@@ -74,6 +70,8 @@ SYMBOLS = {
 # Reserved words have kinds of their own, which TPC keeps in a table in its
 # load image: entries of a 2-byte link, the kind, the length and the word.
 KEYWORD_TABLE = (0x8D74, 0x8F24)
+# Where probe.machine_info and spec/MACHINE.json keep TPC.EXE's hash.
+TPC_EXE = "BP\\BIN\\TPC.EXE"
 
 # -----------------------------------------------------------------------------
 
@@ -131,15 +129,10 @@ class Capture:
             self.error = e
             self._gdb.close()
 
-    def _is_tpc(self):
-        offset, size, digest = SCAN_EXIT_CHECK
-        code = self._gdb.read_memory(LOAD_SEG * 16 + offset, size)
-        return hashlib.sha256(code).hexdigest() == digest
-
     def _handle(self, regs):
         cs, ip = regs["cs"], regs["eip"] & 0xFFFF
-        if cs != LOAD_SEG or not self._is_tpc():
-            return  # Some other program at the same place.
+        if cs != LOAD_SEG:
+            return  # Only TPC runs at this place: the batch runs nothing else.
         if ip == ENTRY:
             self.runs.append([])
             return
@@ -199,13 +192,12 @@ def run_batch(tools, disk, sources, workdir, first=0):
     os.makedirs(workdir, exist_ok=True)
     floppy = os.path.join(workdir, "probes.img")
     tools.mtool("mformat", "-C", "-f", "1440", "-i", floppy, "::")
-    tools.mtool("mmd", "-i", floppy, "::/P")
-    script = ["@ECHO OFF", "A:", "CD \\P"]
-    names = [f"P{first + n:07}" for n in range(len(sources))]
-    for name, source in zip(names, sources):
-        with open(os.path.join(workdir, name + ".PAS"), "wb") as f:
-            f.write(source)
+    names = [probe.probe_name(first + n) for n in range(len(sources))]
+    probe.lay_out(tools, floppy, workdir, names, sources)
+    script = ["@ECHO OFF", "A:"]
+    for name in names:
         script += [
+            f"CD \\P\\{name}",
             f"{probe.TPC} {name}.PAS > {name}.OUT",
             f"IF ERRORLEVEL 1 ECHO 1> {name}.ERL",
             f"IF EXIST {name}.EXE DEL {name}.EXE",
@@ -214,7 +206,6 @@ def run_batch(tools, disk, sources, workdir, first=0):
     with open(os.path.join(workdir, "RUN.BAT"), "wb") as f:
         f.write(("\r\n".join(script) + "\r\n").encode("ascii"))
     tools.mtool("mcopy", "-i", floppy, os.path.join(workdir, "RUN.BAT"), "::/")
-    tools.mtool("mcopy", "-i", floppy, *[os.path.join(workdir, n + ".PAS") for n in names], "::/P/")
 
     # A short socket path: Unix socket paths are limited to about 100 bytes.
     sockdir = tempfile.mkdtemp(prefix="cap", dir="/tmp")
@@ -245,34 +236,38 @@ def run_batch(tools, disk, sources, workdir, first=0):
             if (a["line"], a["column"], a["file"]) == (b["line"], b["column"], b["file"]):
                 raise RuntimeError(f"file {first + n}: token at {a['line']}:{a['column']} seen twice")
 
-    out_dir = os.path.join(workdir, "out")
-    os.makedirs(out_dir)
-    tools.mtool("mcopy", "-n", "-i", floppy, "::/P/*.OUT", "::/P/*.ERL", out_dir + "/")
+    out = os.path.join(workdir, "out")
+    os.makedirs(out)
+    tools.mtool("mcopy", "-s", "-n", "-i", floppy, "::/P", out + "/")
     results = []
     for name, tokens in zip(names, cap.runs):
-        with open(os.path.join(out_dir, name + ".OUT"), "rb") as f:
+        with open(os.path.join(out, "P", name, name + ".OUT"), "rb") as f:
             output = f.read().decode("cp437")
         # TPC adds the compile time when it's 0.1 s or more, which breakpoints
         # make likely. Drop it: it isn't deterministic.
         output = re.sub(r"(\d+ lines), \d+\.\d+ seconds,", r"\1,", output)
-        result = probe.parse_output(output)
+        result = probe.parse_output(output, name + ".PAS")
         result["raw_tokens"] = tokens
         results.append(result)
     return results
 
 
-def run(tools, disk, sources, jobs=None):
-    """Compiles each source (bytes) and returns (machine info, results). Each
-    result is probe.py's verdict plus "tokens", in the form of a case's."""
+def run(tools, disk, sources, tpc_sha256, jobs=None):
+    """Compiles each source (bytes, or (bytes, {file name: bytes}) as for
+    probe.run) and returns (machine info, results). Each result is probe.py's
+    verdict plus "tokens", in the form of a case's, from every file read.
+
+    tpc_sha256: the SHA-256 of the TPC.EXE this tool's facts hold for, as
+    spec/MACHINE.json records it. Raises if the reference disk's differs."""
     jobs = jobs or os.cpu_count() or 1
     size = max(1, min(probe.BATCH_SIZE, -(-len(sources) // jobs)))
     batches = [sources[i:i + size] for i in range(0, len(sources), size)]
     with tempfile.TemporaryDirectory(prefix="cap") as work:
         info = probe.machine_info(tools, disk, work)
-        found = info["sha256"]["BP\\BIN\\TPC.EXE"]
-        if found != TPC_SHA256:
+        found = info["sha256"][TPC_EXE]
+        if found != tpc_sha256:
             raise RuntimeError(f"the reference disk's TPC.EXE has SHA-256 {found}, but what this tool "
-                               f"knows about TPC's internals holds only for {TPC_SHA256}")
+                               f"knows about TPC's internals holds only for {tpc_sha256}")
         words = reserved_words(tools, disk, work)
 
         def one(i):
@@ -290,9 +285,6 @@ def run(tools, disk, sources, jobs=None):
         with concurrent.futures.ThreadPoolExecutor(jobs) as pool:
             results = [r for batch in pool.map(one, range(len(batches))) for r in batch]
     for result in results:
-        main_file = result["raw_tokens"][0]["file"] if result["raw_tokens"] else None
-        if any(t["file"] != main_file for t in result["raw_tokens"]):
-            raise RuntimeError("tokens from an include file; the spec's cases are single files")
         result["tokens"] = [spec_token(t, words) for t in result.pop("raw_tokens")]
     return info, results
 
@@ -302,6 +294,7 @@ def main():
     parser.add_argument("--qemu", required=True)
     parser.add_argument("--mtools", required=True)
     parser.add_argument("--disk", required=True)
+    parser.add_argument("--machine", required=True, help="spec/MACHINE.json, which names the TPC.EXE")
     parser.add_argument("--jobs", type=int)
     parser.add_argument("--out", help="JSON file to write; default: one line per file on stdout")
     parser.add_argument("sources", nargs="+", help="Pascal sources or spec cases")
@@ -313,10 +306,15 @@ def main():
             data = f.read()
         if path.endswith(".yaml"):
             import yaml
-            data = yaml.safe_load(data)["source"].encode("latin-1")
+            case = yaml.safe_load(data)
+            data = case["source"].encode("latin-1")
+            if case.get("files"):
+                data = (data, {k: v.encode("latin-1") for k, v in case["files"].items()})
         sources.append(data)
+    with open(args.machine) as f:
+        tpc_sha256 = json.load(f)["sha256"][TPC_EXE]
     tools = probe.Tools(os.path.abspath(args.qemu), os.path.abspath(args.mtools))
-    info, results = run(tools, os.path.abspath(args.disk), sources, args.jobs)
+    info, results = run(tools, os.path.abspath(args.disk), sources, tpc_sha256, args.jobs)
     if args.out:
         with open(os.path.join(base, args.out), "w") as f:
             json.dump({"machine": info, "results": [dict(source=p, **r) for p, r in zip(args.sources, results)]},

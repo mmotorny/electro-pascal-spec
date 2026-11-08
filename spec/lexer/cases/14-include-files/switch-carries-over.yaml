@@ -1,0 +1,29 @@
+description: A switch set in an include file stays set after it.
+source: |
+  program P;
+  {$I DEFS.INC}
+  {$IFOPT R+} const C = 7; {$ENDIF}
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    {$R+}
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

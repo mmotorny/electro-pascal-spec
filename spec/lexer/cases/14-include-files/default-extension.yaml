@@ -1,0 +1,28 @@
+description: "A name without an extension gets .PAS: {$I DEFS} reads DEFS.PAS."
+source: |
+  program P;
+  {$I DEFS}
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.PAS: |
+    const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

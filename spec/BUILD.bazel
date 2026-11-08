@@ -67,4 +67,7 @@ python_test(
     srcs = ["cases.py"],
 )
 
-exports_files(["cases.py"])
+exports_files([
+    "MACHINE.json",
+    "cases.py",
+])

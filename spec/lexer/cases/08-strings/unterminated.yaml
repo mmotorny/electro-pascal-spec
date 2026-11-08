@@ -13,3 +13,4 @@ compile:
   error: 8
   line: 1
   column: 26
+  message: String constant exceeds line.

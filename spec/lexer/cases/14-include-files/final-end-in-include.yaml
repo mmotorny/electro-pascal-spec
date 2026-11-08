@@ -1,0 +1,26 @@
+description: The program's statement part and final end. in an include file.
+source: |
+  program P;
+  {$I BODY.INC}
+files:
+  BODY.INC: |
+    begin
+      Write(1)
+    end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - INTEGER: 1
+  - RPAREN
+  - END
+  - DOT
+compile:
+  error: 10
+  line: 3
+  column: 4
+  file: BODY.INC
+  message: Unexpected end of file.

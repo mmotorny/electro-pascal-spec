@@ -12,3 +12,4 @@ compile:
   error: 15
   line: 2
   column: 11
+  message: File not found (:X.INC).

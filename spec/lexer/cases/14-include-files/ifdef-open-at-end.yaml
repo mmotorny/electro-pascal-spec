@@ -1,0 +1,26 @@
+description: A compiled {$IFDEF} still open at the end of an include file;
+  the {$ENDIF} after the directive doesn't count.
+source: |
+  program P;
+  {$I DEFS.INC} {$ENDIF}
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    {$DEFINE X} {$IFDEF X} const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+compile:
+  error: 129
+  line: 2
+  column: 1
+  file: DEFS.INC
+  message: ENDIF directive missing.

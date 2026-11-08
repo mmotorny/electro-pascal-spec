@@ -1,0 +1,35 @@
+description: ^Z ends the include file only; the including file goes on.
+source: |
+  program P;
+  {$I DEFS.INC}
+  const E = 1;
+  begin
+    Write(C, E)
+  end.
+files:
+  DEFS.INC: "const C = 7;\x1a !!!\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - CONST
+  - IDENT: E
+  - EQ
+  - INTEGER: 1
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - COMMA
+  - IDENT: E
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "71"

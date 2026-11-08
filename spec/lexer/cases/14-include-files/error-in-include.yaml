@@ -1,0 +1,24 @@
+description: An error inside an include file is reported in that file.
+source: |
+  program P;
+  {$I DEFS.INC}
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+
+    const C = !;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+compile:
+  error: 5
+  line: 2
+  column: 11
+  file: DEFS.INC
+  message: Syntax error.

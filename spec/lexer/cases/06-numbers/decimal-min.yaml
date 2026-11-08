@@ -17,3 +17,4 @@ compile:
   error: 7
   line: 2
   column: 21
+  message: Error in integer constant.

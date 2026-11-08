@@ -1,0 +1,32 @@
+description: An include directive in skipped text is skipped too.
+source: |
+  program P;
+  {$IFDEF X}
+  {$I DEFS.INC}
+  const C = 1;
+  {$ENDIF}
+  const C = 7;
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    {$ENDIF}
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

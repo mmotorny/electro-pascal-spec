@@ -1,0 +1,19 @@
+description: A colon right after I is part of the name.
+source: |
+  program P;
+  {$I:DEFS.INC}
+  begin
+    Write(C)
+  end.
+files:
+  DEFS.INC: |
+    const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 15
+  line: 2
+  column: 14
+  message: File not found (:DEFS.INC).

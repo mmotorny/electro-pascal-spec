@@ -26,3 +26,4 @@ compile:
   error: 6
   line: 3
   column: 38
+  message: Error in real constant.

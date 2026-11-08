@@ -13,3 +13,4 @@ compile:
   error: 17
   line: 3
   column: 5
+  message: Invalid compiler directive.

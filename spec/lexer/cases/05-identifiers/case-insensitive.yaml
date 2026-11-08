@@ -16,3 +16,4 @@ compile:
   error: 4
   line: 2
   column: 8
+  message: Duplicate identifier (X).

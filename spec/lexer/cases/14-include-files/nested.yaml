@@ -1,0 +1,32 @@
+description: An include file may include another.
+source: |
+  program P;
+  {$I A.INC}
+  begin
+    Write(C)
+  end.
+files:
+  A.INC: |
+    {$I B.INC}
+  B.INC: |
+    {$I C.INC}
+  C.INC: |
+    const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

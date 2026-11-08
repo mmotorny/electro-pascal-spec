@@ -1,0 +1,20 @@
+description: A file that includes itself.
+source: |
+  program P;
+  {$I SELF.INC}
+  begin
+    Write(C)
+  end.
+files:
+  SELF.INC: |
+    {$I SELF.INC}
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 18
+  line: 1
+  column: 14
+  file: SELF.INC
+  message: Too many files.

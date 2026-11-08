@@ -21,3 +21,4 @@ compile:
   error: 26
   line: 2
   column: 21
+  message: Type mismatch.

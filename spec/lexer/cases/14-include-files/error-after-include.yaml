@@ -1,0 +1,25 @@
+description: An error after an include file is reported in the including
+  file, at its own line.
+source: |
+  program P;
+  {$I DEFS.INC}
+  !
+  begin
+  end.
+files:
+  DEFS.INC: |
+    const C = 7;
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 7
+  - SEMI
+compile:
+  error: 5
+  line: 3
+  column: 1
+  message: Syntax error.
