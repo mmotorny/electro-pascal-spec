@@ -111,12 +111,12 @@ Why the boundary is drawn here:
 ## Review
 
 Nothing is pushed to `main` until it has passed review against the facts
-boundary. The reviewer is independent of the author: Gemini 4 Argon, run
-through the Antigravity CLI in a separate worktree of the commits to push,
-so it sees only what they would publish (no `dirty/`, no build outputs). It
-may read the whole repo and search the web. Its checklist is
-[`review/facts-boundary.md`](review/facts-boundary.md). Push only on PASS;
-on FAIL, fix the problems and review again.
+boundary. The reviewer is independent of the author: GPT-6.1 Sol at medium
+reasoning effort, run through the Codex CLI in a separate worktree of the
+commits to push, so it sees only what they would publish (no `dirty/`, no
+build outputs). It may read the whole repo and search the web. Its
+checklist is [`review/facts-boundary.md`](review/facts-boundary.md). Push
+only on PASS; on FAIL, fix the problems and review again.
 
 Commit locally, then review the commits not yet on `origin/main` (replace
 DIR with a scratch folder):
@@ -124,21 +124,13 @@ DIR with a scratch folder):
 ```
 git fetch --quiet origin && git worktree add --quiet --detach DIR HEAD
 cd DIR && git diff origin/main...HEAD > REVIEW.diff
-tmux new-session -d -s review -x 200 -y 50 -c DIR \
-  "agy --model gemini-4-argon-high --sandbox --mode auto -i \"\$(cat review/facts-boundary.md)\""
+codex exec -m gpt-6.1-sol -c model_reasoning_effort='"medium"' \
+  -c web_search='"live"' -s read-only --ephemeral \
+  "$(cat review/facts-boundary.md)" < /dev/null
+cd - && git worktree remove --force DIR
 ```
 
-Run `agy` interactively in auto mode, as above. Headless `--print` doesn't
-work: auto mode isn't available there, and every command the reviewer runs
-is denied. Watch the session with `tmux capture-pane -p -t review` until it
-shows `VERDICT: PASS` or `VERDICT: FAIL`. The first time, it asks whether to
-trust the folder: it is the worktree, so confirm, then kill the session and
-start it again, since auto mode is only on when the folder was trusted at
-startup. Auto mode still asks before some commands: read each one in full
-(`ctrl+o` expands it), and approve it with `tmux send-keys -t review Enter`
-only if it just reads. Then clean up:
-
-```
-tmux kill-session -t review
-git worktree remove --force DIR
-```
+The read-only sandbox lets the reviewer run commands without asking, so
+this runs unattended. `< /dev/null` matters: without a terminal on stdin,
+Codex waits to read more of the prompt from it. The verdict is the last
+thing it prints.
