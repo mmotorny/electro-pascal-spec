@@ -1,5 +1,4 @@
-description: Text between {$IFDEF} and {$ENDIF} for an undefined symbol is
-  skipped without being scanned.
+description: "Text between {$IFDEF} and {$ENDIF} for an undefined symbol is skipped: it gives no tokens."
 source: |
   program P; {$IFDEF NOTDEFINED} @@@ 'unterminated
   {$ENDIF} begin end.

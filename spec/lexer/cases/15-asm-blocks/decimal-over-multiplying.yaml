@@ -1,4 +1,4 @@
-description: "4294967300: too large once 429496730 is multiplied by 10."
+description: "4294967300: its first nine digits, 429496730, are in range, but the whole number isn't."
 source: |
   program P;
   var

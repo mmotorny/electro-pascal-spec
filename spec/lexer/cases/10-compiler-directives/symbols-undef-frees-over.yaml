@@ -1,5 +1,5 @@
-description: After {$UNDEF VER70}, a last symbol of 46 characters is one
-  byte too many.
+description: After {$UNDEF VER70}, a last symbol of 46 characters is
+  rejected.
 source: |
   program P;
   {$UNDEF VER70}

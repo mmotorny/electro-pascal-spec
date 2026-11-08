@@ -1,5 +1,5 @@
-description: After VER70, MSDOS, CPU86, CPU87 and three 63-character
-  symbols, the ) right after the name in (*$DEFINE ABCDE) ends the comment.
+description: With three 63-character symbols defined, the ) right after the
+  name in (*$DEFINE ABCDE) ends the comment.
 source: |
   program P;
   {$DEFINE AXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}

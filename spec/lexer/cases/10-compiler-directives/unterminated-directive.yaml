@@ -1,4 +1,4 @@
-description: "A directive that never ends: the directive is checked first."
+description: "A directive, {$R+, that never ends: error 10 at the end of the file."
 source: |
   program P; {$R+ begin end.
 tokens:

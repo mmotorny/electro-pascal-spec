@@ -1,4 +1,4 @@
-description: "'429496729A0': the 'A' comes before the value gets too large."
+description: "'429496729A0': nine digits in range, then a character that isn't a digit, then 0."
 source: |
   program P;
   var

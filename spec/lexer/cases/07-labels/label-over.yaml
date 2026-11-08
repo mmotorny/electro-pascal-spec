@@ -1,4 +1,4 @@
-description: "10000 is delivered as a number, then rejected as a label: the range check is not the lexer's."
+description: "10000 as a label: it is an INTEGER token, and the label is rejected."
 source: |
   program P;
   label 10000;

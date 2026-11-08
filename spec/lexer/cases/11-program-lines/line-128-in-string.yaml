@@ -1,4 +1,4 @@
-description: "A 128-character line holding an unterminated string: the line is too long before the string is read."
+description: "A 128-character line holding an unterminated string: the error is the line's length, not the string."
 source: |
   program P;
   const S = 'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss

@@ -1,5 +1,4 @@
-description: Fifteen 63-character symbols and one of 40 characters are one
-  byte too many.
+description: "Fifteen 63-character symbols and one of 40 characters: the last one is rejected."
 source: |
   program P;
   {$DEFINE AXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}

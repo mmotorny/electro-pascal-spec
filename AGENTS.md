@@ -50,10 +50,24 @@ build it.
   `compile: hang` (a compile still running after 30 seconds). Before
   committing such a case, confirm in the dirty room, from `TPC`'s code and
   by comparing its state between passes, that it loops forever rather than
-  running slowly. The spec then says that `TPC` never finishes, and nothing
-  more: what an implementation does instead is for the implementation repo
-  to decide. Say why it happens in
-  [`notes/curiosities.md`](notes/curiosities.md), in terms of behaviour.
+  running slowly. The part's limits file then says that `TPC` never
+  finishes on that input, and nothing more: not why, and not what an
+  implementation should do instead, which is for the implementation repo
+  to decide.
+- Keep `TPC`'s capacity limits and its failures apart from the behaviour
+  an implementation must match. A part's main file (such as
+  `spec/lexer.md`) holds the behaviour; its limits file (such as
+  `spec/lexer-limits.md`) holds the capacity limits, where `TPC` just
+  gives up (how many files may be open, how long a line may be), and its
+  bugs, such as hangs. Record them with cases all the same, and say only
+  what `TPC` does, never why: an explanation of a limit or a bug brings
+  `TPC`'s workings into what a clean-room implementer reads. Leave it to
+  the implementation repo to decide whether to match them. A limit
+  that changes what a valid program means (such as which digits of a real
+  count, or where a long identifier is cut) is behaviour and stays in the
+  main file. Where the main file meets a limit, it says so in a line and
+  links to the limits file. Bring borderline calls to the user rather
+  than deciding them.
 - Describe in a case's `description` what its input is and what it shows,
   never why `TPC` behaves that way inside.
 - Write cases as small, complete programs of our own, laid out over lines
@@ -80,10 +94,10 @@ results may not.
 
 - **Facts are welcome**, whatever they were learned from: programs we wrote,
   results recorded from `TPC` (verdicts, program output, token streams in the
-  spec's token names), descriptions in our own words of how `TPC` behaves,
-  including how its parts interact (for example where the parser makes the
-  lexer read `^` as a character), and the facts about `TPC`'s internals that
-  the harness needs to observe it (see Tools).
+  spec's token names), descriptions in our own words of what `TPC` does
+  observably, including exactly what it computes (such as the arithmetic
+  that gives a real literal's bits), and the facts about `TPC`'s internals
+  that the harness needs to observe it (see Tools).
 - **Never Borland's expression**: no code, disassembly listings, text from
   the manuals or the IDE help, and nothing copied or paraphrased from the
   runtime library source on the BP disks. Exact identifiers, declarations
@@ -99,9 +113,13 @@ results may not.
   marked place (see `machine/tokens.py`). Never its code: no machine code,
   byte patterns or disassembly; compare against a hash where a tool must
   recognise `TPC`'s code.
-- **The spec stays behaviour only.** Internals never appear in the spec or
-  the cases: the clean-room implementation reads them and doesn't need
-  them.
+- **Nothing explains how `TPC` works inside**, outside the one marked place
+  in a tool: not the spec, the cases, notes, docs or comments. No
+  mechanisms, components (a "scanner", "the assembler") handing work to
+  each other, data structures, buffers, the order of internal steps, or
+  why `TPC` does what it does. Say what an input gives, not how `TPC` gets
+  there. The clean-room implementation reads the spec and must not learn
+  `TPC`'s design from it.
 - **No implementation code in the spec**: the spec is prose and cases. Code
   in this repo is harness tooling only: building the machine, running,
   recording and comparing.
@@ -120,9 +138,11 @@ Why the boundary is drawn here:
   agents doesn't make anyone clean. A review of everything that crosses the
   boundary does.
 - **Behaviour is not protected, however it was learned.** A language's
-  lexical structure, its token stream and how a compiler's parts hand work
-  to each other are methods of operation and functionality, not expression.
-  Don't hold back facts out of excess caution.
+  lexical structure, its token stream and the values a compiler computes
+  are methods of operation and functionality, not expression. Don't hold
+  back facts out of excess caution.
+- **Explanations stay out to keep the clean room clean**, not because they
+  are protected: an implementer who learns `TPC`'s design copies it.
 - **What stays out does so for concrete reasons**: Borland's expression is
   protected, and passing on information obtained by decompiling is limited
   to what interoperability needs. Checking a compatible compiler's spec

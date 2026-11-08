@@ -1,5 +1,5 @@
-description: In (*$M 16384,0,672), with 672 bytes being 42 paragraphs, the )
-  right after the number ends the comment.
+description: In (*$M 16384,0,672), the ) right after the number ends the
+  comment.
 source: |
   program P;
   (*$M 16384,0,672) begin Write(1) end. *)

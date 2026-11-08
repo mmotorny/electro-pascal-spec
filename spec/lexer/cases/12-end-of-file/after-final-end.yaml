@@ -1,4 +1,4 @@
-description: Nothing after the final end. is scanned.
+description: Text after the final end. is ignored.
 source: |
   program P; begin end. @@@ 'unterminated
 tokens:

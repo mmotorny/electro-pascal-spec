@@ -38,8 +38,7 @@ definition: it's the compiler people's programs were built with.
   ([string-five](../spec/lexer/cases/15-asm-blocks/string-five.yaml)).
 - **Binary numbers in `asm` blocks.** The IDE help gives the range of
   numbers in an `asm` block as up to 4294967295 in any notation. `TPC`
-  reads only a number's first 32 characters, so a binary number with 32
-  digits loses its `B` and is rejected as too large a decimal number; the
+  rejects a binary number of 32 digits as too large (error 76); the
   largest binary number it accepts is 31 ones
   ([binary-31-digits](../spec/lexer/cases/15-asm-blocks/binary-31-digits.yaml),
   [binary-32-digits](../spec/lexer/cases/15-asm-blocks/binary-32-digits.yaml)).

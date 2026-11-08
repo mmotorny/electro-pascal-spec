@@ -1,5 +1,5 @@
-description: In (*$M 16384,0,688), with 43 paragraphs, the ) doesn't end the
-  comment.
+description: In (*$M 16384,0,688), the ) right after the number doesn't end
+  the comment.
 source: |
   program P;
   (*$M 16384,0,688) begin Write(1) end. *)

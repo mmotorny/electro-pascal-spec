@@ -1,6 +1,5 @@
-description: A literal whose digits, read as one integer, need 48 bits. The
-  output is the constant's 80-bit Extended value in hex, most significant
-  byte first.
+description: 150842375.945992, with 15 significant digits. The output is the
+  constant's 80-bit Extended value in hex, most significant byte first.
 source: |
   {$N+,E-}
   program P;

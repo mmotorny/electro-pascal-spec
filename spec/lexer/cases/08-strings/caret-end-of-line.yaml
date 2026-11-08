@@ -1,4 +1,4 @@
-description: "^ at the end of a line, where an operand is expected: TPC delivers CARET, then reports error 8 as for an unterminated string."
+description: "^ at the end of a line, where an operand is expected: the token CARET, then error 8."
 source: |
   program P; const C = ^
   M; begin end.

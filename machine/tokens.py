@@ -31,29 +31,36 @@ from gdbremote import GdbRemote
 
 # --- What this tool knows about TPC.EXE --------------------------------------
 #
-# Facts about TPC's internals, needed to watch its scanner: where in its load
-# image to stop, where in its data segment the token is, and how it numbers
-# token kinds. They hold only for the TPC.EXE whose SHA-256 spec/MACHINE.json
+# Facts about TPC's internals, needed to watch it deliver tokens: where in
+# its load image to stop, where in memory and registers the token is, and how
+# it numbers token kinds. They hold only for the TPC.EXE whose SHA-256 spec/MACHINE.json
 # records, which run() checks first.
 
 # Paragraph where TPC's load image starts when run from probe.py's batch file.
 LOAD_SEG = 0x4B8
 # Breakpoints, as offsets in the load image (TPC's code segment starts there).
 ENTRY = 0x0000            # TPC starts.
-SCAN_EXIT = 0x8301        # The scanner has a token; its kind is stored.
-RESCAN_EXIT = 0x8524      # A caret token was scanned again as a character string.
+SCAN_EXIT = 0x8301        # A token is ready; its kind is in V_KIND.
+RESCAN_EXIT = 0x8524      # A CARET token was replaced by a character string;
+                          # its kind is in AL.
+# At both, SI points just past the token's last character.
 # Variables in TPC's data segment.
 DS_WINDOW = (0x2C60, 0x2FA0)  # Covers all of them; read in one go.
-V_FILEREC = 0x2C78        # Pointer to the current file's record: +2 line number (word),
-                          # +0x12 name length (byte), +0x13 name.
+V_FILEREC = 0x2C78        # Pointer to the current file's record (R_* below).
 V_CONSTTYPE = 0x2CA4      # Type of a constant token: T_* below.
 V_START = 0x2D4C          # Pointer to the token's first character in the line buffer.
 V_KIND = 0x2D5C           # The token's kind (byte).
 V_LINEBUF = 0x2E32        # The current line.
+LINEBUF_SIZE = 0x80
 V_IDENT = 0x2F02          # An identifier: length byte, then its characters as written.
 V_VALUE = 0x2F42          # A constant's value: a 32-bit integer, a character, or a
                           # pointer to a length-prefixed string.
 T_INTEGER, T_REAL, T_STRING, T_CHAR = 0x152, 0xF2, 0xBA, 0x1CE
+# The current file's record.
+R_LINE = 0x02             # Line number (word).
+R_NAME_LEN = 0x12         # Length of the file's name (byte).
+R_NAME = 0x13             # The name.
+R_SIZE = R_NAME + 80      # Covers them all.
 # Token kinds.
 IDENT_KIND = 0x01
 CONST_KIND = 0x02
@@ -63,20 +70,20 @@ SYMBOLS = {
     0x0D: "LPAREN", 0x0E: "RPAREN", 0x0F: "LBRACKET", 0x10: "RBRACKET",
     0x11: "DOT", 0x12: "COMMA", 0x13: "COLON", 0x14: "SEMI", 0x15: "CARET",
     0x16: "ASSIGN", 0x17: "DOTDOT", 0x18: "AT",
-    # Kinds the parser asks for in some contexts; each stands for one text.
-    0x19: "SLASH",  # `/` inside an inline(...) list.
-    0x1A: "EQ",     # `=` while the type of a typed constant is parsed.
+    # Second kinds TPC also gives `/` and `=`.
+    0x19: "SLASH",
+    0x1A: "EQ",
 }
-# Reserved words have kinds of their own, which TPC keeps in a table in its
-# load image: entries of a 2-byte link, the kind, the length and the word.
+# Reserved words have kinds of their own, listed in TPC's load image here:
+# entries of 2 bytes skipped, the kind, the length and the word.
 KEYWORD_TABLE = (0x8D74, 0x8F24)
-# The built-in assembler, which reads asm blocks with a scanner of its own. Its
-# code segment starts this many paragraphs into the load image.
+# Tokens of asm blocks: the code segment to stop in starts this many
+# paragraphs into the load image.
 ASM_SEG = 0x0C97
 # Breakpoints, as offsets in that segment.
-ASM_STATEMENT = 0x0006    # The assembler starts on a statement.
-ASM_EXIT = 0x07F8         # Its scanner has a token; DH is the token's kind.
-# The scanner's state, in the assembler's stack frame, as offsets from BP.
+ASM_STATEMENT = 0x0006    # A statement starts.
+ASM_EXIT = 0x07F8         # A token is ready; DH is its kind.
+# The token, as offsets from BP at ASM_EXIT.
 A_TEXT = -0x12            # Far pointer to the text being read.
 A_START = -0x14           # Offset of the token's first character.
 A_CLASS = -0x19           # What the raw token is: A_SYMBOL, A_WORD or A_STRING.
@@ -86,10 +93,10 @@ A_UPPER = -0x8E           # A word in upper case: length byte, then the characte
 A_VALUE = -0x36           # A number's value: 32 bits.
 A_CHARS = -0x10E          # A string's characters: length byte, then the characters.
 A_FRAME = -0x110          # Covers all of them.
-# Kinds the assembler's scanner gives tokens.
+# Kinds of asm tokens.
 A_END = 0x3B              # The statement has ended.
 A_INSTRUCTION = 0x41
-A_NUMBER = 0x64           # Strings too, which are numbers outside db.
+A_NUMBER = 0x64           # Also the kind of a string; A_CLASS tells them apart.
 A_IDENT = 0x6B            # A Pascal identifier.
 A_FIRST = 0x01            # The first word of a statement isn't an instruction.
 A_RESERVED = set(range(0x43, 0x51)) | {0x65, 0x66}  # Registers, operators, sizes.
@@ -175,11 +182,12 @@ class Capture:
         w = self._gdb.read_memory(ds + lo, hi - lo)
         word = lambda off: struct.unpack_from("<H", w, off - lo)[0]
         kind = w[V_KIND - lo] if ip == SCAN_EXIT else regs["eax"] & 0xFF
-        record = self._gdb.read_memory(ds + word(V_FILEREC), 0x13 + 80)
+        record = self._gdb.read_memory(ds + word(V_FILEREC), R_SIZE)
         start, end = word(V_START), regs["esi"] & 0xFFFF
-        text = w[start - lo:end - lo].decode("latin-1") if V_LINEBUF <= start <= end <= V_LINEBUF + 0x80 else None
-        token = {"kind": kind, "text": text, "line": struct.unpack_from("<H", record, 2)[0],
-                 "column": start - V_LINEBUF + 1, "file": record[0x13:0x13 + record[0x12]].decode("latin-1")}
+        text = w[start - lo:end - lo].decode("latin-1") if V_LINEBUF <= start <= end <= V_LINEBUF + LINEBUF_SIZE else None
+        token = {"kind": kind, "text": text, "line": struct.unpack_from("<H", record, R_LINE)[0],
+                 "column": start - V_LINEBUF + 1,
+                 "file": record[R_NAME:R_NAME + record[R_NAME_LEN]].decode("latin-1")}
         if kind == CONST_KIND:
             t, value = word(V_CONSTTYPE), w[V_VALUE - lo:V_VALUE - lo + 10]
             if t == T_INTEGER:
@@ -195,14 +203,13 @@ class Capture:
             n = w[V_IDENT - lo]
             token["ident"] = w[V_IDENT + 1 - lo:V_IDENT + 1 - lo + n].decode("latin-1")
         if ip == RESCAN_EXIT:
-            self.runs[-1][-1] = token  # Replaces the caret token the parser just got.
+            self.runs[-1][-1] = token  # Replaces the CARET token captured just before.
         else:
             self.runs[-1].append(token)
 
     def _handle_asm(self, regs, ip):
-        """A token of an asm block. The assembler asks for the end of a
-        statement again after it has had it: only the first counts, and a
-        statement with no other token gives none."""
+        """Records one asm token. Of consecutive ASM_END hits only the first is
+        kept, and a statement with no other token records none."""
         if ip == ASM_STATEMENT:
             self._statement = []
             return
@@ -214,7 +221,7 @@ class Capture:
         word = lambda off: struct.unpack_from("<H", f, at(off))[0]
         counted = lambda off: f[at(off) + 1:at(off) + 1 + f[at(off)]].decode("latin-1")
         kind, cls = (regs["edx"] >> 8) & 0xFF, f[at(A_CLASS)]
-        if kind == A_END:  # Whatever the class: it can be the last token's.
+        if kind == A_END:  # Checked before the class.
             if not self._statement or self._statement[-1]["asm"] == "ASM_END":
                 return
             token = {"asm": "ASM_END"}
@@ -225,7 +232,7 @@ class Capture:
         elif cls == A_WORD and kind == A_NUMBER:
             token = {"asm": "ASM_NUMBER", "integer": struct.unpack_from("<I", f, at(A_VALUE))[0]}
         elif cls == A_WORD and kind == A_IDENT:
-            name = counted(A_UPPER)  # A_RAW loses its & in a way that garbles it.
+            name = counted(A_UPPER)  # Read from A_UPPER; a leading & is dropped below.
             token = {"asm": "ASM_IDENT", "ident": name[1:] if name.startswith("&") else name}
         elif cls == A_WORD and kind in {A_INSTRUCTION, A_FIRST} | A_RESERVED:
             name = {A_INSTRUCTION: "ASM_INSTRUCTION", A_FIRST: "ASM_WORD"}.get(kind, "ASM_RESERVED")
@@ -233,12 +240,12 @@ class Capture:
         else:
             raise RuntimeError(f"asm token of kind {kind:#x}, class {cls} this tool doesn't know")
         record = self._gdb.read_memory(self._ds * 16 + DS_WINDOW[0], DS_WINDOW[1] - DS_WINDOW[0])
-        rec = self._gdb.read_memory(self._ds * 16 + struct.unpack_from("<H", record, V_FILEREC - DS_WINDOW[0])[0], 0x13 + 80)
+        rec = self._gdb.read_memory(self._ds * 16 + struct.unpack_from("<H", record, V_FILEREC - DS_WINDOW[0])[0], R_SIZE)
         text_seg = word(A_TEXT + 2)
-        token.update(line=struct.unpack_from("<H", rec, 2)[0], file=rec[0x13:0x13 + rec[0x12]].decode("latin-1"),
+        token.update(line=struct.unpack_from("<H", rec, R_LINE)[0], file=rec[R_NAME:R_NAME + rec[R_NAME_LEN]].decode("latin-1"),
                      column=word(A_START) - V_LINEBUF + 1 if text_seg == self._ds else None, text=None)
         if token["asm"] == "ASM_END":
-            token["column"] = None  # Often still the position of the token before.
+            token["column"] = None  # Not reported for ASM_END.
         self._statement.append(token)
         self.runs[-1].append(token)
 

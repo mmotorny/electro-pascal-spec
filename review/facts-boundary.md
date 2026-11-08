@@ -27,15 +27,17 @@ comes from Borland's manuals. Check each change against these questions:
 4. Does it add implementation code to the spec (for example a lexer or parser
    written to behave like `TPC`), rather than harness tooling for building,
    running, recording or comparing?
-5. Do test case descriptions (the `#` lines in `*.case` files) say why `TPC`
-   behaves as it does in terms of its code, rather than what the input is and
-   what it shows?
+5. Does anything outside the marked block of a tool (the spec, case
+   descriptions, notes, docs, comments) explain how `TPC` works inside or
+   why it behaves as it does: its mechanisms, components handing work to
+   each other, data structures, buffers or the order of internal steps,
+   rather than what an input gives?
 6. Does it name or hint at where to download Borland's or Microsoft's
    proprietary files?
 
-Descriptions of behaviour in the authors' own words are fine, including how
-`TPC`'s parts interact, as are programs the authors wrote, results recorded
-from running `TPC`, and generic tools.
+Descriptions of behaviour in the authors' own words are fine, including
+exactly what `TPC` computes, as are programs the authors wrote, results
+recorded from running `TPC`, and generic tools.
 
 Answer with "VERDICT: PASS" or "VERDICT: FAIL" on the first line, then, for a
 FAIL, list each problem with the file, the line and why. Be concrete and

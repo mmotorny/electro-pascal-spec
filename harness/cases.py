@@ -27,7 +27,7 @@ A case is a YAML file holding one mapping (see spec/case.schema.yaml):
   precompile   optional: names of some of those files, which TPC compiles,
                in that order and with no options, before the program; for
                units that the program needs compiled already.
-  tokens       the tokens the spec says TPC's scanner delivers, up to the
+  tokens       the tokens TPC reads in the program, up to the
                end of the program or the error: a kind alone, or a mapping
                from a kind to its value.
   compile      what compiling the source with TPC gives, written only by

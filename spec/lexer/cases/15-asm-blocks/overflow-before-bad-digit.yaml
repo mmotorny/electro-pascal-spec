@@ -1,4 +1,4 @@
-description: "'4294967295A0': the value gets too large at the 'A'."
+description: "'4294967295A0': the largest value, then a character that isn't a digit, then 0."
 source: |
   program P;
   var

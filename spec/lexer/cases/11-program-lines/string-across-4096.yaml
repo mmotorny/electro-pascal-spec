@@ -1,5 +1,4 @@
-description: A string literal running from byte 4090 to byte 4130 of the
-  file.
+description: A string literal after many lines of comments.
 source: |
   program P;
   {xxxxxxxxxxxxxxxxxx}

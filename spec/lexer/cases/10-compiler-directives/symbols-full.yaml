@@ -1,5 +1,4 @@
-description: Fifteen 63-character symbols and one of 39 characters fill the
-  room for conditional symbols exactly.
+description: "Fifteen 63-character symbols and one of 39 characters: all are defined."
 source: |
   program P;
   {$DEFINE AXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}

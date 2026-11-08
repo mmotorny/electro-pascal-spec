@@ -10,13 +10,11 @@ and are the final word; where this text and a case disagree, the case is
 right and this text needs fixing. `bazel test //harness:tpc_test` checks that
 every case still matches what `TPC` gives.
 
-Between them, the cases take both sides of every branch in `TPC`'s scanner,
-and in the scanner of its built-in assembler, that a single source file can
-reach, except as noted under
-[not covered yet](#not-covered-yet). A case's token list ends where `TPC`
-stops asking for tokens: at the end of the program, or at the token where
-it reports an error. When the error is in the lexer itself, the bad token
-is not delivered.
+The cases are meant to show every lexical behaviour a single source file
+can reach, except as noted under [not covered yet](#not-covered-yet). A
+case's token list ends at the end of the program, or at the token where
+`TPC` reports an error. A token that is itself in error, such as a bad
+number, string or character, is not listed.
 
 ## Cases
 
@@ -109,21 +107,18 @@ output: "7"
   one long line ([lf-ends-a-line](lexer/cases/01-separators/lf-ends-a-line.yaml), [crlf-ends-a-line](lexer/cases/01-separators/crlf-ends-a-line.yaml), [cr-does-not-end-a-line](lexer/cases/01-separators/cr-does-not-end-a-line.yaml)).
 - A line may hold at most 127 characters, not counting CRs. A tab counts as
   one character ([line-127](lexer/cases/11-program-lines/line-127.yaml), [line-127-crlf](lexer/cases/11-program-lines/line-127-crlf.yaml), [line-127-two-crs](lexer/cases/11-program-lines/line-127-two-crs.yaml), [line-127-with-cr-inside](lexer/cases/11-program-lines/line-127-with-cr-inside.yaml), [line-127-tab](lexer/cases/11-program-lines/line-127-tab.yaml)).
-- A longer line is error 11 at column 128, before any token on that line is
-  delivered ([line-128](lexer/cases/11-program-lines/line-128.yaml), [line-128-tab](lexer/cases/11-program-lines/line-128-tab.yaml), [line-128-with-cr-inside](lexer/cases/11-program-lines/line-128-with-cr-inside.yaml)). This
+- A longer line is error 11 at column 128, and no token on that line is
+  listed ([line-128](lexer/cases/11-program-lines/line-128.yaml), [line-128-tab](lexer/cases/11-program-lines/line-128-tab.yaml), [line-128-with-cr-inside](lexer/cases/11-program-lines/line-128-with-cr-inside.yaml)). This
   happens wherever the line is: inside a comment, an unterminated string or
   text skipped by `{$IFDEF}` too
   ([line-128-in-comment-before-end](lexer/cases/11-program-lines/line-128-in-comment-before-end.yaml), [line-128-in-string](lexer/cases/11-program-lines/line-128-in-string.yaml), [line-128-in-skipped-text](lexer/cases/11-program-lines/line-128-in-skipped-text.yaml)).
-- NUL (0) bytes are dropped as a line is read, as if they weren't in the
-  file: `pro`, NUL, `gram` is `program`, a NUL between two digits or inside
+- NUL (0) bytes are ignored, as if they weren't in the file: `pro`, NUL, `gram` is `program`, a NUL between two digits or inside
   a quoted string disappears, and NULs don't count toward the line length.
   So are carriage returns: `pro`, CR, `gram` is `program` too, and CRs take
   no column in the positions `TPC` reports
   ([cr-inside-word](lexer/cases/01-separators/cr-inside-word.yaml), [cr-does-not-end-a-line](lexer/cases/01-separators/cr-does-not-end-a-line.yaml))
   ([nul-in-word](lexer/cases/02-character-set/nul-in-word.yaml), [nul-in-number](lexer/cases/02-character-set/nul-in-number.yaml), [nul-in-string](lexer/cases/02-character-set/nul-in-string.yaml), [nul-not-counted](lexer/cases/02-character-set/nul-not-counted.yaml), [nul-after-semicolon](lexer/cases/02-character-set/nul-after-semicolon.yaml)).
-- Nothing changes where a token crosses a 4096-byte boundary of the file
-  ([string-across-4096](lexer/cases/11-program-lines/string-across-4096.yaml)).
-- ^Z (26) ends the file; nothing after it is read
+- ^Z (26) ends the file; what follows it is ignored
   ([ctrl-z-ends-file](lexer/cases/12-end-of-file/ctrl-z-ends-file.yaml)). When the file ends too early, the error is
   reported at column 1 of the line after the last line read. A line with
   text before its ^Z counts as read; a line that starts with ^Z doesn't, so
@@ -131,12 +126,12 @@ output: "7"
   ([ctrl-z-line-3](lexer/cases/12-end-of-file/ctrl-z-line-3.yaml), [ctrl-z](lexer/cases/15-asm-blocks/ctrl-z.yaml))
   ([ctrl-z-early](lexer/cases/12-end-of-file/ctrl-z-early.yaml), [ctrl-z-early-more-lines](lexer/cases/12-end-of-file/ctrl-z-early-more-lines.yaml), [ctrl-z-line-3](lexer/cases/12-end-of-file/ctrl-z-line-3.yaml), [missing-final-dot](lexer/cases/12-end-of-file/missing-final-dot.yaml)).
   The last line needs no line end ([no-final-newline](lexer/cases/12-end-of-file/no-final-newline.yaml)).
-- Scanning stops after the program's final `end.`. Anything after it is
-  never read ([after-final-end](lexer/cases/12-end-of-file/after-final-end.yaml)).
+- Text after the program's final `end.` is ignored, whatever it holds
+  ([after-final-end](lexer/cases/12-end-of-file/after-final-end.yaml)).
 
 ## Separators
 
-- Characters 1 to 32 are blanks (0 never gets this far, see
+- Characters 1 to 32 are blanks (NUL is ignored altogether, see
   [source text](#source-text)). Blanks and comments separate tokens and are
   otherwise ignored ([control-characters-are-blanks](lexer/cases/01-separators/control-characters-are-blanks.yaml), [comment-is-a-separator](lexer/cases/01-separators/comment-is-a-separator.yaml)).
 - A separator is needed only between two tokens that would otherwise run
@@ -154,7 +149,7 @@ output: "7"
 - The printable characters ``! " % & ? \ ` | ~``, DEL (127) and the
   characters 128 to 255 are allowed only inside strings and comments
   ([high-characters-in-string](lexer/cases/02-character-set/high-characters-in-string.yaml), [del-in-string](lexer/cases/02-character-set/del-in-string.yaml), [not-a-symbol-in-comment](lexer/cases/02-character-set/not-a-symbol-in-comment.yaml)).
-  Elsewhere each is error 5, and no token is delivered for it
+  Elsewhere each is error 5, and no token is listed for it
   ([not-a-symbol-exclamation](lexer/cases/02-character-set/not-a-symbol-exclamation.yaml), [not-a-symbol-double-quote](lexer/cases/02-character-set/not-a-symbol-double-quote.yaml), [not-a-symbol-percent](lexer/cases/02-character-set/not-a-symbol-percent.yaml), [not-a-symbol-ampersand](lexer/cases/02-character-set/not-a-symbol-ampersand.yaml), [not-a-symbol-question-mark](lexer/cases/02-character-set/not-a-symbol-question-mark.yaml), [not-a-symbol-backslash](lexer/cases/02-character-set/not-a-symbol-backslash.yaml), [not-a-symbol-backquote](lexer/cases/02-character-set/not-a-symbol-backquote.yaml), [not-a-symbol-vertical-bar](lexer/cases/02-character-set/not-a-symbol-vertical-bar.yaml), [not-a-symbol-tilde](lexer/cases/02-character-set/not-a-symbol-tilde.yaml), [not-a-symbol-del](lexer/cases/02-character-set/not-a-symbol-del.yaml), [high-character-outside-string](lexer/cases/02-character-set/high-character-outside-string.yaml)).
 
 ## Special symbols
@@ -178,7 +173,7 @@ shl shr string then to type unit until uses var while with xor`
 
 `exports`, `library` and the standard directives `absolute assembler export
 external far forward index interrupt near private public resident virtual`
-are ordinary identifiers to the lexer ([not-reserved-*](lexer/cases/04-reserved-words/)).
+are not reserved: each is an `IDENT` ([not-reserved-*](lexer/cases/04-reserved-words/)).
 
 ## Identifiers
 
@@ -241,9 +236,9 @@ are ordinary identifiers to the lexer ([not-reserved-*](lexer/cases/04-reserved-
 
 A label is an identifier or a number from 0 to 9999; leading zeros don't
 matter, so `01` and `1` are the same label
-([label-identifier](lexer/cases/07-labels/label-identifier.yaml), [label-max](lexer/cases/07-labels/label-max.yaml), [label-leading-zeros](lexer/cases/07-labels/label-leading-zeros.yaml)). To the lexer a
-numeric label is an ordinary `INTEGER`: `10000` is delivered as a number and
-then rejected where a label is expected ([label-over](lexer/cases/07-labels/label-over.yaml)).
+([label-identifier](lexer/cases/07-labels/label-identifier.yaml), [label-max](lexer/cases/07-labels/label-max.yaml), [label-leading-zeros](lexer/cases/07-labels/label-leading-zeros.yaml)). A numeric
+label is an `INTEGER` token: `10000` is listed as one, and the error comes
+where a label is expected ([label-over](lexer/cases/07-labels/label-over.yaml)).
 
 ## Character strings
 
@@ -275,12 +270,13 @@ between parts ends the string, and the next part starts a new one
   ([caret-backquote](lexer/cases/08-strings/caret-backquote.yaml), [caret-z](lexer/cases/08-strings/caret-z.yaml), [caret-brace](lexer/cases/08-strings/caret-brace.yaml), [caret-tilde](lexer/cases/08-strings/caret-tilde.yaml), [caret-del](lexer/cases/08-strings/caret-del.yaml), [caret-high](lexer/cases/08-strings/caret-high.yaml)).
   Only one character is taken: `^Integer` is `^I` followed by the
   identifier `nteger` ([caret-word](lexer/cases/08-strings/caret-word.yaml)). Where an operand is expected but
-  `^` is the last character on its line, `TPC` delivers `CARET` and then
-  reports error 8 just after it, as for an unterminated string
+  `^` is the last character on its line, the token is `CARET`, then error 8
+  just after it
   ([caret-end-of-line](lexer/cases/08-strings/caret-end-of-line.yaml)).
 
-Any number of strings, however long, may appear in one statement
-([many-long-strings](lexer/cases/08-strings/many-long-strings.yaml)).
+Any number of strings, however long, may appear in one statement, and
+anywhere in a file
+([many-long-strings](lexer/cases/08-strings/many-long-strings.yaml), [string-across-4096](lexer/cases/11-program-lines/string-across-4096.yaml)).
 
 Whether `^` starts a string depends on where it appears. Where an operand
 of an expression is expected, `^` and the next character are a character
@@ -324,9 +320,8 @@ A comment whose first character is `$` is a compiler directive
 Their names aren't case sensitive ([lower-case-directive](lexer/cases/10-compiler-directives/lower-case-directive.yaml), [switch-lower-sign](lexer/cases/10-compiler-directives/switch-lower-sign.yaml)).
 `{ $R+}` is an ordinary comment ([blank-before-dollar](lexer/cases/10-compiler-directives/blank-before-dollar.yaml)).
 
-A directive is checked as soon as `{$` or `(*$` is read, before the end of
-the comment is looked for, so a bad directive is error 17 even in a comment
-that never ends
+A bad directive is error 17 even in a comment that never ends, not error
+10
 ([invalid-directive-unterminated](lexer/cases/10-compiler-directives/invalid-directive-unterminated.yaml), [unterminated-directive](lexer/cases/10-compiler-directives/unterminated-directive.yaml)). Its name is
 the run of letters and digits after the `$`, so `{$M16384}` has the unknown
 name `M16384` ([m-no-blank-number](lexer/cases/10-compiler-directives/m-no-blank-number.yaml), [long-unknown-name](lexer/cases/10-compiler-directives/long-unknown-name.yaml)). The name is one
@@ -351,9 +346,9 @@ of:
   `I` and `L` take a file name, read as described under
   [include files](#include-files); a colon right after the letter is part
   of it ([l-colon](lexer/cases/10-compiler-directives/l-colon.yaml)). `L` names an object file, and a name without a
-  `.` gets `.OBJ`. `TPC` looks for it only at the program's final `.`: a
-  missing file is error 15 there, naming the file, and comes before error
-  129 for a conditional still open there
+  `.` gets `.OBJ`. A missing object file is error 15, reported at the
+  program's final `.` and naming the file; with a conditional also still
+  open there, the error is 15, not 129
   ([l-colon](lexer/cases/10-compiler-directives/l-colon.yaml), [paren-l-no-close](lexer/cases/10-compiler-directives/paren-l-no-close.yaml), [l-missing-and-ifdef-open](lexer/cases/10-compiler-directives/l-missing-and-ifdef-open.yaml)). `O` takes a unit name, see [overlays](#overlays).
   `M` takes numbers, see [memory sizes](#memory-sizes)
   ([parameter-with-blank](lexer/cases/10-compiler-directives/parameter-with-blank.yaml)).
@@ -446,16 +441,15 @@ nothing. A name that can't be a symbol, such as `/D1X`, is error 130
 token
 ([d-option](lexer/cases/10-compiler-directives/d-option.yaml), [d-option-lower-case](lexer/cases/10-compiler-directives/d-option-lower-case.yaml), [d-option-two](lexer/cases/10-compiler-directives/d-option-two.yaml), [d-option-comma](lexer/cases/10-compiler-directives/d-option-comma.yaml), [d-option-empty](lexer/cases/10-compiler-directives/d-option-empty.yaml), [d-option-digit-first](lexer/cases/10-compiler-directives/d-option-digit-first.yaml)).
 
-The
-defined symbols, these four included, share 1024 bytes, each taking its
-length plus one. A `{$DEFINE}` that doesn't fit is error 127 at its name.
-Removing a symbol, even a predefined one, makes room again
+Counting each
+defined symbol, these four included, as its length plus one, the total may
+be at most 1024. A `{$DEFINE}` that would go over is error 127 at its name.
+Removing a symbol, even a predefined one, lowers the total
 ([symbols-full](lexer/cases/10-compiler-directives/symbols-full.yaml), [symbols-over](lexer/cases/10-compiler-directives/symbols-over.yaml), [symbols-undef-frees](lexer/cases/10-compiler-directives/symbols-undef-frees.yaml), [symbols-undef-frees-over](lexer/cases/10-compiler-directives/symbols-undef-frees-over.yaml)).
 
 ### Conditional compilation
 
-The conditional directives work at this level: skipped text produces no
-tokens ([ifdef-skips](lexer/cases/10-compiler-directives/ifdef-skips.yaml)).
+Skipped text produces no tokens ([ifdef-skips](lexer/cases/10-compiler-directives/ifdef-skips.yaml)).
 
 - `{$IFDEF name}` compiles the text up to its `{$ELSE}` or `{$ENDIF}` if
   `name` is defined, and skips it otherwise. `{$IFNDEF name}` does the
@@ -486,7 +480,7 @@ tokens ([ifdef-skips](lexer/cases/10-compiler-directives/ifdef-skips.yaml)).
   open at the program's final `end.` is error 129 at the `.`
   ([ifdef-open-at-final-end](lexer/cases/10-compiler-directives/ifdef-open-at-final-end.yaml)).
 
-Skipped text is still read for comments and quoted strings, though: a
+In skipped text, comments and quoted strings are still recognised: a
 `{$ENDIF}` inside a comment or after an apostrophe on the same line doesn't
 count ([ifdef-skips-comments](lexer/cases/10-compiler-directives/ifdef-skips-comments.yaml), [ifdef-skips-strings](lexer/cases/10-compiler-directives/ifdef-skips-strings.yaml)). A string still open
 at the end of a line just ends there ([ifdef-skips](lexer/cases/10-compiler-directives/ifdef-skips.yaml)). A comment still
@@ -545,10 +539,9 @@ with the rest of the directive's line. Include files may include others
 - In skipped text, `{$I}` is skipped like any other directive
   ([include-in-skipped-text](lexer/cases/14-include-files/include-in-skipped-text.yaml)).
 - `{$I}` inside any statement part is error 118, just after the directive,
-  before `TPC` looks for the file ([in-statement](lexer/cases/14-include-files/in-statement.yaml), [in-procedure-body](lexer/cases/14-include-files/in-procedure-body.yaml)).
+  whether or not the file exists ([in-statement](lexer/cases/14-include-files/in-statement.yaml), [in-procedure-body](lexer/cases/14-include-files/in-procedure-body.yaml)).
 - The program can't end in an include file: with the main `begin … end.`
-  in one, `TPC` reads on to the include file's end and reports error 10
-  at the `.` ([final-end-in-include](lexer/cases/14-include-files/final-end-in-include.yaml)). Nor can a statement part go on past
+  in one, it is error 10 at the `.` ([final-end-in-include](lexer/cases/14-include-files/final-end-in-include.yaml)). Nor can a statement part go on past
   the end of the include file it begins in: with `begin` in an include
   file and the rest in the program, it is error 10 at the line after the
   include file's last line ([statement-part-begins-in-include](lexer/cases/14-include-files/statement-part-begins-in-include.yaml)).
@@ -567,18 +560,18 @@ Errors:
   `Crt`: error 144 at the name ([o-unit-not-overlay](lexer/cases/10-compiler-directives/o-unit-not-overlay.yaml), [o-without-overlay-unit](lexer/cases/10-compiler-directives/o-without-overlay-unit.yaml));
 - `{$O name}` in a unit: error 17 at the `O` ([o-in-unit](lexer/cases/10-compiler-directives/o-in-unit.yaml)).
 
-`{$O}` is checked the same way while `TPC` looks for a run-time error
-address (its `/F` option): `{$O Foo}` is accepted, and the compile ends
+With `/F`, which looks for a run-time error address, `{$O}` gives the
+same results: `{$O Foo}` is accepted, and the compile ends
 with `/F`'s error 117, "Target address not found", which has no
 position, for the address 0000:0000; `{$O Crt}` is still error 144
 ([o-find-mode](lexer/cases/10-compiler-directives/o-find-mode.yaml), [o-find-mode-not-overlay](lexer/cases/10-compiler-directives/o-find-mode-not-overlay.yaml)).
 
 ### Units
 
-With `/M`, `TPC` compiles each unit a program uses from its source,
-`NAME.PAS`, when it reads the `;` that ends the `uses` clause. The unit's
-tokens come in the list right there, after that `SEMI`, and the program's
-go on after the unit's final `DOT`; an error in the unit is reported in its
+With `/M`, each unit a program uses is compiled from its source,
+`NAME.PAS`. The unit's tokens come in the list right after the `SEMI` that
+ends the `uses` clause, and the program's go on after the unit's final
+`DOT`; an error in the unit is reported in its
 file ([o-overlay-unit](lexer/cases/10-compiler-directives/o-overlay-unit.yaml), [o-in-unit](lexer/cases/10-compiler-directives/o-in-unit.yaml)). A unit compiled beforehand
 (see `precompile` under [cases](#cases)) adds no tokens
 ([o-find-mode](lexer/cases/10-compiler-directives/o-find-mode.yaml)).
@@ -596,8 +589,8 @@ last item ends the comment, as `*)` would, in exactly these cases:
 - `(*$UNDEF name)`, when `name` is defined and 42 characters long
   ([paren-undef-close-42](lexer/cases/10-compiler-directives/paren-undef-close-42.yaml), [paren-undef-close-41](lexer/cases/10-compiler-directives/paren-undef-close-41.yaml)).
 - `(*$DEFINE name)`, when `name` isn't defined yet and, once it is, the
-  defined symbols take up 222 more than a multiple of 256 bytes, counted as
-  under [conditional symbols](#conditional-symbols)
+  total counted as under [conditional symbols](#conditional-symbols) is
+  222 more than a multiple of 256
   ([paren-define-close](lexer/cases/10-compiler-directives/paren-define-close.yaml), [paren-define-no-close](lexer/cases/10-compiler-directives/paren-define-no-close.yaml)).
 - `(*$R)` in skipped text. In compiled text, `(*$R)` stays open
   ([paren-r-close-skipped](lexer/cases/10-compiler-directives/paren-r-close-skipped.yaml), [paren-s-skipped](lexer/cases/10-compiler-directives/paren-s-skipped.yaml), [paren-r-compiled](lexer/cases/10-compiler-directives/paren-r-compiled.yaml)).
@@ -611,13 +604,12 @@ the other parameter directives (`{$L}` included), `{$IFDEF}`, `{$IFNDEF}`,
 
 ## `asm` blocks
 
-After the reserved word `asm`, the text up to the block's `end` is read by
-`TPC`'s built-in assembler, with a scanner of its own, not by the Pascal
-lexer. Its tokens come after `ASM`, and the block's `end` isn't one: the
+After the reserved word `asm`, the text up to the block's `end` is split
+into tokens by the rules of this section, not those of Pascal text. Its tokens come after `ASM`, and the block's `end` isn't one: the
 token after them is the Pascal token after the block's `end`
 ([block](lexer/cases/15-asm-blocks/block.yaml), [empty-block](lexer/cases/15-asm-blocks/empty-block.yaml)). The body of an `assembler` procedure is such a
-block too ([assembler-procedure](lexer/cases/15-asm-blocks/assembler-procedure.yaml)). This section says how the assembler
-splits a block into statements and tokens. Which instructions and operands
+block too ([assembler-procedure](lexer/cases/15-asm-blocks/assembler-procedure.yaml)). This section says how a block is split
+into statements and tokens. Which instructions and operands
 it accepts, and how it encodes them, are not covered.
 
 ### Tokens in a block
@@ -673,13 +665,13 @@ it accepts, and how it encodes them, are not covered.
   word that names no identifier, which is error 3 at the start of the word,
   or `&` alone, which is error 5 at the `&`
   ([two-statements-no-separator](lexer/cases/15-asm-blocks/two-statements-no-separator.yaml), [identifier-39-characters](lexer/cases/15-asm-blocks/identifier-39-characters.yaml), [pascal-reserved-word-as-operand](lexer/cases/15-asm-blocks/pascal-reserved-word-as-operand.yaml), [ampersand-alone](lexer/cases/15-asm-blocks/ampersand-alone.yaml)).
-- A token that the assembler can't use where it stands is delivered, and
-  the error follows it:
+- A token that can't stand where it is is still listed, and the error
+  follows it:
   - a first word that isn't an instruction and has no `:` after it: error
-    5 just after the word, with no token after it delivered
+    5 just after the word, with no token after it listed
     ([register-first](lexer/cases/15-asm-blocks/register-first.yaml), [number-first](lexer/cases/15-asm-blocks/number-first.yaml), [end-then-digit](lexer/cases/15-asm-blocks/end-then-digit.yaml), [semicolon-is-not-a-comment](lexer/cases/15-asm-blocks/semicolon-is-not-a-comment.yaml));
   - a first word with `:` after it that isn't a declared label, a register
-    included: error 3 just after the word, with its `:` not delivered ([label-undeclared](lexer/cases/15-asm-blocks/label-undeclared.yaml), [register-as-label](lexer/cases/15-asm-blocks/register-as-label.yaml));
+    included: error 3 just after the word, with its `:` not listed ([label-undeclared](lexer/cases/15-asm-blocks/label-undeclared.yaml), [register-as-label](lexer/cases/15-asm-blocks/register-as-label.yaml));
   - a second label after a label: error 5 at its start ([two-labels](lexer/cases/15-asm-blocks/two-labels.yaml));
   - a symbol the operands can't take: error 5 at it ([symbol-*](lexer/cases/15-asm-blocks/), [close-brace](lexer/cases/15-asm-blocks/close-brace.yaml)).
 - A statement that ends before its operands are complete gives its
@@ -751,8 +743,7 @@ at the end of a line are ignored
 - A word is a run of letters, digits and the characters `_ @ $ & ?`:
   `@@a?$&@b` is one label ([word-characters](lexer/cases/15-asm-blocks/word-characters.yaml)). Case doesn't matter
   ([case-insensitive](lexer/cases/15-asm-blocks/case-insensitive.yaml)).
-- Only the first 32 characters of a word count; the rest are read and
-  ignored. A Pascal identifier longer than 32 characters can't be named in
+- Only the first 32 characters of a word count; the rest are ignored. A Pascal identifier longer than 32 characters can't be named in
   full in a block, and one of exactly 32 characters is found by any longer
   word that starts with it. A leading `&` is one of the 32: `&` and a
   32-character name finds no identifier
@@ -813,18 +804,17 @@ starts with a letter is never a number: `FFh` is an identifier
 - The value is a 32-bit number: `4294967295`, `0FFFFFFFFh` and
   `37777777777o` are the largest, and a value one more is error 76
   ([decimal-max](lexer/cases/15-asm-blocks/decimal-max.yaml), [decimal-over](lexer/cases/15-asm-blocks/decimal-over.yaml), [hex-max](lexer/cases/15-asm-blocks/hex-max.yaml), [hex-over](lexer/cases/15-asm-blocks/hex-over.yaml), [octal-max](lexer/cases/15-asm-blocks/octal-max.yaml), [octal-over](lexer/cases/15-asm-blocks/octal-over.yaml)).
-  The digits are read from the left. For each one, the value so far is
-  first multiplied by the base, which is error 76 if the result needs more
-  than 32 bits; then a character that isn't a digit of the base is error
-  7; then the digit is added, again error 76 if the sum needs more than 32
-  bits. So `429496729A0` is error 7 and `4294967295A0` is error 76
+  Going from the left, with v the value of the digits so far, each
+  character in turn gives error 76 if v times the base needs more than 32
+  bits; otherwise error 7 if it isn't a digit of the base; otherwise error
+  76 if v times the base plus the digit needs more than 32 bits. So `429496729A0` is error 7 and `4294967295A0` is error 76
   ([decimal-over-multiplying](lexer/cases/15-asm-blocks/decimal-over-multiplying.yaml), [bad-digit-before-overflow](lexer/cases/15-asm-blocks/bad-digit-before-overflow.yaml), [overflow-before-bad-digit](lexer/cases/15-asm-blocks/overflow-before-bad-digit.yaml)).
 - Only a number's first 32 characters count, so a longer number loses its
   end, suffix and all: 32 zeros and a `1` is 0, and 31 zeros, `F` and `h`
   is error 7, since `F` is then its last character
   ([digits-32](lexer/cases/15-asm-blocks/digits-32.yaml), [digits-33](lexer/cases/15-asm-blocks/digits-33.yaml), [hex-32-characters](lexer/cases/15-asm-blocks/hex-32-characters.yaml), [hex-33-characters](lexer/cases/15-asm-blocks/hex-33-characters.yaml)).
-  A binary number with 32 digits is read as a decimal number, which is
-  error 76: the longest binary number has 31 digits
+  So a binary number with 32 digits loses its `b` and is decimal, which
+  is error 76: the longest binary number has 31 digits
   ([binary-31-digits](lexer/cases/15-asm-blocks/binary-31-digits.yaml), [binary-32-digits](lexer/cases/15-asm-blocks/binary-32-digits.yaml)).
 
 ### Strings in a statement
@@ -920,7 +910,7 @@ smallest literal that isn't 0, and `3.362103143112093506e-4932` is 0.
 P(n) starts as 10^(n mod 8), exactly. Then, for i from 0 up to 9, if bit
 i of n div 8 is set, P(n) becomes P(n) ⊗ T(i), where T(i) is the
 Extended value nearest to 10^(8·2^i). Once a product is infinite, P(n)
-is infinite. Before all this, an n above 4999 counts as 4999, so `1e8192` is error 6,
+is infinite. For n above 4999, P(n) is P(4999), so `1e8192` is error 6,
 not 1 ([exponent-8192](lexer/cases/13-real-values/exponent-8192.yaml)).
 
 ### Multiplication
@@ -989,5 +979,5 @@ the file is named
 
 - `CPU87` on a machine without a floating-point unit: QEMU always has
   one, so no case shows it undefined.
-- How the units a program uses change the [limit on nested include
+- Whether the units a program uses affect the [limit on nested include
   files](#include-files).

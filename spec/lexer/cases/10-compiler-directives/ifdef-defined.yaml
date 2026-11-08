@@ -1,4 +1,4 @@
-description: Text under a defined symbol is scanned.
+description: Text under a defined symbol is compiled.
 source: |
   program P; {$DEFINE X} {$IFDEF X} const C = 1; {$ENDIF} begin end.
 tokens:

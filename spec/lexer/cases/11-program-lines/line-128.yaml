@@ -1,5 +1,5 @@
-description: A line of 128 characters is too long; the error comes before
-  any token on the line.
+description: A line of 128 characters is too long; no token on the line is
+  listed.
 source: |
   program P; begin end. {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}
 tokens: []

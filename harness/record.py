@@ -4,7 +4,7 @@ Usage: bazel run //harness:record [-- case or directory ...]
        bazel test //harness:tpc_test
 
 With no case or directory, takes every case under spec/. Records each
-case's tokens (captured from TPC's scanner by machine/tokens.py), compile
+case's tokens (captured from TPC by machine/tokens.py), compile
 and output (from machine/probe.py), prints the cases that changed, and
 writes spec/MACHINE.json: what the results ran on.
 
