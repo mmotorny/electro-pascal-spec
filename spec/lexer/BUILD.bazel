@@ -1,22 +1,5 @@
-load("//machine:python_tool.bzl", "python_test")
-
-exports_files(["reference.py"])
-
 filegroup(
     name = "cases",
     srcs = glob(["cases/**/*.case"]),
     visibility = ["//visibility:public"],
-)
-
-# Checks that the reference lexer, which follows lexer.md, agrees with
-# every case.
-python_test(
-    name = "reference_test",
-    size = "small",
-    data = [":cases"],
-    main = "reference_test.py",
-    srcs = [
-        "reference.py",
-        "//spec:cases.py",
-    ],
 )

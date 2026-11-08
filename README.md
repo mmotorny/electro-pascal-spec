@@ -15,6 +15,7 @@ Developed on macOS (Apple Silicon) with [Homebrew](https://brew.sh).
 | QEMU | latest | `brew install qemu` | Runs MS-DOS 6.22 and Borland Pascal 7.01 as the reference machine |
 | Python 3 | latest | `xcode-select --install` | Drives the installers on the reference machine |
 | mtools | latest | `brew install mtools` | Copies files to and from the reference machine's disk |
+| Antigravity CLI | latest | see antigravity.google | `agy`, which runs the independent review of pull requests (see `AGENTS.md`) |
 
 Tools aren't pinned: keep them up to date with `brew upgrade`.
 
@@ -78,10 +79,6 @@ expects and `TPC`'s recorded verdict and program output.
   machine and writes the verdicts and outputs into the cases.
 - `bazel test //spec:cases_test` checks that every case is well formed and
   recorded, without running `TPC`.
-- `bazel test //spec/lexer:reference_test` checks that the reference lexer
-  (`spec/lexer/reference.py`), a small program that follows `lexer.md`,
-  agrees with every case. It makes the spec's rules executable, so they can
-  be checked against `TPC` on any input.
 - `python3 spec/compare.py CAPTURED.json` compares the cases' `tokens:`
   lines with a dump of the tokens `TPC` actually delivered, in the spec's
   notation. The dump comes from a capture tool that is not part of this
@@ -93,10 +90,7 @@ expects and `TPC`'s recorded verdict and program output.
 keeps every mutant that makes `TPC` run code no earlier input reached,
 shrinks each one, and writes them to `DIR` with their verdicts. These finds
 are candidates for new cases. `--range-file` limits coverage to an address
-range, to focus on one part of `TPC`. `python3 spec/lexer/check_inputs.py`
-then compares the reference lexer with `TPC` on the finds, given a dump of
-the tokens `TPC` delivered for them, and lists every disagreement: each is a
-gap in the spec.
+range, to focus on one part of `TPC`.
 
 ## IDE help as text
 
