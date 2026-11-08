@@ -5,9 +5,10 @@ check that this pull request publishes only facts, not Borland's expression
 and not raw reverse-engineering results. Read AGENTS.md ("Facts boundary")
 for the rules.
 
-Review the changes from `origin/main` to `HEAD` (run `git diff
-origin/main...HEAD` and read the changed files in full where needed). Check
-each change against these questions:
+The changes are in the file `REVIEW.diff` in the current folder (the diff
+from `main` to this pull request's branch). Read it, and read the changed
+files in full where needed. You don't need to run any commands. Check each
+change against these questions:
 
 1. Does it contain Borland's expression: code (Pascal, assembly or machine
    code from `TPC.EXE` or Borland's libraries), disassembly, or text copied or

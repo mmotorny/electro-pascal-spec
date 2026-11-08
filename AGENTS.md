@@ -85,13 +85,11 @@ Why the boundary is drawn here:
   boundary does.
 - **Behaviour is not protected, however it was learned.** A language's
   lexical structure, its token stream and how a compiler's parts hand work
-  to each other are methods of operation and functionality, not expression:
-  see Lotus v. Borland (1st Cir. 1995), Baker v. Selden (1879), SAS Institute
-  v. World Programming (CJEU 2012) and Sega v. Accolade (9th Cir. 1992).
+  to each other are methods of operation and functionality, not expression.
   Don't hold back facts out of excess caution.
 - **What stays out does so for concrete reasons**: Borland's expression is
-  protected, and EU law (Software Directive art. 6) limits passing on
-  information obtained by decompiling to what interoperability needs.
+  protected, and passing on information obtained by decompiling is limited
+  to what interoperability needs.
   Addresses, internal codes and listings aren't needed to describe the
   language.
 
@@ -123,6 +121,6 @@ Run it from a fresh clone (replace BRANCH and the clone folder):
 
 ```
 git clone --quiet --branch BRANCH https://github.com/mmotorny/electro-pascal-spec.git DIR
-cd DIR && git fetch --quiet origin main
-agy --print --model gemini-4-argon-high --sandbox "$(cat review/facts-boundary.md)"
+cd DIR && git fetch --quiet origin main && git diff origin/main...HEAD > REVIEW.diff
+agy --model gemini-4-argon-high --sandbox --print "$(cat review/facts-boundary.md)"
 ```
