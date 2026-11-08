@@ -124,6 +124,21 @@ DIR with a scratch folder):
 ```
 git fetch --quiet origin && git worktree add --quiet --detach DIR HEAD
 cd DIR && git diff origin/main...HEAD > REVIEW.diff
-agy --model gemini-4-argon-high --sandbox --print "$(cat review/facts-boundary.md)"
-cd - && git worktree remove --force DIR
+tmux new-session -d -s review -x 200 -y 50 -c DIR \
+  "agy --model gemini-4-argon-high --sandbox --mode auto -i \"\$(cat review/facts-boundary.md)\""
+```
+
+Run `agy` interactively in auto mode, as above. Headless `--print` doesn't
+work: auto mode isn't available there, and every command the reviewer runs
+is denied. Watch the session with `tmux capture-pane -p -t review` until it
+shows `VERDICT: PASS` or `VERDICT: FAIL`. The first time, it asks whether to
+trust the folder: it is the worktree, so confirm, then kill the session and
+start it again, since auto mode is only on when the folder was trusted at
+startup. Auto mode still asks before some commands: read each one in full
+(`ctrl+o` expands it), and approve it with `tmux send-keys -t review Enter`
+only if it just reads. Then clean up:
+
+```
+tmux kill-session -t review
+git worktree remove --force DIR
 ```

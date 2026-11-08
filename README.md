@@ -16,6 +16,7 @@ Developed on macOS (Apple Silicon) with [Homebrew](https://brew.sh).
 | Python 3 | latest | `xcode-select --install` | Drives the installers on the reference machine |
 | mtools | latest | `brew install mtools` | Copies files to and from the reference machine's disk |
 | Antigravity CLI | latest | see antigravity.google | `agy`, which runs the independent review of commits before they are pushed (see `AGENTS.md`) |
+| tmux | latest | `brew install tmux` | Runs `agy` interactively during the review |
 
 Tools aren't pinned: keep them up to date with `brew upgrade`.
 
