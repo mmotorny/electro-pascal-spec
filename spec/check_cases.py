@@ -1,6 +1,6 @@
 """Checks the cases and how spec/lexer.md cites them, without running TPC.
 
-Every case must match spec/case.schema.json and have a recorded verdict
+Every case must match spec/case.schema.yaml and have a recorded verdict
 (run `bazel run //spec:record` after adding or changing a case).
 
 Every link from spec/lexer.md into lexer/cases/ must name an existing case,
@@ -12,20 +12,20 @@ in 13-real-values (see check_real_values).
 """
 
 import fnmatch
-import json
 import os
 import re
 import sys
 from fractions import Fraction
 
 import jsonschema
+import yaml
 
 import cases
 
 
 def schema_checker(root):
-    with open(os.path.join(root, "case.schema.json")) as f:
-        schema = json.load(f)
+    with open(os.path.join(root, "case.schema.yaml")) as f:
+        schema = yaml.safe_load(f)
     return jsonschema.Draft202012Validator(schema)
 
 

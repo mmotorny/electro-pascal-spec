@@ -36,7 +36,7 @@ python_test(
     name = "cases_test",
     size = "small",
     data = [
-        "case.schema.json",
+        "case.schema.yaml",
         "lexer.md",
         "//spec/lexer:cases",
     ],

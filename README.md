@@ -75,7 +75,7 @@ The spec lives in [`spec/`](spec). It starts with the lexer,
 [`spec/lexer.md`](spec/lexer.md), backed by test cases in
 `spec/lexer/cases/`. Each case is a YAML file holding a small program, the
 tokens the spec expects, and what compiling and running it with `TPC` gave;
-[`spec/case.schema.json`](spec/case.schema.json) defines the format.
+[`spec/case.schema.yaml`](spec/case.schema.yaml) defines the format.
 
 - `bazel run //spec:record` runs every case through `TPC` on the reference
   machine and writes the verdicts and outputs into the cases.

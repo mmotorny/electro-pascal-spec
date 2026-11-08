@@ -19,7 +19,7 @@ is not delivered.
 
 ## Cases
 
-Each case is a YAML file; [`case.schema.json`](case.schema.json) defines
+Each case is a YAML file; [`case.schema.yaml`](case.schema.yaml) defines
 its fields exactly. For example:
 
 ```yaml

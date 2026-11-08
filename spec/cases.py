@@ -1,6 +1,6 @@
 """Reads and writes spec test cases (*.yaml).
 
-A case is a YAML file holding one mapping (see spec/case.schema.json):
+A case is a YAML file holding one mapping (see spec/case.schema.yaml):
 
     description: Thirty leading zeros don't overflow.
     source: |
@@ -105,10 +105,12 @@ class Case:
 
 
 def find(root):
-    """All cases under a directory, in path order."""
+    """All cases under a directory, in path order: the YAML files inside a
+    folder named "cases"."""
     paths = []
     for dirpath, _, files in os.walk(root):
-        paths += [os.path.join(dirpath, f) for f in files if f.endswith(EXTENSION)]
+        inside = "cases" in os.path.abspath(dirpath).split(os.sep)
+        paths += [os.path.join(dirpath, f) for f in files if inside and f.endswith(EXTENSION)]
     return [Case(p) for p in sorted(paths)]
 
 
