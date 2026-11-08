@@ -78,8 +78,8 @@ output: "7"
 - `files`, when present, holds more files beside the program, such as
   include files: DOS file names in upper case, each mapped to its
   contents, written like `source`.
-- `compile` is what compiling the source with `TPC` gives: `ok`, or the
-  error number with the line and column `TPC` reports it at, the file it
+- `compile` is what compiling the source with `TPC` gives: `ok`; `hang`
+  when `TPC` never finishes compiling it; or the error number with the line and column `TPC` reports it at, the file it
   is in when that isn't the program, and `TPC`'s message:
 
   ```yaml
@@ -590,6 +590,9 @@ it accepts, and how it encodes them, are not covered.
   missing, as in `mov ax, end`, it is error 5 at `end` ([end-in-operand](lexer/cases/15-asm-blocks/end-in-operand.yaml)).
   Character 233 before `end` is a [blank](#blanks-in-a-statement), so
   `end` still ends the block ([high-character-before-end](lexer/cases/15-asm-blocks/high-character-before-end.yaml)).
+- `end` followed directly by DEL (127) at the start of a statement makes
+  `TPC` loop forever: it never finishes compiling the program
+  ([end-then-del](lexer/cases/15-asm-blocks/end-then-del.yaml)).
 - `end` inside a string is part of the string ([end-in-string](lexer/cases/15-asm-blocks/end-in-string.yaml)).
 
 ### Blanks in a statement
@@ -740,8 +743,6 @@ reproduce `TPC`'s own arithmetic. That arithmetic isn't known yet
 
 - Which instructions and operands an [`asm` block](#asm-blocks) accepts,
   and how they are encoded.
-- `end` followed directly by DEL (127) at the start of a statement in an
-  `asm` block: `TPC` never finishes compiling, and cases can't record that.
 - `CPU87` on a machine without a floating-point unit: QEMU always has
   one, so no case shows it undefined.
 - `{$O name}` while `TPC` looks for a run-time error (its `/F` option),

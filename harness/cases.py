@@ -29,10 +29,11 @@ A case is a YAML file holding one mapping (see spec/case.schema.yaml):
                from a kind to its value.
   compile      what compiling the source with TPC gives, written only by
                `bazel run //harness:record`:
-               "ok", or a mapping with "error" (the error number), "line"
-               and "column" (1-based) when TPC gives a position, "file" when
-               the error is in one of the files rather than the program, and
-               "message", TPC's error message.
+               "ok"; "hang" when TPC never finishes compiling it; or a
+               mapping with "error" (the error number), "line" and "column"
+               (1-based) when TPC gives a position, "file" when the error is
+               in one of the files rather than the program, and "message",
+               TPC's error message.
   output       what the compiled program writes, also written only by the
                record tool; present only when the program compiles. One
                character per byte, like source.
@@ -137,8 +138,8 @@ def token_pairs(tokens):
 
 def verdict(result):
     """A probe result (see machine/probe.py) as a case's compile value."""
-    if result["verdict"] == "ok":
-        return "ok"
+    if result["verdict"] in ("ok", "hang"):
+        return result["verdict"]
     if result["verdict"] == "error":
         out = {"error": result["code"]}
         if result["line"]:
@@ -156,8 +157,8 @@ def verdict_text(value):
         if value["verdict"] not in ("ok", "error"):
             return value["verdict"]
         value = verdict(value)
-    if value == "ok":
-        return "ok"
+    if value in ("ok", "hang"):
+        return value
     where = f" at {value['line']}:{value['column']}" if "line" in value else ""
     if "file" in value:
         where += f" in {value['file']}"
@@ -289,8 +290,8 @@ def dump(data):
                         raise ValueError(f"bad token kind {token!r}")
                     lines.append(f"  - {token}")
         elif key == "compile":
-            if value == "ok":
-                lines.append("compile: ok")
+            if value in ("ok", "hang"):
+                lines.append(f"compile: {value}")
             else:
                 lines.append("compile:")
                 lines += [f"  {k}: {scalar(value[k])}" for k in VERDICT_FIELDS if k in value]

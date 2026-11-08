@@ -46,6 +46,14 @@ build it.
   `bazel test //harness:cases_test //harness:tpc_test` passing.
 - When a recorded result disagrees with the spec's text, the recorded
   result is right: fix the text, or record the behaviour as a quirk.
+- When `TPC` never finishes compiling a case, `record` writes
+  `compile: hang` (a compile still running after 30 seconds). Before
+  committing such a case, confirm in the dirty room, from `TPC`'s code and
+  by comparing its state between passes, that it loops forever rather than
+  running slowly. The spec then says that `TPC` never finishes, and nothing
+  more: what an implementation does instead is for the implementation repo
+  to decide. Say why it happens in
+  [`notes/curiosities.md`](notes/curiosities.md), in terms of behaviour.
 - Describe in a case's `description` what its input is and what it shows,
   never why `TPC` behaves that way inside.
 - Write cases as small, complete programs of our own, laid out over lines

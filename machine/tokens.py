@@ -198,6 +198,7 @@ def run_batch(tools, disk, sources, workdir, first=0):
     for name, source in zip(names, sources):
         script += [
             f"CD \\P\\{name}",
+            f"ECHO COMPILING {name}",
             probe.command(name, source),
             f"IF ERRORLEVEL 1 ECHO 1> {name}.ERL",
             f"IF EXIST {name}.EXE DEL {name}.EXE",
@@ -218,7 +219,7 @@ def run_batch(tools, disk, sources, workdir, first=0):
         cap = Capture(sock)
         m.wait_prompt("C:\\>", timeout=60)
         m.type("A:\\RUN\n")
-        m.wait(r"PROBES DONE", timeout=60 + 10 * len(sources))
+        hung = probe.wait_batch(m, names)
     finally:
         m.quit()
         if cap:
@@ -226,8 +227,9 @@ def run_batch(tools, disk, sources, workdir, first=0):
         shutil.rmtree(sockdir, ignore_errors=True)
     if cap.error:
         raise cap.error
-    if len(cap.runs) != len(sources):
-        raise RuntimeError(f"saw {len(cap.runs)} TPC runs for {len(sources)} files; has TPC's load "
+    done = names.index(hung) if hung else len(names)
+    if len(cap.runs) != done + bool(hung):
+        raise RuntimeError(f"saw {len(cap.runs)} TPC runs for {done + bool(hung)} files; has TPC's load "
                            "address changed?")
     # Every token takes up source text, so two in a row at the same place mean
     # that a breakpoint hit was seen twice.
@@ -240,7 +242,7 @@ def run_batch(tools, disk, sources, workdir, first=0):
     os.makedirs(out)
     tools.mtool("mcopy", "-s", "-n", "-i", floppy, "::/P", out + "/")
     results = []
-    for name, tokens in zip(names, cap.runs):
+    for name, tokens in zip(names[:done], cap.runs):
         with open(os.path.join(out, "P", name, name + ".OUT"), "rb") as f:
             output = f.read().decode("cp437")
         # TPC adds the compile time when it's 0.1 s or more, which breakpoints
@@ -249,6 +251,13 @@ def run_batch(tools, disk, sources, workdir, first=0):
         result = probe.parse_output(output, name + ".PAS")
         result["raw_tokens"] = tokens
         results.append(result)
+    if hung:
+        # The tokens TPC's scanner delivered before it stopped making progress.
+        qmp.log(f"{hung}: TPC hasn't finished after {probe.HANG_SECONDS} s; reporting a hang")
+        results.append({"verdict": "hang", "raw_tokens": cap.runs[done]})
+        rest = sources[done + 1:]
+        if rest:
+            results += run_batch(tools, disk, rest, os.path.join(workdir, "rest"), first + done + 1)
     return results
 
 

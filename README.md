@@ -61,7 +61,8 @@ disk are thrown away when QEMU exits. Arguments after `--` go to QEMU.
 
 `bazel run //machine:probe -- file.pas ...` compiles each file with `TPC.EXE`
 on the reference machine and prints the results as JSON: whether it compiled,
-or the error number, line, column and message, plus `TPC`'s full output. It
+or the error number, line, column and message, or that `TPC` was still
+compiling it after 30 seconds (a hang), plus `TPC`'s full output. It
 also records what the results ran on: the QEMU version and hashes of the key
 BP files. Large sets are spread over one machine per CPU core. With
 `--coverage`, each result also lists the code edges `TPC` executed while

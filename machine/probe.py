@@ -5,9 +5,9 @@ with a batch file that compiles each one with C:\\BP\\BIN\\TPC.EXE and saves
 its output. The reference disk boots without being changed. Batches run on
 several machines in parallel.
 
-Each result is either {"verdict": "ok"} or {"verdict": "error", "code": N,
-"line": L, "column": C, "message": "..."}, plus TPC's full output and its
-exit code. Line and column are 1-based; the column is where TPC puts its
+Each result is either {"verdict": "ok"}, {"verdict": "error", "code": N,
+"line": L, "column": C, "message": "..."} or {"verdict": "hang"}, plus TPC's
+full output and its exit code (for a hang, only the verdict). Line and column are 1-based; the column is where TPC puts its
 caret. When a probe compiles, the program is also run, and "run_output"
 holds what it wrote to standard output (as a latin-1 string, one character
 per byte).
@@ -31,11 +31,14 @@ import struct
 import subprocess
 import sys
 import tempfile
+import time
 
 from qmp import Machine, log
 
 PARTITION_OFFSET = 63 * 512  # Of C: on the reference disk; see defs.bzl.
 BATCH_SIZE = 200  # Fits on one floppy with room to spare.
+# A compile still running after this many seconds is reported as a hang.
+HANG_SECONDS = 30
 TPC = "C:\\BP\\BIN\\TPC.EXE"
 # A .COM program that executes the coverage plugin's marker, XCHG BX,BX, and
 # exits: MOV AX,4C00h; INT 21h.
@@ -152,7 +155,7 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
     lay_out(tools, floppy, workdir, names, sources)
     script = ["@ECHO OFF", "A:"]
     for name, source in zip(names, sources):
-        script.append(f"CD \\P\\{name}")
+        script += [f"CD \\P\\{name}", f"ECHO COMPILING {name}"]
         if coverage:
             script.append("A:\\MARK")
         script += [command(name, source)]
@@ -162,6 +165,7 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
             # COMMAND.COM creates the file even when the condition is false,
             # so a non-zero exit code is a non-empty file.
             f"IF ERRORLEVEL 1 ECHO 1> {name}.ERL",
+            f"IF EXIST {name}.EXE ECHO RUNNING {name}",
             # As with ERL, the redirection creates RUN even if nothing runs.
             f"IF EXIST {name}.EXE {name} > {name}.RUN",
             f"IF EXIST {name}.EXE DEL {name}.EXE",
@@ -184,9 +188,10 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
     try:
         m.wait_prompt("C:\\>", timeout=60)
         m.type("A:\\RUN\n")
-        m.wait(r"PROBES DONE", timeout=60 + 5 * len(sources))
+        hung = wait_batch(m, names)
     finally:
         m.quit()
+    done = names.index(hung) if hung else len(names)
 
     out = os.path.join(workdir, "out")
     os.makedirs(out)
@@ -197,9 +202,9 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
             lines = f.read().split("\n")
         # Lines alternate: before a probe's first marker, then between its
         # two markers, which is TPC compiling it.
-        edges = [sorted(int(x, 16) for x in lines[2 * n + 1].split()) for n in range(len(sources))]
+        edges = [sorted(int(x, 16) for x in lines[2 * n + 1].split()) for n in range(done)]
     results = []
-    for n, name in enumerate(names):
+    for n, name in enumerate(names[:done]):
         out_dir = os.path.join(out, "P", name)
         with open(os.path.join(out_dir, name + ".ERL"), "rb") as f:
             failed = bool(f.read().strip())
@@ -214,7 +219,37 @@ def run_batch(tools, disk, sources, workdir, first=0, coverage=None):
                 result["run_output"] = f.read().decode("latin-1")
         result["output"] = output
         results.append(result)
+    if hung:
+        log(f"{hung}: TPC hasn't finished after {HANG_SECONDS} s; reporting a hang")
+        results.append({"verdict": "hang"})
+        rest = sources[done + 1:]
+        if rest:
+            more = os.path.join(workdir, "rest")
+            os.makedirs(more)
+            results += run_batch(tools, disk, rest, more, first + done + 1, coverage)
     return results
+
+
+def wait_batch(m, names, timeout=60):
+    """Waits for a batch file that prints COMPILING <name> before each probe
+    to print PROBES DONE. Returns None, or the name of the probe whose compile
+    hasn't finished HANG_SECONDS after it started. Raises if nothing moves on
+    for `timeout` seconds otherwise, or a compiled program never finishes."""
+    last, since = None, time.time()
+    while True:
+        rows = m.screen()
+        text = "\n".join(rows)
+        if "PROBES DONE" in text:
+            return None
+        marks = re.findall(r"^(COMPILING|RUNNING) (P\d{7})$", text, re.M)
+        mark = marks[-1] if marks else None
+        if mark != last:
+            last, since = mark, time.time()
+        elif mark and mark[0] == "COMPILING" and mark[1] in names and time.time() - since > HANG_SECONDS:
+            return mark[1]
+        elif time.time() - since > timeout:
+            raise TimeoutError(f"waiting for PROBES DONE; screen:\n" + text)
+        time.sleep(0.2)
 
 
 def tpc_range(tools, disk, workdir):

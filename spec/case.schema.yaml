@@ -43,11 +43,13 @@ properties:
     items:
       $ref: '#/$defs/token'
   compile:
-    description: 'What compiling the source with TPC gives: ok, or the error with
+    description: 'What compiling the source with TPC gives: ok; hang, when TPC
+      never finishes compiling it; or the error with
       its position when TPC gives one (1-based), the file it is in when that
       isn''t the program, and TPC''s message.'
     oneOf:
       - const: ok
+      - const: hang
       - type: object
         additionalProperties: false
         required:
