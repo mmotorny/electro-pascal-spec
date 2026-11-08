@@ -1,0 +1,45 @@
+description: A 32-character Pascal variable is found by a longer name in an
+  asm block that starts with its 32 characters.
+source: |
+  program P;
+  var
+    W: Word;
+    A2345678901234567890123456789012: Word;
+  begin
+    W := 0;
+    asm
+      mov ax, 9
+      mov A2345678901234567890123456789012XYZ, ax
+      mov ax, A2345678901234567890123456789012
+      mov W, ax
+    end;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - IDENT: A2345678901234567890123456789012
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: W
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "9"

@@ -1,0 +1,38 @@
+description: A Pascal variable named Bx, set to 5, is assigned 7 in an asm
+  block as 'Bx'.
+source: |
+  program P;
+  var
+    Bx: Integer;
+  begin
+    Bx := 5;
+    asm
+      mov ax, 7
+      mov Bx, ax
+    end;
+    Write(Bx)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: BX
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: BX
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: BX
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "5"

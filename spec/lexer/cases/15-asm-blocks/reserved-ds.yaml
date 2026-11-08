@@ -1,0 +1,38 @@
+description: A Pascal variable named Ds, set to 5, is assigned ds in an asm
+  block as 'Ds'.
+source: |
+  program P;
+  var
+    Ds: Integer;
+  begin
+    Ds := 5;
+    asm
+      mov ax, ds
+      mov Ds, ax
+    end;
+    Write(Ds)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: DS
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: DS
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: DS
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "5"

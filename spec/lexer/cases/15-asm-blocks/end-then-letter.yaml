@@ -1,0 +1,33 @@
+description: "'endx' at the start of a statement doesn't end the block."
+source: |
+  program P;
+  var
+    W: Word;
+  begin
+    W := 0;
+    asm
+      mov ax, 4
+      mov W, ax
+    endx;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+compile:
+  error: 5
+  line: 9
+  column: 7
+  message: Syntax error.

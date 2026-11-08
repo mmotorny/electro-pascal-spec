@@ -1,0 +1,27 @@
+description: Characters 233 and 255 separate the parts of a statement like
+  blanks.
+source: "program P;\nvar\n  W: Word;\nbegin\n  W := 0;\n  asm\n    mov\xe9ax,\xff6\n    mov W, ax\n  end;\n  Write(W)\nend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: W
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "6"

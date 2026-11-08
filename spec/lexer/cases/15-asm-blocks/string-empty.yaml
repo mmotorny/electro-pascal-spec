@@ -1,0 +1,37 @@
+description: An empty string as a number.
+source: |
+  program P;
+  var
+    W: Word;
+  begin
+    W := 0;
+    asm
+      mov ax, ''
+      mov W, ax
+    end;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: W
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "0"

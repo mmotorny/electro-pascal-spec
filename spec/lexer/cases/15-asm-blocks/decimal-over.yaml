@@ -1,0 +1,33 @@
+description: "4294967296."
+source: |
+  program P;
+  var
+    L: Longint;
+  begin
+    L := 0;
+    asm
+      mov word ptr L, (4294967296) and 0FFFFh
+      mov word ptr L+2, (4294967296) shr 16
+    end;
+    Write(L)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: L
+  - COLON
+  - IDENT: LONGINT
+  - SEMI
+  - BEGIN
+  - IDENT: L
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+compile:
+  error: 76
+  line: 7
+  column: 22
+  message: Constant out of range.

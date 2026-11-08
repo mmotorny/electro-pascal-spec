@@ -1,0 +1,42 @@
+description: Conditional directives between statements select which
+  statements are assembled.
+source: |
+  program P;
+  var
+    W: Word;
+  begin
+    W := 0;
+    asm
+      {$IFDEF X}
+      mov ax, 1
+      {$ELSE}
+      mov ax, 2
+      {$ENDIF}
+      mov W, ax
+    end;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: W
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "2"

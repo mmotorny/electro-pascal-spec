@@ -1,0 +1,45 @@
+description: Each kind of quote inside the other.
+source: |
+  program P;
+  type
+    PS = ^String;
+
+  procedure S; assembler;
+  asm
+    db 3, "'", '"', 'x'
+  end;
+
+  begin
+    Write(PS(@S)^)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - TYPE
+  - IDENT: PS
+  - EQ
+  - CARET
+  - STRING
+  - SEMI
+  - PROCEDURE
+  - IDENT: S
+  - SEMI
+  - IDENT: ASSEMBLER
+  - SEMI
+  - ASM
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: PS
+  - LPAREN
+  - AT
+  - IDENT: S
+  - RPAREN
+  - CARET
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "'\"x"

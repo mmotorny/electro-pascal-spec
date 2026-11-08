@@ -1,0 +1,26 @@
+description: A tab and characters 1 and 2 separate the parts of a statement.
+source: "program P;\nvar\n  W: Word;\nbegin\n  W := 0;\n  asm\n    mov\tax,\x01\x02 5\n    mov W, ax\n  end;\n  Write(W)\nend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: W
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "5"

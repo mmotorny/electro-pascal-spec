@@ -1,0 +1,17 @@
+description: The file ends inside an asm block.
+source: |
+  program P;
+  begin
+    asm
+      nop
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - ASM
+compile:
+  error: 10
+  line: 5
+  column: 1
+  message: Unexpected end of file.

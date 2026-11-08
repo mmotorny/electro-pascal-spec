@@ -1,0 +1,34 @@
+description: A Pascal variable named Cs, set to 5, is assigned 7 in an asm
+  block as 'Cs'.
+source: |
+  program P;
+  var
+    Cs: Integer;
+  begin
+    Cs := 5;
+    asm
+      mov ax, 7
+      mov Cs, ax
+    end;
+    Write(Cs)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: CS
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: CS
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+compile:
+  error: 155
+  line: 8
+  column: 13
+  message: Invalid combination of opcode and operands.

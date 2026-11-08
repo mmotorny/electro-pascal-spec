@@ -1,0 +1,34 @@
+description: A Pascal variable named Byte, set to 5, is assigned 7 in an asm
+  block as 'Byte'.
+source: |
+  program P;
+  var
+    Byte: Integer;
+  begin
+    Byte := 5;
+    asm
+      mov ax, 7
+      mov Byte, ax
+    end;
+    Write(Byte)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: BYTE
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: BYTE
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+compile:
+  error: 155
+  line: 8
+  column: 15
+  message: Invalid combination of opcode and operands.

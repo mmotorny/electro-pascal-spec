@@ -1,0 +1,38 @@
+description: A Pascal variable named Sp, set to 5, is assigned sp in an asm
+  block as 'Sp'.
+source: |
+  program P;
+  var
+    Sp: Integer;
+  begin
+    Sp := 5;
+    asm
+      mov ax, sp
+      mov Sp, ax
+    end;
+    Write(Sp)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: SP
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: SP
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: SP
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "5"

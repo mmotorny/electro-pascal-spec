@@ -1,0 +1,34 @@
+description: A Pascal variable named Low, set to 5, is assigned 7 in an asm
+  block as 'Low'.
+source: |
+  program P;
+  var
+    Low: Integer;
+  begin
+    Low := 5;
+    asm
+      mov ax, 7
+      mov Low, ax
+    end;
+    Write(Low)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: LOW
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: LOW
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+compile:
+  error: 5
+  line: 8
+  column: 12
+  message: Syntax error.

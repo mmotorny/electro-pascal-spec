@@ -1,0 +1,34 @@
+description: A statement can't go on to the next line.
+source: |
+  program P;
+  var
+    W: Word;
+  begin
+    W := 0;
+    asm
+      mov ax,
+      4
+      mov W, ax
+    end;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+compile:
+  error: 5
+  line: 7
+  column: 11
+  message: Syntax error.

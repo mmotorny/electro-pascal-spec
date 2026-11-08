@@ -1,0 +1,32 @@
+description: "Two statements on a line with nothing between them: the second 'mov' is read as an operand."
+source: |
+  program P;
+  var
+    W: Word;
+  begin
+    W := 0;
+    asm
+      mov ax, 4 mov W, ax
+    end;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+compile:
+  error: 3
+  line: 7
+  column: 15
+  message: Unknown identifier.

@@ -1,0 +1,38 @@
+description: A Pascal variable named Si, set to 5, is assigned 7 in an asm
+  block as 'Si'.
+source: |
+  program P;
+  var
+    Si: Integer;
+  begin
+    Si := 5;
+    asm
+      mov ax, 7
+      mov Si, ax
+    end;
+    Write(Si)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: SI
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: SI
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: SI
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "5"

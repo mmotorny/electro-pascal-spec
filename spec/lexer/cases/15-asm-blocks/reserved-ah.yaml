@@ -1,0 +1,34 @@
+description: A Pascal variable named Ah, set to 5, is assigned 7 in an asm
+  block as 'Ah'.
+source: |
+  program P;
+  var
+    Ah: Integer;
+  begin
+    Ah := 5;
+    asm
+      mov ax, 7
+      mov Ah, ax
+    end;
+    Write(Ah)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: AH
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: AH
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+compile:
+  error: 155
+  line: 8
+  column: 13
+  message: Invalid combination of opcode and operands.

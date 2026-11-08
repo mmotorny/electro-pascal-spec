@@ -1,0 +1,38 @@
+description: Instructions, registers and Pascal identifiers in an asm block
+  don't depend on case.
+source: |
+  program P;
+  var
+    W: Word;
+  begin
+    W := 0;
+    asm
+      MoV Ax, 8
+      mOv w, aX
+    end;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: W
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "8"

@@ -1,0 +1,22 @@
+description: "'end' followed by character 233 ends the block, and character 233 is then read as Pascal."
+source: "program P;\nvar\n  W: Word;\nbegin\n  W := 0;\n  asm\n    mov ax, 4\n    mov W, ax\n  end\xe9;\n  Write(W)\nend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+compile:
+  error: 5
+  line: 9
+  column: 6
+  message: Syntax error.

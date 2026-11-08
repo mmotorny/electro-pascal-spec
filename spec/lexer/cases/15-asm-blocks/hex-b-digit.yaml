@@ -1,0 +1,37 @@
+description: "'0Bh': only the last letter is a suffix, so 'B' is a hex digit here."
+source: |
+  program P;
+  var
+    W: Word;
+  begin
+    W := 0;
+    asm
+      mov ax, 0Bh
+      mov W, ax
+    end;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: W
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "11"

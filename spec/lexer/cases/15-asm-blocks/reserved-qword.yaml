@@ -1,0 +1,34 @@
+description: A Pascal variable named Qword, set to 5, is assigned 7 in an
+  asm block as 'Qword'.
+source: |
+  program P;
+  var
+    Qword: Integer;
+  begin
+    Qword := 5;
+    asm
+      mov ax, 7
+      mov Qword, ax
+    end;
+    Write(Qword)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: QWORD
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: QWORD
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+compile:
+  error: 155
+  line: 8
+  column: 16
+  message: Invalid combination of opcode and operands.

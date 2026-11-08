@@ -1,0 +1,45 @@
+description: "A statement that starts with 'e' but isn't 'end': the Pascal label Eat."
+source: |
+  program P;
+  label
+    Eat;
+  var
+    W: Word;
+  begin
+    W := 0;
+    asm
+      mov ax, 3
+      jmp Eat
+      mov ax, 4
+  Eat:
+      mov W, ax
+    end;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - LABEL
+  - IDENT: EAT
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: W
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "3"

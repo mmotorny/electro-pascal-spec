@@ -1,0 +1,13 @@
+description: ^Z inside an asm block ends the file there.
+source: "program P;\nbegin\n  asm\n    nop\n\x1a  end;\nend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - ASM
+compile:
+  error: 10
+  line: 5
+  column: 1
+  message: Unexpected end of file.

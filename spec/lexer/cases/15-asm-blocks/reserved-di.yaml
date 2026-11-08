@@ -1,0 +1,38 @@
+description: A Pascal variable named Di, set to 5, is assigned 7 in an asm
+  block as 'Di'.
+source: |
+  program P;
+  var
+    Di: Integer;
+  begin
+    Di := 5;
+    asm
+      mov ax, 7
+      mov Di, ax
+    end;
+    Write(Di)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: DI
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: DI
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: DI
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "5"

@@ -1,0 +1,34 @@
+description: A Pascal variable named Far, set to 5, is assigned 7 in an asm
+  block as 'Far'.
+source: |
+  program P;
+  var
+    Far: Integer;
+  begin
+    Far := 5;
+    asm
+      mov ax, 7
+      mov Far, ax
+    end;
+    Write(Far)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: FAR
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: FAR
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+compile:
+  error: 155
+  line: 8
+  column: 14
+  message: Invalid combination of opcode and operands.

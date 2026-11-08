@@ -1,0 +1,23 @@
+description: An asm block with nothing in it.
+source: |
+  program P;
+  begin
+    asm
+    end;
+    Write(1)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - INTEGER: 1
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "1"

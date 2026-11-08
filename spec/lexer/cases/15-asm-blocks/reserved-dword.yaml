@@ -1,0 +1,34 @@
+description: A Pascal variable named Dword, set to 5, is assigned 7 in an
+  asm block as 'Dword'.
+source: |
+  program P;
+  var
+    Dword: Integer;
+  begin
+    Dword := 5;
+    asm
+      mov ax, 7
+      mov Dword, ax
+    end;
+    Write(Dword)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: DWORD
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: DWORD
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+compile:
+  error: 155
+  line: 8
+  column: 16
+  message: Invalid combination of opcode and operands.

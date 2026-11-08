@@ -1,0 +1,39 @@
+description: A 39-character Pascal variable named in full in an asm block
+  isn't found.
+source: |
+  program P;
+  var
+    W: Word;
+    A23456789012345678901234567890123456789: Word;
+  begin
+    W := 0;
+    asm
+      mov ax, 1
+      mov A23456789012345678901234567890123456789, ax
+    end;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - IDENT: A23456789012345678901234567890123456789
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+compile:
+  error: 3
+  line: 9
+  column: 9
+  message: Unknown identifier.

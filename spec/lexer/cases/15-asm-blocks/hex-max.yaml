@@ -1,0 +1,37 @@
+description: 0FFFFFFFFh as a 32-bit value.
+source: |
+  program P;
+  var
+    L: Longint;
+  begin
+    L := 0;
+    asm
+      mov word ptr L, (0FFFFFFFFh) and 0FFFFh
+      mov word ptr L+2, (0FFFFFFFFh) shr 16
+    end;
+    Write(L)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: L
+  - COLON
+  - IDENT: LONGINT
+  - SEMI
+  - BEGIN
+  - IDENT: L
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: L
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "-1"

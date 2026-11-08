@@ -1,0 +1,37 @@
+description: "'&AX' names a Pascal variable called AX, while 'ax' is the register."
+source: |
+  program P;
+  var
+    AX: Word;
+  begin
+    AX := 0;
+    asm
+      mov ax, 5
+      mov &AX, ax
+    end;
+    Write(AX)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: AX
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: AX
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: AX
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "5"

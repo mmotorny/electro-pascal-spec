@@ -10,8 +10,9 @@ and are the final word; where this text and a case disagree, the case is
 right and this text needs fixing. `bazel test //harness:tpc_test` checks that
 every case still matches what `TPC` gives.
 
-Between them, the cases take both sides of every branch in `TPC`'s scanner
-that a single source file can reach, except as noted under
+Between them, the cases take both sides of every branch in `TPC`'s scanner,
+and in the scanner of its built-in assembler, that a single source file can
+reach, except as noted under
 [not covered yet](#not-covered-yet). A case's token list ends where `TPC`
 stops asking for tokens: at the end of the program, or at the token where
 it reports an error. When the error is in the lexer itself, the bad token
@@ -534,6 +535,176 @@ the other parameter directives (`{$L}` included), `{$IFDEF}`, `{$IFNDEF}`,
 ([paren-switch-no-close](lexer/cases/10-compiler-directives/paren-switch-no-close.yaml), [paren-switch-list-no-close](lexer/cases/10-compiler-directives/paren-switch-list-no-close.yaml), [paren-parameter-no-close](lexer/cases/10-compiler-directives/paren-parameter-no-close.yaml), [paren-l-no-close](lexer/cases/10-compiler-directives/paren-l-no-close.yaml), [paren-ifdef-no-close](lexer/cases/10-compiler-directives/paren-ifdef-no-close.yaml), [paren-ifndef-no-close](lexer/cases/10-compiler-directives/paren-ifndef-no-close.yaml), [paren-ifopt-no-close](lexer/cases/10-compiler-directives/paren-ifopt-no-close.yaml), [paren-else-no-close](lexer/cases/10-compiler-directives/paren-else-no-close.yaml), [paren-endif-no-close](lexer/cases/10-compiler-directives/paren-endif-no-close.yaml), [paren-define-defined-no-close](lexer/cases/10-compiler-directives/paren-define-defined-no-close.yaml), [paren-undef-not-defined-no-close](lexer/cases/10-compiler-directives/paren-undef-not-defined-no-close.yaml)).
 `{$O}` is untested, as it needs units.
 
+## `asm` blocks
+
+After the reserved word `asm`, the text up to the block's `end` is read by
+`TPC`'s built-in assembler, not by the Pascal lexer. No tokens are
+delivered for it: the token after `ASM` is the one after the block's `end`
+([block](lexer/cases/15-asm-blocks/block.yaml), [empty-block](lexer/cases/15-asm-blocks/empty-block.yaml)). The body of an `assembler` procedure is such a
+block too ([assembler-procedure](lexer/cases/15-asm-blocks/assembler-procedure.yaml)). This section says how the assembler
+splits a block into statements and words. Which instructions and operands
+it accepts, and how it encodes them, are not covered.
+
+### Statements
+
+- A statement lies on one line: a line end ends it, so a statement can't go
+  on to the next line ([block](lexer/cases/15-asm-blocks/block.yaml), [statement-across-lines](lexer/cases/15-asm-blocks/statement-across-lines.yaml)).
+- `;` ends a statement too. Any number of `;` may stand between and around
+  statements ([semicolons](lexer/cases/15-asm-blocks/semicolons.yaml)). `;` doesn't start a comment: the text after
+  it is the next statement ([semicolon-is-not-a-comment](lexer/cases/15-asm-blocks/semicolon-is-not-a-comment.yaml)). Two statements
+  on one line need something between them: in `mov ax, 4 mov W, ax` the
+  second `mov` is an operand, and is error 3
+  ([two-statements-no-separator](lexer/cases/15-asm-blocks/two-statements-no-separator.yaml)).
+- Between statements, the text is read as Pascal text is between tokens:
+  blanks, line ends, comments of both kinds and compiler directives,
+  conditional directives included, which choose the statements that are
+  assembled
+  ([brace-comment-between](lexer/cases/15-asm-blocks/brace-comment-between.yaml), [paren-star-comment-between](lexer/cases/15-asm-blocks/paren-star-comment-between.yaml), [comment-across-lines](lexer/cases/15-asm-blocks/comment-across-lines.yaml), [ifdef-between-statements](lexer/cases/15-asm-blocks/ifdef-between-statements.yaml)).
+  So a comment separates two statements as `;` does. `{$I}` there is error
+  118, as everywhere in a statement part ([include-in-block](lexer/cases/15-asm-blocks/include-in-block.yaml)).
+- Inside a statement, `{` and `(*` end the statement where they stand, and
+  the comment is then read as between statements. A comment or directive in
+  the middle of a statement leaves the statement incomplete, error 5 at the
+  `{` or `(`
+  ([brace-comment-in-operand](lexer/cases/15-asm-blocks/brace-comment-in-operand.yaml), [paren-star-comment-in-operand](lexer/cases/15-asm-blocks/paren-star-comment-in-operand.yaml), [ifdef-in-operand](lexer/cases/15-asm-blocks/ifdef-in-operand.yaml)).
+  A `(` not followed directly by `*` is a symbol ([paren-not-comment](lexer/cases/15-asm-blocks/paren-not-comment.yaml)), and
+  so is `}`: `mov ax, 4 }` is error 5 at the `}` ([close-brace](lexer/cases/15-asm-blocks/close-brace.yaml)).
+- The lines of a block are read like other lines: a line over 127
+  characters is error 11, NULs are dropped, and the end of the file, or ^Z,
+  inside a block is error 10 ([line-127](lexer/cases/15-asm-blocks/line-127.yaml), [line-128](lexer/cases/15-asm-blocks/line-128.yaml), [nul-dropped](lexer/cases/15-asm-blocks/nul-dropped.yaml), [end-of-file](lexer/cases/15-asm-blocks/end-of-file.yaml), [ctrl-z](lexer/cases/15-asm-blocks/ctrl-z.yaml)).
+
+### Where a block ends
+
+- At the start of a statement, `end` in any case ends the block unless the
+  next character is a letter, a digit or `_`: `end1`, `endx` and `end_`
+  start a statement and are error 5 just after the word, and a statement
+  may start with other words beginning with `e`
+  ([end-mixed-case](lexer/cases/15-asm-blocks/end-mixed-case.yaml), [end-then-digit](lexer/cases/15-asm-blocks/end-then-digit.yaml), [end-then-letter](lexer/cases/15-asm-blocks/end-then-letter.yaml), [end-then-underscore](lexer/cases/15-asm-blocks/end-then-underscore.yaml), [label-starting-with-e](lexer/cases/15-asm-blocks/label-starting-with-e.yaml)).
+  Any other character after `end`, such as `$`, `?` or character 233, ends
+  the block and is then read as Pascal text
+  ([end-then-dollar](lexer/cases/15-asm-blocks/end-then-dollar.yaml), [end-then-question-mark](lexer/cases/15-asm-blocks/end-then-question-mark.yaml), [end-then-high-character](lexer/cases/15-asm-blocks/end-then-high-character.yaml)).
+- Inside a statement, the word `end` ends the statement where it starts,
+  and so ends the block. `mov W, ax end` needs no `;` before `end`, and
+  `@@x: end` ends the block after the label
+  ([end-after-statement](lexer/cases/15-asm-blocks/end-after-statement.yaml), [end-after-label](lexer/cases/15-asm-blocks/end-after-label.yaml)). Where an operand is still
+  missing, as in `mov ax, end`, it is error 5 at `end` ([end-in-operand](lexer/cases/15-asm-blocks/end-in-operand.yaml)).
+  Character 233 before `end` is a [blank](#blanks-in-a-statement), so
+  `end` still ends the block ([high-character-before-end](lexer/cases/15-asm-blocks/high-character-before-end.yaml)).
+- `end` inside a string is part of the string ([end-in-string](lexer/cases/15-asm-blocks/end-in-string.yaml)).
+
+### Blanks in a statement
+
+Inside a statement, characters 1 to 32, DEL (127) and characters 128 to
+255 are blanks: they separate words and are otherwise ignored. Character
+233 inside `ax` makes two words, `a` and `x`, and `a` is error 3. Blanks
+at the end of a line are ignored
+([control-characters](lexer/cases/15-asm-blocks/control-characters.yaml), [high-characters-are-blanks](lexer/cases/15-asm-blocks/high-characters-are-blanks.yaml), [del-is-blank](lexer/cases/15-asm-blocks/del-is-blank.yaml), [high-character-splits-word](lexer/cases/15-asm-blocks/high-character-splits-word.yaml), [blanks-at-end-of-line](lexer/cases/15-asm-blocks/blanks-at-end-of-line.yaml)).
+
+### Words
+
+- A word is a run of letters, digits and the characters `_ @ $ & ?`:
+  `@@a?$&@b` is one label ([word-characters](lexer/cases/15-asm-blocks/word-characters.yaml)). Case doesn't matter
+  ([case-insensitive](lexer/cases/15-asm-blocks/case-insensitive.yaml)).
+- Only the first 32 characters of a word count; the rest are read and
+  ignored. A Pascal identifier longer than 32 characters can't be named in
+  full in a block, and one of exactly 32 characters is found by any longer
+  word that starts with it
+  ([identifier-39-characters](lexer/cases/15-asm-blocks/identifier-39-characters.yaml), [identifier-32-significant](lexer/cases/15-asm-blocks/identifier-32-significant.yaml)). For numbers,
+  see [below](#numbers-in-a-statement).
+- A word that starts with a digit or `$` is a
+  [number](#numbers-in-a-statement).
+- The first word of a statement is an instruction, unless `:` follows it,
+  which makes it a label: one declared in a `label` part, or one starting
+  with `@@`, which needs no declaration. An undeclared label is error 3
+  just after the word. After a label, the next word is again an
+  instruction; a second label there is error 5 at its start
+  ([label-then-instruction](lexer/cases/15-asm-blocks/label-then-instruction.yaml), [label-starting-with-e](lexer/cases/15-asm-blocks/label-starting-with-e.yaml), [label-undeclared](lexer/cases/15-asm-blocks/label-undeclared.yaml), [two-labels](lexer/cases/15-asm-blocks/two-labels.yaml)).
+  After a prefix such as `rep`, the next word is an instruction too, and a
+  prefix may stand alone ([prefix-then-instruction](lexer/cases/15-asm-blocks/prefix-then-instruction.yaml), [prefix-alone](lexer/cases/15-asm-blocks/prefix-alone.yaml)). A
+  first word that isn't an instruction, such as a register, is error 5
+  just after it ([register-first](lexer/cases/15-asm-blocks/register-first.yaml)).
+- In the operands, these 41 words are reserved: they never name a Pascal
+  identifier ([reserved-*](lexer/cases/15-asm-blocks/), [operator-*](lexer/cases/15-asm-blocks/)):
+
+  `ah al and ax bh bl bp bx byte ch cl cs cx dh di dl ds dword dx es far
+  high low mod near not offset or ptr qword seg shl shr si sp ss st tbyte
+  type word xor`
+
+  Every other word in the operands names a Pascal identifier, instruction
+  names included: `mov Mov, ax` stores into the variable `Mov`
+  ([instruction-as-variable](lexer/cases/15-asm-blocks/instruction-as-variable.yaml)). A Pascal reserved word such as `begin` is
+  error 3 there, as an unknown identifier
+  ([pascal-reserved-word-as-operand](lexer/cases/15-asm-blocks/pascal-reserved-word-as-operand.yaml)).
+- `&` before a word makes it name a Pascal identifier even when it is
+  reserved: `&AX` is the variable `AX` and `ax` the register
+  ([ampersand-register-name](lexer/cases/15-asm-blocks/ampersand-register-name.yaml)). Only one `&` is taken off: `&&W` is error 3.
+  `&` alone is error 5 ([ampersand-twice](lexer/cases/15-asm-blocks/ampersand-twice.yaml), [ampersand-alone](lexer/cases/15-asm-blocks/ampersand-alone.yaml)).
+
+### Numbers in a statement
+
+A number is a word that starts with a digit or with `$`. A word that
+starts with a letter is never a number: `FFh` is an identifier
+([hex-letter-first](lexer/cases/15-asm-blocks/hex-letter-first.yaml)). Errors in a number are reported at its start.
+
+- After `$` come hex digits. `$` alone is 0
+  ([hex-dollar](lexer/cases/15-asm-blocks/hex-dollar.yaml), [dollar-alone](lexer/cases/15-asm-blocks/dollar-alone.yaml)).
+- Otherwise, when the last character is a digit, the number is decimal
+  ([decimal](lexer/cases/15-asm-blocks/decimal.yaml)). When it is a letter, it is a suffix, and the characters
+  before it are the digits: `D` for decimal, `B` binary, `O` octal and `H`
+  hex, in either case
+  ([decimal-suffix](lexer/cases/15-asm-blocks/decimal-suffix.yaml), [decimal-suffix-upper](lexer/cases/15-asm-blocks/decimal-suffix-upper.yaml), [binary](lexer/cases/15-asm-blocks/binary.yaml), [octal](lexer/cases/15-asm-blocks/octal.yaml), [hex-suffix](lexer/cases/15-asm-blocks/hex-suffix.yaml), [hex-suffix-upper](lexer/cases/15-asm-blocks/hex-suffix-upper.yaml), [zero-h](lexer/cases/15-asm-blocks/zero-h.yaml)).
+  Any other last character, such as `Q` or `X`, is error 7
+  ([octal-q](lexer/cases/15-asm-blocks/octal-q.yaml), [bad-suffix](lexer/cases/15-asm-blocks/bad-suffix.yaml), [one-end](lexer/cases/15-asm-blocks/one-end.yaml)). Only the last character is a
+  suffix: `0Bh` is 11 ([hex-b-digit](lexer/cases/15-asm-blocks/hex-b-digit.yaml)).
+- The digits are `0` to `9` for decimal, `0` and `1` for binary, `0` to
+  `7` for octal, and `0` to `9` and `A` to `F` for hex, where `@` and `?`
+  are hex digits too, worth 9 and 8: `$1@` and `1@h` are 25, `$?` and
+  `0?h` are 8
+  ([hex-at-dollar](lexer/cases/15-asm-blocks/hex-at-dollar.yaml), [hex-at-suffix](lexer/cases/15-asm-blocks/hex-at-suffix.yaml), [hex-question-dollar](lexer/cases/15-asm-blocks/hex-question-dollar.yaml), [hex-question-suffix](lexer/cases/15-asm-blocks/hex-question-suffix.yaml)).
+  Any other character among the digits is error 7, `H` after `$` included
+  ([bad-decimal-digit](lexer/cases/15-asm-blocks/bad-decimal-digit.yaml), [bad-binary-digit](lexer/cases/15-asm-blocks/bad-binary-digit.yaml), [bad-octal-digit](lexer/cases/15-asm-blocks/bad-octal-digit.yaml), [bad-hex-digit](lexer/cases/15-asm-blocks/bad-hex-digit.yaml), [bad-hex-underscore](lexer/cases/15-asm-blocks/bad-hex-underscore.yaml), [bad-hex-ampersand](lexer/cases/15-asm-blocks/bad-hex-ampersand.yaml), [bad-hex-dollar-suffix](lexer/cases/15-asm-blocks/bad-hex-dollar-suffix.yaml)).
+- The value is a 32-bit number: `4294967295`, `0FFFFFFFFh` and
+  `37777777777o` are the largest, and a value one more is error 76
+  ([decimal-max](lexer/cases/15-asm-blocks/decimal-max.yaml), [decimal-over](lexer/cases/15-asm-blocks/decimal-over.yaml), [hex-max](lexer/cases/15-asm-blocks/hex-max.yaml), [hex-over](lexer/cases/15-asm-blocks/hex-over.yaml), [octal-max](lexer/cases/15-asm-blocks/octal-max.yaml), [octal-over](lexer/cases/15-asm-blocks/octal-over.yaml)).
+  The digits are read from the left. For each one, the value so far is
+  first multiplied by the base, which is error 76 if the result needs more
+  than 32 bits; then a character that isn't a digit of the base is error
+  7; then the digit is added, again error 76 if the sum needs more than 32
+  bits. So `429496729A0` is error 7 and `4294967295A0` is error 76
+  ([decimal-over-multiplying](lexer/cases/15-asm-blocks/decimal-over-multiplying.yaml), [bad-digit-before-overflow](lexer/cases/15-asm-blocks/bad-digit-before-overflow.yaml), [overflow-before-bad-digit](lexer/cases/15-asm-blocks/overflow-before-bad-digit.yaml)).
+- Only a number's first 32 characters count, so a longer number loses its
+  end, suffix and all: 32 zeros and a `1` is 0, and 31 zeros, `F` and `h`
+  is error 7, since `F` is then its last character
+  ([digits-32](lexer/cases/15-asm-blocks/digits-32.yaml), [digits-33](lexer/cases/15-asm-blocks/digits-33.yaml), [hex-32-characters](lexer/cases/15-asm-blocks/hex-32-characters.yaml), [hex-33-characters](lexer/cases/15-asm-blocks/hex-33-characters.yaml)).
+  A binary number with 32 digits is read as a decimal number, which is
+  error 76: the longest binary number has 31 digits
+  ([binary-31-digits](lexer/cases/15-asm-blocks/binary-31-digits.yaml), [binary-32-digits](lexer/cases/15-asm-blocks/binary-32-digits.yaml)).
+
+### Strings in a statement
+
+- A string is the characters between two `'` or two `"` on one line. The
+  same quote twice stands for one, and the other quote is an ordinary
+  character
+  ([string-double-quotes](lexer/cases/15-asm-blocks/string-double-quotes.yaml), [string-doubled-apostrophe](lexer/cases/15-asm-blocks/string-doubled-apostrophe.yaml), [db-doubled-double-quote](lexer/cases/15-asm-blocks/db-doubled-double-quote.yaml), [string-apostrophe-in-double-quotes](lexer/cases/15-asm-blocks/string-apostrophe-in-double-quotes.yaml), [db-quotes](lexer/cases/15-asm-blocks/db-quotes.yaml)).
+  A line end before the closing quote is error 8 at the opening quote
+  ([string-unterminated](lexer/cases/15-asm-blocks/string-unterminated.yaml)). Inside a string, `;`, `{`, `(*`, `end`, DEL and
+  characters above 127 are characters like any other
+  ([string-semicolon](lexer/cases/15-asm-blocks/string-semicolon.yaml), [string-brace](lexer/cases/15-asm-blocks/string-brace.yaml), [db-separators-in-string](lexer/cases/15-asm-blocks/db-separators-in-string.yaml), [db-high-characters](lexer/cases/15-asm-blocks/db-high-characters.yaml), [end-in-string](lexer/cases/15-asm-blocks/end-in-string.yaml)).
+- After `db`, a string stands for all its characters ([db-string](lexer/cases/15-asm-blocks/db-string.yaml)).
+  Elsewhere it is a number: its character codes as digits in base 256, the
+  last character lowest, keeping the low 32 bits. `'A'` is 65, `'AB'` is
+  16706, `''` is 0, `'ABCD'` is 1094861636, and `'ABCDE'` is 1111704645,
+  the value of `'BCDE'`
+  ([string-one](lexer/cases/15-asm-blocks/string-one.yaml), [string-two](lexer/cases/15-asm-blocks/string-two.yaml), [string-empty](lexer/cases/15-asm-blocks/string-empty.yaml), [string-four](lexer/cases/15-asm-blocks/string-four.yaml), [string-five](lexer/cases/15-asm-blocks/string-five.yaml)).
+  A value too large for where it is used is error 76, such as `'ABC'` as a
+  16-bit operand ([string-three](lexer/cases/15-asm-blocks/string-three.yaml)).
+
+### Symbols in a statement
+
+Every other character is a symbol by itself. `! # % \ ^ = < > | ~` and
+`` ` `` between two numbers in an operand are error 5 at the symbol
+([symbol-*](lexer/cases/15-asm-blocks/)).
+
 ## Real values
 
 Each case here prints the exact 80-bit Extended value of a real literal.
@@ -567,8 +738,10 @@ reproduce `TPC`'s own arithmetic. That arithmetic isn't known yet
 
 ## Not covered yet
 
-- The scanner inside `asm` blocks, which is a separate scanner: after `asm`,
-  no further tokens reach the Pascal parser until the block's `end`.
+- Which instructions and operands an [`asm` block](#asm-blocks) accepts,
+  and how they are encoded.
+- `end` followed directly by DEL (127) at the start of a statement in an
+  `asm` block: `TPC` never finishes compiling, and cases can't record that.
 - `CPU87` on a machine without a floating-point unit: QEMU always has
   one, so no case shows it undefined.
 - `{$O name}` while `TPC` looks for a run-time error (its `/F` option),

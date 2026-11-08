@@ -1,0 +1,38 @@
+description: A Pascal variable named Cx, set to 5, is assigned 7 in an asm
+  block as 'Cx'.
+source: |
+  program P;
+  var
+    Cx: Integer;
+  begin
+    Cx := 5;
+    asm
+      mov ax, 7
+      mov Cx, ax
+    end;
+    Write(Cx)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: CX
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: CX
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: CX
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "5"

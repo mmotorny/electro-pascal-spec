@@ -1,0 +1,38 @@
+description: An instruction name after the first word of a statement names a
+  Pascal variable.
+source: |
+  program P;
+  var
+    Mov: Word;
+  begin
+    Mov := 0;
+    asm
+      mov ax, 7
+      mov Mov, ax
+    end;
+    Write(Mov)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: MOV
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: MOV
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: MOV
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

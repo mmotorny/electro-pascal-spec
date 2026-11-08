@@ -1,0 +1,22 @@
+description: Character 233 inside 'ax' splits it into two words.
+source: "program P;\nvar\n  W: Word;\nbegin\n  W := 0;\n  asm\n    mov a\xe9x, 6\n    mov W, ax\n  end;\n  Write(W)\nend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - BEGIN
+  - IDENT: W
+  - ASSIGN
+  - INTEGER: 0
+  - SEMI
+  - ASM
+compile:
+  error: 3
+  line: 7
+  column: 9
+  message: Unknown identifier.

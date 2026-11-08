@@ -1,0 +1,33 @@
+description: Character 233 and DEL inside a string are kept.
+source: "program P;\ntype\n  PS = ^String;\n\nprocedure S; assembler;\nasm\n  db 3, 'a\xe9\x7f'\nend;\n\nbegin\n  Write(PS(@S)^)\nend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - TYPE
+  - IDENT: PS
+  - EQ
+  - CARET
+  - STRING
+  - SEMI
+  - PROCEDURE
+  - IDENT: S
+  - SEMI
+  - IDENT: ASSEMBLER
+  - SEMI
+  - ASM
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: PS
+  - LPAREN
+  - AT
+  - IDENT: S
+  - RPAREN
+  - CARET
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "a\xe9\x7f"

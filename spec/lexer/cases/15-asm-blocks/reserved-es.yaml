@@ -1,0 +1,38 @@
+description: A Pascal variable named Es, set to 5, is assigned 7 in an asm
+  block as 'Es'.
+source: |
+  program P;
+  var
+    Es: Integer;
+  begin
+    Es := 5;
+    asm
+      mov ax, 7
+      mov Es, ax
+    end;
+    Write(Es)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: ES
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: ES
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: ES
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "5"

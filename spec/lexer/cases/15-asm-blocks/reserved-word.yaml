@@ -1,0 +1,34 @@
+description: A Pascal variable named Word, set to 5, is assigned 7 in an asm
+  block as 'Word'.
+source: |
+  program P;
+  var
+    Word: Integer;
+  begin
+    Word := 5;
+    asm
+      mov ax, 7
+      mov Word, ax
+    end;
+    Write(Word)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: WORD
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: WORD
+  - ASSIGN
+  - INTEGER: 5
+  - SEMI
+  - ASM
+compile:
+  error: 155
+  line: 8
+  column: 15
+  message: Invalid combination of opcode and operands.

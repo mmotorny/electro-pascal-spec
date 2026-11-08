@@ -1,0 +1,42 @@
+description: The body of an assembler procedure is an asm block too.
+source: |
+  program P;
+  var
+    W: Word;
+
+  procedure S; assembler;
+  asm
+    mov W, 3
+  end;
+
+  begin
+    S;
+    Write(W)
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: W
+  - COLON
+  - IDENT: WORD
+  - SEMI
+  - PROCEDURE
+  - IDENT: S
+  - SEMI
+  - IDENT: ASSEMBLER
+  - SEMI
+  - ASM
+  - SEMI
+  - BEGIN
+  - IDENT: S
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: W
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "3"
