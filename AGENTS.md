@@ -144,6 +144,38 @@ Why the boundary is drawn here:
 - **Let the recorded result decide.** When a case disagrees with the spec's
   text, the case is right.
 
+## Clean-room trial
+
+A part of the spec is done only when an implementer can build from it
+alone. Check that with a trial before calling a part done, and again after
+large changes:
+
+1. `bazel run //harness:clean_room -- prepare DIR` copies `spec/` into
+   `DIR/spec`, with every case's recorded `tokens`, `compile` and `output`
+   removed. Use a scratch folder outside the repo.
+2. Give a fresh agent, with none of this work in its context, only that
+   folder. Tell it to:
+   - read nothing outside `DIR`: not this repo, `dirty/`, Bazel outputs,
+     Borland's files, or the web on how Turbo Pascal behaves;
+   - write `scan(source, files, options, precompile)` in `DIR` (the
+     interface is in `harness/clean_room.py`);
+   - report every place the text is missing, ambiguous or contradicts
+     itself, with the reading it chose, and anything it relied on that the
+     spec doesn't state.
+3. `bazel run //harness:clean_room -- score DIR/FILE -v` scores its code
+   against the full cases.
+4. Work through the report and every case that isn't exact. Where the text
+   is missing or wrong, fix it, and record new cases where none shows the
+   fact. Where a case's description contradicts its results, fix the
+   description. Errors that only a later part of the spec (such as the
+   parser) can explain are expected.
+
+A looser trial, with the results left in, finds gaps faster. In that case,
+tell the agent to list every rule it inferred from the results, because
+each one is a gap in the text.
+
+Nothing from a trial is committed: the spec holds no implementation code.
+
 ## Review
 
 Nothing is pushed to `main` until it has passed review against the facts

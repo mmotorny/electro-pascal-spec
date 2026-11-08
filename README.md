@@ -93,6 +93,10 @@ make and check the cases are in [`harness/`](harness).
   case is well formed and recorded, that every rule's links name existing
   cases and every case is linked from a rule, and that the rules the spec
   gives for real values hold for the recorded values.
+- `bazel run //harness:clean_room -- prepare DIR` and
+  `bazel run //harness:clean_room -- score FILE` set up and score a
+  clean-room trial: an implementation built from `spec/` alone, with the
+  cases' recorded results removed (see `AGENTS.md`).
 - `bazel run //machine:tokens -- file ...` prints the tokens `TPC`'s
   scanner delivers for Pascal files or cases, and inside `asm` blocks those
   of its built-in assembler's scanner. It watches `TPC` through

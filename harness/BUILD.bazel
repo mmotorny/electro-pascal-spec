@@ -67,3 +67,12 @@ python_test(
     main = "check_cases.py",
     srcs = ["cases.py"],
 )
+
+# Sets up a clean-room trial and scores its implementation against the cases:
+# bazel run //harness:clean_room -- prepare DIR
+# bazel run //harness:clean_room -- score FILE [-v]
+python_tool(
+    name = "clean_room",
+    main = "clean_room.py",
+    srcs = ["cases.py"],
+)
