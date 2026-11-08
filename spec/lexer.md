@@ -575,7 +575,7 @@ the other parameter directives (`{$L}` included), `{$IFDEF}`, `{$IFNDEF}`,
 `{$IFOPT}`, `{$ELSE}`, `{$ENDIF}`, `{$DEFINE}` of a defined symbol and
 `{$UNDEF}` of an undefined one
 ([paren-switch-no-close](lexer/cases/10-compiler-directives/paren-switch-no-close.yaml), [paren-switch-list-no-close](lexer/cases/10-compiler-directives/paren-switch-list-no-close.yaml), [paren-parameter-no-close](lexer/cases/10-compiler-directives/paren-parameter-no-close.yaml), [paren-l-no-close](lexer/cases/10-compiler-directives/paren-l-no-close.yaml), [paren-ifdef-no-close](lexer/cases/10-compiler-directives/paren-ifdef-no-close.yaml), [paren-ifndef-no-close](lexer/cases/10-compiler-directives/paren-ifndef-no-close.yaml), [paren-ifopt-no-close](lexer/cases/10-compiler-directives/paren-ifopt-no-close.yaml), [paren-else-no-close](lexer/cases/10-compiler-directives/paren-else-no-close.yaml), [paren-endif-no-close](lexer/cases/10-compiler-directives/paren-endif-no-close.yaml), [paren-define-defined-no-close](lexer/cases/10-compiler-directives/paren-define-defined-no-close.yaml), [paren-undef-not-defined-no-close](lexer/cases/10-compiler-directives/paren-undef-not-defined-no-close.yaml)).
-`{$O}` is untested, as it needs units.
+`{$O}` is untested ([#16](https://github.com/mmotorny/electro-pascal-spec/issues/16)).
 
 ## `asm` blocks
 
@@ -585,7 +585,7 @@ token after them is the Pascal token after the block's `end`
 ([block](lexer/cases/15-asm-blocks/block.yaml), [empty-block](lexer/cases/15-asm-blocks/empty-block.yaml)). The body of an `assembler` procedure is such a
 block too ([assembler-procedure](lexer/cases/15-asm-blocks/assembler-procedure.yaml)). This section says how a block is split
 into statements and tokens. Which instructions and operands
-it accepts, and how it encodes them, are not covered.
+a block accepts, and how they are encoded, are not covered ([#13](https://github.com/mmotorny/electro-pascal-spec/issues/13)).
 
 ### Tokens in a block
 
@@ -952,4 +952,4 @@ the file is named
 ## Not covered yet
 
 - `CPU87` on a machine without a floating-point unit: the cases run on
-  QEMU, which always has one.
+  QEMU, which always has one ([#14](https://github.com/mmotorny/electro-pascal-spec/issues/14)).

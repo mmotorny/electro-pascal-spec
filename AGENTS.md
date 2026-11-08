@@ -83,6 +83,10 @@ build it.
   indented. Keep a program on fewer lines only where its layout is what
   the case shows (line lengths, line ends, positions on a line). When a
   case shows a value, make the program print it so `output` records it.
+- Track every open question and gap as a GitHub issue, never in the
+  documentation alone: where a document mentions one (such as under "Not
+  covered yet"), it links to the issue. Issues are public, so they keep
+  to the facts boundary like everything else.
 - Every rule in the spec ends with links to the cases that show it, and
   every case is linked from some rule; a link to a folder, with a pattern
   such as `reserved-*` as its text, cites the cases matching it.

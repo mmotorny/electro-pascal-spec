@@ -60,4 +60,4 @@ the total
 ## Not covered yet
 
 - Whether the units a program uses affect the limit on nested include
-  files.
+  files ([#15](https://github.com/mmotorny/electro-pascal-spec/issues/15)).
