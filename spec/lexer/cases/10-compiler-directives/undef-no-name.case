@@ -1,0 +1,6 @@
+# {$UNDEF} without a name.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 2 at 2:8
+---
+program P;
+{$UNDEF} begin end.

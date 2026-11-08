@@ -8,9 +8,11 @@ text and a case disagree, the case is right and this text needs fixing.
 
 Status: first draft, from the Language Guide, the IDE help and black-box
 probes. Every case's `tokens:` line matches the token stream captured from
-`TPC` (issue #6). A case's token list ends where `TPC` stops asking for
-tokens: at the end of the program, or at the token where it reports an
-error. When the error is in the lexer itself, the bad token is not
+`TPC` (issue #6). Between them, the cases take both sides of every branch
+in `TPC`'s scanner that a single source file can reach, except as noted
+under [not covered yet](#not-covered-yet). A case's token list ends where
+`TPC` stops asking for tokens: at the end of the program, or at the token
+where it reports an error. When the error is in the lexer itself, the bad token is not
 delivered.
 
 ## Notation
@@ -47,6 +49,12 @@ string. For example `'Line 1'#13#10`.
   even inside a comment ([program lines](lexer/cases/11-program-lines)).
   The error comes before any token on that line is delivered. The Language
   Guide's figure of 126 is wrong.
+- NUL (0) bytes are dropped as a line is read, as if they weren't in the
+  file: `pro`, NUL, `gram` is `program`, a NUL between two digits or inside
+  a quoted string disappears, and NULs don't count toward the line length
+  ([character set](lexer/cases/02-character-set)).
+- Nothing changes where a token crosses a 4096-byte boundary of the file
+  ([program lines](lexer/cases/11-program-lines)).
 - ^Z (26) ends the file; nothing after it is read. When the file ends too
   early, the error is reported at column 1 of the line after the last line
   read, and a line that ^Z cuts short still counts as read
@@ -56,7 +64,8 @@ string. For example `'Line 1'#13#10`.
 
 ## Separators
 
-- Characters 0 to 32 are blanks. Blanks and comments separate tokens and are
+- Characters 1 to 32 are blanks (0 never gets this far, see
+  [source text](#source-text)). Blanks and comments separate tokens and are
   otherwise ignored.
 - A separator is needed only between two tokens that would otherwise run
   together: two words (reserved words or identifiers) or a word and a
@@ -154,9 +163,12 @@ parts ends the string, and the next part starts a new one. The parts are:
   overflows. Then only its low 8 bits are used: `#256` is `#0`, `#65601` is
   `'A'` and `#2147483647` is `#255`.
 - **`^` and the very next character**, whatever it is, a blank included:
-  the character in upper case with bit 64 flipped. `^M` and `^m` are `#13`,
-  `^@` is `#0`, `^[` is `#27`, `^1` is `'q'`, `^'` is `'g'`, and `^` then a
-  space is `` ` `` (96). Only one character is taken: `^Integer` is `^I`
+  the character with bit 64 flipped, after changing `a` to `z` to upper
+  case. `^M` and `^m` are `#13`, `^@` is `#0`, `^[` is `#27`, `^1` is `'q'`,
+  `^'` is `'g'`, and `^` then a space is `` ` `` (96). Only `a` to `z`
+  change case: `` ^` `` is `' '`, `^z` is `#26`, `^{` is `';'`, `^~` is
+  `'>'`, `^` then DEL (127) is `'?'` and `^` then character 233 is `#169`.
+  Only one character is taken: `^Integer` is `^I`
   followed by the identifier `nteger`. Where an operand is expected but `^`
   is the last character on its line, `TPC` delivers `CARET` and then
   reports error 8 just after it, as for an unterminated string.
@@ -178,7 +190,9 @@ statements, set constructors and `case` labels. Everywhere else `^` is
 
 ([comments](lexer/cases/09-comments))
 
-- `{` to the next `}`, or `(*` to the next `*)`. Comments may span lines.
+- `{` to the next `}`, or `(*` to the next `*)`. Comments of both kinds may
+  span lines. A `*` at the end of one line and a `)` at the start of the
+  next don't end a `(*` comment.
 - They don't nest, and the other kind of delimiter has no effect inside
   one: `{ (* }` is a complete comment.
 - `(*)` opens a comment; the `)` is part of it.
@@ -207,21 +221,112 @@ so `{$M16384}` has the unknown name `M16384`. The name is one of:
 - a parameter directive letter (`C D G I L M O R S`) and its parameter.
   Most take a file name or other text, which may be anything, including
   nothing at all: `{$R}` and `{$L:X.OBJ}` are accepted (a missing file is
-  error 15, but that's not the lexer's business). `M` takes numbers: after
-  any blanks, a number must follow, so `{$M}`, `{$M ABC}` and `{$M=16384}`
-  are error 17 at the first character that isn't one.
+  error 15, but that's not the lexer's business). `M` takes numbers, see
+  [memory sizes](#memory-sizes).
 
 Anything else is error 17, at the column of the offending item: a blank
 right after `$`, an unknown name such as `{$FOO}` or `{$Z+}`, a switch
 letter that isn't also a parameter directive written without its sign
 (`{$T}`), or a missing item after a comma (`{$R+,}`).
 
-The conditional directives work at this level: text skipped by `{$IFDEF}`
-and similar produces no tokens. It is still read for comments and quoted
-strings, though: a `{$ENDIF}` inside a comment or after an apostrophe on the
-same line doesn't count. A string still open at the end of a line just ends
-there. A comment still open at the end of the file is error 10, and a
-missing `{$ENDIF}` is error 129, both at the end of the file.
+### Switches that must come first
+
+The switches `A D E G K L N O T X Y` may appear only before the program
+heading or right after it. After a `uses` clause or a declaration, or inside
+a statement part, any of them is error 17 at the switch letter. The other
+switches (`B F I P Q R S V W`) and `{$M}` may appear anywhere.
+
+### Memory sizes
+
+`{$M stack,heapmin,heapmax}` takes three numbers, decimal or hex. Before
+each number, any run of blanks, commas and semicolons is skipped, so
+`{$M 16384 0 655360}`, `{$M 16384;0;655360}` and `{$M ,16384,,0, ,655360}`
+are all accepted. Anything after the third number is ignored. A number that
+is missing or out of range is error 17 at the place where it starts or
+should start, so `{$M}`, `{$M ABC}`, `{$M=16384}`, `{$M 16384}` and
+`{$M 16384,0}` are all errors.
+
+- `stack` is rounded down to an even number and must then be from 1024 to
+  65520: 1023 and 65522 are errors, 1025 is used as 1024 and 65521 as
+  65520.
+- `heapmin` and `heapmax` are rounded up to a whole number of 16-byte
+  paragraphs and may be at most 655360. After rounding, `heapmax` may not be
+  below `heapmin`: `{$M 16384,1024,1009}` is accepted, as both are 64
+  paragraphs, and `{$M 16384,1024,1008}` is an error. A number too large
+  for an integer is an error too.
+
+### Conditional symbols
+
+`{$DEFINE name}` defines a conditional symbol and `{$UNDEF name}` removes
+it. Defining a symbol that is already defined, or removing one that isn't,
+does nothing: after defining `X` twice and removing it once, `X` is
+undefined.
+
+A symbol's name is read like an identifier: a letter or underscore, then
+letters, digits and underscores, with case not mattering and only the first
+63 characters significant. It ends at the first other character, so
+`{$DEFINE A$}` defines `A`, and it may be a reserved word. A missing name,
+or one starting with a digit, is error 2 where the name should start. This
+goes for `{$UNDEF}`, `{$IFDEF}` and `{$IFNDEF}` too.
+
+`VER70`, `MSDOS`, `CPU86` and `CPU87` are defined from the start (on the
+reference machine); `VER60`, `DPMI` and `WINDOWS` are not. The defined
+symbols, these four included, share 1024 bytes, each taking its length
+plus one. A `{$DEFINE}` that doesn't fit is error 127 at its name.
+Removing a symbol, even a predefined one, makes room again.
+
+### Conditional compilation
+
+The conditional directives work at this level: skipped text produces no
+tokens.
+
+- `{$IFDEF name}` compiles the text up to its `{$ELSE}` or `{$ENDIF}` if
+  `name` is defined, and skips it otherwise. `{$IFNDEF name}` does the
+  opposite.
+- `{$IFOPT X+}` and `{$IFOPT X-}` test whether switch `X` is on or off.
+  After any blanks comes a switch letter and its sign; anything after that
+  is ignored. A letter that isn't a switch (`Z`), one that is only a
+  parameter directive (`M`), or a missing sign is error 17 at the letter.
+- `{$ELSE}` switches from compiling to skipping or back. A second `{$ELSE}`
+  at the same level switches again: in `{$IFDEF X} a {$ELSE} b {$ELSE} c
+  {$ENDIF}`, `a` and `c` are compiled when `X` is defined, and only `b`
+  when it isn't.
+- Conditionals nest, in compiled and in skipped text alike. In skipped
+  text, only the conditional directives count: `{$IFDEF}`, `{$IFNDEF}` and
+  `{$IFOPT}` open a level, `{$ENDIF}` closes one, and an `{$ELSE}` or
+  `{$ENDIF}` at the outermost level ends the skipping. All other
+  directives there are ignored, even unknown ones, and so is anything
+  after a directive's name: `{$ENDIF junk}` ends skipped text but
+  `{$ENDIFX}` doesn't.
+- `{$ELSE}` or `{$ENDIF}` with no conditional open is error 128 at its
+  name. A conditional still open at the program's final `end.` is error
+  129 at the `.`.
+
+Skipped text is still read for comments and quoted strings, though: a
+`{$ENDIF}` inside a comment or after an apostrophe on the same line doesn't
+count. A string still open at the end of a line just ends there. A comment
+still open at the end of the file is error 10, and a missing `{$ENDIF}` is
+error 129, both at the end of the file.
+
+### Include files
+
+`{$I name}` inside a statement part is error 118, just after the
+directive, before `TPC` looks for the file.
+
+### `)` ending a `(*$` directive
+
+In a directive written with `(*$`, a `)` directly after the directive's
+last item sometimes ends the comment, as `*)` would. The cases have found
+these, and no other directives have been seen to do it:
+
+- `(*$M stack,heapmin,heapmax)`, when `heapmax` in paragraphs (rounded up)
+  is 42 more than a multiple of 256: 672 bytes, 42 paragraphs, ends the
+  comment, and 688 bytes, 43 paragraphs, doesn't.
+- `(*$UNDEF name)`, when `name` is defined and 42 characters long.
+- `(*$DEFINE name)`, when `name` isn't defined yet and, once it is, the
+  defined symbols take up 222 more than a multiple of 256 bytes, counted as
+  under [conditional symbols](#conditional-symbols).
+- `(*$R)` in skipped text. In compiled text, `(*$R)` stays open.
 
 ## Real values
 
@@ -245,7 +350,12 @@ arithmetic. That arithmetic isn't known yet (issue #10). What is known:
 
 - The scanner inside `asm` blocks, which is a separate scanner: after `asm`,
   no further tokens reach the Pascal parser until the block's `end`.
-- Include files (`{$I name}`).
+- Include files (`{$I name}`), beyond the rule that they can't start
+  inside a statement part. The cases are single files, so nesting, the
+  return to the including file and the limit on open files are untested.
+  How the file name is read (where it ends, its case, its length) shows
+  only in error 15's message, which the cases don't record.
+- `{$O unit}`, which needs units.
 - The exact value of real literals (see [real values](#real-values)).
 - Why real overflow is reported just after the number, while integer
   overflow is reported at the digit that overflows.

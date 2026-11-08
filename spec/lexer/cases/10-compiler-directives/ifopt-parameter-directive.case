@@ -1,0 +1,6 @@
+# {$IFOPT M+}: M is a parameter directive, not a switch.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 2:9
+---
+program P;
+{$IFOPT M+} begin end.

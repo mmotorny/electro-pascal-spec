@@ -1,0 +1,6 @@
+# {$IFOPT R} without + or -.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 2:9
+---
+program P;
+{$IFOPT R} begin end.

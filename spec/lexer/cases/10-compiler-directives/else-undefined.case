@@ -1,0 +1,8 @@
+# With X undefined, the text after {$ELSE} is compiled.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(2) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) RPAREN END DOT
+tpc: ok
+output: '2'
+---
+program P;
+{$IFDEF X} const A = 1; {$ELSE} const A = 2; {$ENDIF}
+begin Write(A) end.

@@ -1,0 +1,8 @@
+# Text after the name in {$ENDIF junk} is ignored.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(1) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) RPAREN END DOT
+tpc: ok
+output: '1'
+---
+program P;
+{$IFDEF X} {$ENDIF junk}
+const A = 1; begin Write(A) end.

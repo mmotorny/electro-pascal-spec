@@ -1,0 +1,7 @@
+# A stack size of 1024, the smallest; the program prints SPtr at its start.
+tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(SPTR) RPAREN END DOT
+tpc: ok
+output: '1018'
+---
+program P;
+{$M 1024,0,655360} begin Write(SPtr) end.

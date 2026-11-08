@@ -1,0 +1,6 @@
+# A heap minimum above the maximum.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 2:16
+---
+program P;
+{$M 16384,1024,1008} begin Write(SPtr) end.

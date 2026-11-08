@@ -1,0 +1,6 @@
+# A heap minimum of 655361.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 2:11
+---
+program P;
+{$M 16384,655361,655360} begin Write(SPtr) end.

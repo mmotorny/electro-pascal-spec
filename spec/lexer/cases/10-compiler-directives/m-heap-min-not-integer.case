@@ -1,0 +1,6 @@
+# A heap minimum too large to be an integer.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 2:11
+---
+program P;
+{$M 16384,4294967295,655360} begin Write(SPtr) end.

@@ -1,0 +1,7 @@
+# {$E+} after a declaration.
+tokens: PROGRAM IDENT(P) SEMI VAR IDENT(V) COLON IDENT(INTEGER) SEMI
+tpc: error 17 at 3:3
+---
+program P;
+var V: Integer;
+{$E+} begin end.

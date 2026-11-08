@@ -1,0 +1,6 @@
+# {$DEFINE} without a name.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 2 at 2:9
+---
+program P;
+{$DEFINE} begin end.

@@ -1,0 +1,7 @@
+# A stack size of 65520, the largest.
+tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(SPTR) RPAREN END DOT
+tpc: ok
+output: '65514'
+---
+program P;
+{$M 65520,0,655360} begin Write(SPtr) end.

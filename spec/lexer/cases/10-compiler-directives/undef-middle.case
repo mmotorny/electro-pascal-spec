@@ -1,0 +1,11 @@
+# Removing the second of three symbols leaves the other two defined.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(1) SEMI CONST IDENT(C) EQ INTEGER(3) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) COMMA IDENT(C) RPAREN END DOT
+tpc: ok
+output: '13'
+---
+program P;
+{$DEFINE A} {$DEFINE B} {$DEFINE C} {$UNDEF B}
+{$IFDEF A} const A = 1; {$ENDIF}
+{$IFDEF B} const A = 2; {$ENDIF}
+{$IFDEF C} const C = 3; {$ENDIF}
+begin Write(A, C) end.

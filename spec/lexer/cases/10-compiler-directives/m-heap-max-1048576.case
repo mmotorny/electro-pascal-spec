@@ -1,0 +1,6 @@
+# A heap maximum of 1048576.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 17 at 2:13
+---
+program P;
+{$M 16384,0,1048576} begin Write(SPtr) end.

@@ -1,0 +1,7 @@
+# A heap maximum of 655360, the largest.
+tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(SPTR) RPAREN END DOT
+tpc: ok
+output: '16378'
+---
+program P;
+{$M 16384,0,655360} begin Write(SPtr) end.

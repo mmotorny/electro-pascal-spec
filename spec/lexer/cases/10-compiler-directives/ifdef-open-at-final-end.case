@@ -1,0 +1,6 @@
+# A compiled {$IFDEF} still open at the program's final end.
+tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
+tpc: error 129 at 2:33
+---
+program P;
+{$DEFINE X} {$IFDEF X} begin end.

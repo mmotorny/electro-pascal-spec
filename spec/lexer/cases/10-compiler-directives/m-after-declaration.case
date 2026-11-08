@@ -1,0 +1,8 @@
+# {$M} after a declaration.
+tokens: PROGRAM IDENT(P) SEMI VAR IDENT(V) COLON IDENT(INTEGER) SEMI BEGIN END DOT
+tpc: ok
+output: ''
+---
+program P;
+var V: Integer;
+{$M 16384,0,655360} begin end.

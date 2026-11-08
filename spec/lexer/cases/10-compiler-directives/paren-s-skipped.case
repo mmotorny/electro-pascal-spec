@@ -1,0 +1,7 @@
+# In skipped text, (*$S) stays open until *), so the {$ENDIF} inside it doesn't count.
+tokens: PROGRAM IDENT(P) SEMI
+tpc: error 129 at 4:1
+---
+program P;
+{$IFDEF X} (*$S) {$ENDIF} begin Write(1) end. *)
+begin Write(2) end.

@@ -1,0 +1,7 @@
+# A heap maximum of 17 bytes is rounded up to 32.
+tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(MEMAVAIL) RPAREN END DOT
+tpc: ok
+output: '528'
+---
+program P;
+{$M 16384,0,17} begin Write(MemAvail) end.

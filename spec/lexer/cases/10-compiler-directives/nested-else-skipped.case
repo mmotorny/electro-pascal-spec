@@ -1,0 +1,10 @@
+# A nested {$ELSE} inside skipped text doesn't end the skipping; the outer {$ELSE} does.
+tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(3) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) RPAREN END DOT
+tpc: ok
+output: '3'
+---
+program P;
+{$IFDEF X}
+  {$IFDEF Y} const A = 1; {$ELSE} const A = 2; {$ENDIF} const A = 4;
+{$ELSE} const A = 3; {$ENDIF}
+begin Write(A) end.
