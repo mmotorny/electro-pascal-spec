@@ -1,7 +1,0 @@
-# A tab counts as one character: 128 characters with a tab is too long.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 11 at 2:128
----
-program P;
-	{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}
-begin end.

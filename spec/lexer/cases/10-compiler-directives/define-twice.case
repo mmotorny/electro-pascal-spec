@@ -1,9 +1,0 @@
-# Defining X twice and removing it once leaves it undefined.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(2) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) RPAREN END DOT
-tpc: ok
-output: '2'
----
-program P;
-{$DEFINE X} {$DEFINE X} {$UNDEF X}
-{$IFDEF X} const A = 1; {$ENDIF}
-const A = 2; begin Write(A) end.

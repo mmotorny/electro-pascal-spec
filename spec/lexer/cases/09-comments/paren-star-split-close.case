@@ -1,8 +1,0 @@
-# A * at the end of a line and a ) at the start of the next don't close a (* comment.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN INTEGER(1) RPAREN END DOT
-tpc: ok
-output: '1'
----
-program P;
-(* one *
-) two *) begin Write(1) end.

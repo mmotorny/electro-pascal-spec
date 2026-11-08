@@ -1,0 +1,17 @@
+description: A heap maximum of 17 bytes is rounded up to 32.
+source: |
+  program P;
+  {$M 16384,0,17} begin Write(MemAvail) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: MEMAVAIL
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "528"

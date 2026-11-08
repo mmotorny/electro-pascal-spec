@@ -1,0 +1,16 @@
+description: A blank inside <= splits it into < and =.
+source: |
+  program P; begin if 1 < = 2 then end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IF
+  - INTEGER: 1
+  - LT
+  - EQ
+compile:
+  error: 42
+  line: 1
+  column: 25

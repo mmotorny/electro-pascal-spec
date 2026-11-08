@@ -1,5 +1,0 @@
-# A real number beyond the Extended range.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ
-tpc: error 6 at 1:28
----
-program P; const C = 1e4933; begin Write(C) end.

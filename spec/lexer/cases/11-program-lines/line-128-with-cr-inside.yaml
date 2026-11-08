@@ -1,0 +1,11 @@
+description: 128 characters other than CR, with a CR in the middle of the
+  line.
+source: "program P;\n{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\rxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}\nbegin end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 11
+  line: 2
+  column: 128

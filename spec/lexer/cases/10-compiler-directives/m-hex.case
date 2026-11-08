@@ -1,7 +1,0 @@
-# Hex numbers in {$M}.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(SPTR) RPAREN END DOT
-tpc: ok
-output: '16378'
----
-program P;
-{$M $4000,0,$A0000} begin Write(SPtr) end.

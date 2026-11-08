@@ -1,6 +1,0 @@
-# Text after a switch, separated by a blank.
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; {$R+ this is ignored} begin end.

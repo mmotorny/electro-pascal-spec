@@ -1,5 +1,0 @@
-# (* *) don't nest: the comment ends at the first *), and the second *) is * then ).
-tokens: PROGRAM IDENT(P) SEMI STAR
-tpc: error 36 at 1:21
----
-program P; (* (* *) *) begin end.

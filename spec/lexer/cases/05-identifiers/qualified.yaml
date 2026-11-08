@@ -1,0 +1,15 @@
+description: A qualified identifier is two identifiers and a dot.
+source: |
+  program P; begin System.WriteLn end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: SYSTEM
+  - DOT
+  - IDENT: WRITELN
+  - END
+  - DOT
+compile: ok
+output: "\r\n"

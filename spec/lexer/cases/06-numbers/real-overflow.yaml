@@ -1,0 +1,14 @@
+description: A real number beyond the Extended range.
+source: |
+  program P; const C = 1e4933; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+compile:
+  error: 6
+  line: 1
+  column: 28

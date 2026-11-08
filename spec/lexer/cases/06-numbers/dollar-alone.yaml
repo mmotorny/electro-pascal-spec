@@ -1,0 +1,14 @@
+description: A dollar sign with no hex digit.
+source: |
+  program P; const C = $; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+compile:
+  error: 7
+  line: 1
+  column: 23

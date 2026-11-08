@@ -1,9 +1,0 @@
-# In (*$UNDEF name) with a defined 42-character name, the ) right after the name ends the comment.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN INTEGER(1) RPAREN END DOT
-tpc: ok
-output: '1'
----
-program P;
-{$DEFINE UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU}
-(*$UNDEF UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU) begin Write(1) end. *)
-begin Write(2) end.

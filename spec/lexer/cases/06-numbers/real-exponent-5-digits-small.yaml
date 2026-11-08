@@ -1,0 +1,16 @@
+description: "A five-digit exponent: the fifth digit is a separate token."
+source: |
+  program P; const C = 1e12345; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - REAL: "1e1234"
+  - INTEGER: 5
+compile:
+  error: 85
+  line: 1
+  column: 28

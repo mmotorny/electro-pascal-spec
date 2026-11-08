@@ -1,6 +1,0 @@
-# A brace in a string is part of the string.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING('{') SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
-tpc: ok
-output: '{'
----
-program P; const S = '{'; begin Write(S) end.

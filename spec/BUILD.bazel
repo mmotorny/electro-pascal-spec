@@ -22,12 +22,21 @@ python_tool(
     ],
 )
 
+# Compares the cases' tokens with a capture of TPC's tokens:
+# bazel run //spec:compare -- CAPTURED.json [--write]
+python_tool(
+    name = "compare",
+    main = "compare.py",
+    srcs = ["cases.py"],
+)
+
 # Checks that every case is well formed, recorded and cited by lexer.md, and
 # that the real-value rules in lexer.md hold for the cases. Doesn't run TPC.
 python_test(
     name = "cases_test",
     size = "small",
     data = [
+        "case.schema.json",
         "lexer.md",
         "//spec/lexer:cases",
     ],

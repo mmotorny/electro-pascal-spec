@@ -1,9 +1,0 @@
-# X defined: each {$ELSE} switches between compiling and skipping, so the part after the second {$ELSE} is compiled.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(1) SEMI CONST IDENT(B) EQ INTEGER(3) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) COMMA IDENT(B) RPAREN END DOT
-tpc: ok
-output: '13'
----
-program P;
-{$DEFINE X}
-{$IFDEF X} const A = 1; {$ELSE} const A = 2; {$ELSE} const B = 3; {$ENDIF}
-begin Write(A, B) end.

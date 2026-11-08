@@ -1,5 +1,0 @@
-# An unterminated comment inside skipped text is error 10.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 10 at 2:1
----
-program P; {$IFDEF X} (* begin end.

@@ -1,0 +1,17 @@
+description: An identifier can be a label.
+source: |
+  program P; label L; begin L: end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - LABEL
+  - IDENT: L
+  - SEMI
+  - BEGIN
+  - IDENT: L
+  - COLON
+  - END
+  - DOT
+compile: ok
+output: ""

@@ -1,0 +1,21 @@
+description: A quoted string.
+source: |
+  program P; const S = 'TURBO'; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: TURBO
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: TURBO

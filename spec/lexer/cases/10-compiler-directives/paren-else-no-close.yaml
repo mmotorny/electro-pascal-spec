@@ -1,0 +1,16 @@
+description: (*$ELSE) does not end at its ).
+source: |
+  program P;
+  {$IFDEF X}
+  (*$ELSE) ! *)
+  {$ENDIF}
+  begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

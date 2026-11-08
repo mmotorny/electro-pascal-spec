@@ -1,0 +1,21 @@
+description: ^ followed by a digit.
+source: |
+  program P; const S = ^1; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: q
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: q

@@ -1,0 +1,21 @@
+description: A real number with a fraction.
+source: |
+  program P; const C = 1.5; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - REAL: "1.5"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: " 1.5000000000E+00"

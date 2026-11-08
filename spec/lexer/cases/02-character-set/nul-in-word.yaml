@@ -1,0 +1,11 @@
+description: "A NUL (ASCII 0) inside a word is dropped: pro, NUL, gram is program."
+source: "pro\0gram P; begin end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

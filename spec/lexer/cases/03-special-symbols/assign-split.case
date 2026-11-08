@@ -1,5 +1,0 @@
-# A blank inside := splits it into : and =.
-tokens: PROGRAM IDENT(P) SEMI VAR IDENT(I) COLON IDENT(INTEGER) SEMI BEGIN IDENT(I) COLON
-tpc: error 91 at 1:36
----
-program P; var I: Integer; begin I : = 1 end.

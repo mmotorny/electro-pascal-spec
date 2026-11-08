@@ -1,0 +1,23 @@
+description: With X undefined, the text after {$ELSE} is compiled.
+source: |
+  program P;
+  {$IFDEF X} const A = 1; {$ELSE} const A = 2; {$ENDIF}
+  begin Write(A) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: A
+  - EQ
+  - INTEGER: 2
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: A
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "2"

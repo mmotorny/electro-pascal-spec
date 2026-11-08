@@ -1,0 +1,11 @@
+description: I directly followed by a colon.
+source: |
+  program P; {$I:X.INC} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 15
+  line: 1
+  column: 22

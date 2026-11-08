@@ -1,6 +1,0 @@
-# $80000000 is the most negative 32-bit value.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ INTEGER(-2147483648) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
-tpc: ok
-output: '-2147483648'
----
-program P; const C = $80000000; begin Write(C) end.

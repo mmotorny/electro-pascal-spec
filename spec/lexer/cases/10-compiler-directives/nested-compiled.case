@@ -1,9 +1,0 @@
-# A nested {$IFDEF} with {$ELSE} inside compiled text.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(2) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) RPAREN END DOT
-tpc: ok
-output: '2'
----
-program P;
-{$DEFINE X}
-{$IFDEF X} {$IFDEF Y} const A = 1; {$ELSE} const A = 2; {$ENDIF} {$ENDIF}
-begin Write(A) end.

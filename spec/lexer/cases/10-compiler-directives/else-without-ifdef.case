@@ -1,6 +1,0 @@
-# {$ELSE} with no open conditional.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 128 at 2:3
----
-program P;
-{$ELSE} begin end.

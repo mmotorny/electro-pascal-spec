@@ -1,0 +1,23 @@
+description: "{$ifopt r-} in lower case."
+source: |
+  program P;
+  {$ifopt r-} const A = 1; {$endif}
+  begin Write(A) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: A
+  - EQ
+  - INTEGER: 1
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: A
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "1"

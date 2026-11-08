@@ -1,6 +1,0 @@
-# A single underscore is an identifier.
-tokens: PROGRAM IDENT(P) SEMI VAR IDENT(_) COLON IDENT(INTEGER) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; var _: Integer; begin end.

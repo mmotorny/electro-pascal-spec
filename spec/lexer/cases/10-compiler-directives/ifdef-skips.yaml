@@ -1,0 +1,14 @@
+description: Text between {$IFDEF} and {$ENDIF} for an undefined symbol is
+  skipped without being scanned.
+source: |
+  program P; {$IFDEF NOTDEFINED} @@@ 'unterminated
+  {$ENDIF} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

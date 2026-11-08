@@ -1,0 +1,10 @@
+description: "^Z early, with more lines after it: where the end of file is reported."
+source: "program P;\x1a\nbegin\nend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 10
+  line: 2
+  column: 1

@@ -11,3 +11,5 @@ include("//third_party/tp70:tp70.MODULE.bazel")
 include("//third_party/qemu:qemu.MODULE.bazel")
 
 include("//third_party/mtools:mtools.MODULE.bazel")
+
+include("//third_party/python:python.MODULE.bazel")

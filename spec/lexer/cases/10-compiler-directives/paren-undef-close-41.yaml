@@ -1,0 +1,19 @@
+description: "The same with a 41-character name: the ) doesn't end the comment."
+source: |
+  program P;
+  {$DEFINE UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU}
+  (*$UNDEF UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU) begin Write(1) end. *)
+  begin Write(2) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - INTEGER: 2
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "2"

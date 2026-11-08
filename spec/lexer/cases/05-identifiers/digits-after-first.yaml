@@ -1,0 +1,17 @@
+description: Digits and underscores may follow the first character.
+source: |
+  program P; var a1_2B: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: A1_2B
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

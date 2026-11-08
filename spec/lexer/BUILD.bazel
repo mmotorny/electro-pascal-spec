@@ -1,5 +1,5 @@
 filegroup(
     name = "cases",
-    srcs = glob(["cases/**/*.case"]),
+    srcs = glob(["cases/**/*.yaml"]),
     visibility = ["//visibility:public"],
 )

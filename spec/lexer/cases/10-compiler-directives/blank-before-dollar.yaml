@@ -1,0 +1,12 @@
+description: "{ $R+} is an ordinary comment."
+source: |
+  program P; { $Z+} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

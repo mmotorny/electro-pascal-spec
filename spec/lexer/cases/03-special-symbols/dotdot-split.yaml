@@ -1,0 +1,16 @@
+description: A blank inside .. splits it into two dots.
+source: |
+  program P; type T = 1 . . 2; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - TYPE
+  - IDENT: T
+  - EQ
+  - INTEGER: 1
+  - DOT
+compile:
+  error: 121
+  line: 1
+  column: 23

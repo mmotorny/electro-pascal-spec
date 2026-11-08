@@ -1,9 +1,0 @@
-# A symbol name may start with and contain underscores and digits; case doesn't matter.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(1) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) RPAREN END DOT
-tpc: ok
-output: '1'
----
-program P;
-{$DEFINE _X1_}
-{$IFDEF _x1_} const A = 1; {$ENDIF}
-begin Write(A) end.

@@ -1,0 +1,23 @@
+description: DEL (127) is allowed in a quoted string.
+source: "program P; const S = '\x7f'; begin Write(Ord(S)) end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: "\x7f"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: ORD
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "127"

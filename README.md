@@ -15,6 +15,7 @@ Developed on macOS (Apple Silicon) with [Homebrew](https://brew.sh).
 | QEMU | latest | `brew install qemu` | Runs MS-DOS 6.22 and Borland Pascal 7.01 as the reference machine |
 | Python 3 | latest | `xcode-select --install` | Drives the installers on the reference machine |
 | mtools | latest | `brew install mtools` | Copies files to and from the reference machine's disk |
+| PyYAML, jsonschema | latest | installed by Bazel with the system Python's `pip` | Reading the spec's cases and checking them against their schema |
 | Codex CLI | latest | see github.com/openai/codex | `codex`, which runs the independent review of commits before they are pushed (see `AGENTS.md`) |
 
 Tools aren't pinned: keep them up to date with `brew upgrade`.
@@ -72,8 +73,9 @@ plugin header.
 
 The spec lives in [`spec/`](spec). It starts with the lexer,
 [`spec/lexer.md`](spec/lexer.md), backed by test cases in
-`spec/lexer/cases/`. Each case is a small program with the tokens the spec
-expects and `TPC`'s recorded verdict and program output.
+`spec/lexer/cases/`. Each case is a YAML file holding a small program, the
+tokens the spec expects, and what compiling and running it with `TPC` gave;
+[`spec/case.schema.json`](spec/case.schema.json) defines the format.
 
 - `bazel run //spec:record` runs every case through `TPC` on the reference
   machine and writes the verdicts and outputs into the cases.
@@ -81,8 +83,8 @@ expects and `TPC`'s recorded verdict and program output.
   case is well formed and recorded, that every rule's links name existing
   cases and every case is linked from a rule, and that the rules the spec
   gives for real values hold for the recorded values.
-- `python3 spec/compare.py CAPTURED.json` compares the cases' `tokens:`
-  lines with a dump of the tokens `TPC` actually delivered, in the spec's
+- `bazel run //spec:compare -- CAPTURED.json` compares the cases' `tokens`
+  with a dump of the tokens `TPC` actually delivered, in the spec's
   notation. The dump comes from a capture tool that is not part of this
   repo.
 

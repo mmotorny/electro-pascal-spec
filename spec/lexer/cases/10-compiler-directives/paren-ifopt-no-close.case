@@ -1,9 +1,0 @@
-# (*$IFOPT R-) does not end at its ).
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P;
-(*$IFOPT R-) ! *)
-{$ENDIF}
-begin end.

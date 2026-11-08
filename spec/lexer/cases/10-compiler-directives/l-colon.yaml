@@ -1,0 +1,14 @@
+description: L directly followed by a colon.
+source: |
+  program P; {$L:X.OBJ} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile:
+  error: 15
+  line: 1
+  column: 32

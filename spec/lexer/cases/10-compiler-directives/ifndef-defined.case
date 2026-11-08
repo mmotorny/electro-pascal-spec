@@ -1,9 +1,0 @@
-# {$IFNDEF} for a defined symbol skips its text.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(2) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) RPAREN END DOT
-tpc: ok
-output: '2'
----
-program P;
-{$DEFINE X}
-{$IFNDEF X} const A = 1; {$ENDIF}
-const A = 2; begin Write(A) end.

@@ -1,0 +1,21 @@
+description: A hexadecimal integer.
+source: |
+  program P; const C = $FF; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 255
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "255"

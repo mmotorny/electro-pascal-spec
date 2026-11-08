@@ -1,0 +1,23 @@
+description: ^ followed by DEL (127).
+source: "program P; const C = ^\x7f; begin Write(Ord(C)) end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - STRING: "?"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: ORD
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "63"

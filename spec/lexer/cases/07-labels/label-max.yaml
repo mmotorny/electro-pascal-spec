@@ -1,0 +1,17 @@
+description: 9999 is the largest numeric label.
+source: |
+  program P; label 9999; begin 9999: end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - LABEL
+  - INTEGER: 9999
+  - SEMI
+  - BEGIN
+  - INTEGER: 9999
+  - COLON
+  - END
+  - DOT
+compile: ok
+output: ""

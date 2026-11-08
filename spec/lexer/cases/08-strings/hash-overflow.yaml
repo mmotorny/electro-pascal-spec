@@ -1,0 +1,14 @@
+description: "A number after # that overflows 32 bits is an error, like any integer."
+source: |
+  program P; const S = #4294967296; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+compile:
+  error: 7
+  line: 1
+  column: 32

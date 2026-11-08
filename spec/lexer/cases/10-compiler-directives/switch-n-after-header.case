@@ -1,7 +1,0 @@
-# {$N+} right after the program header.
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P;
-{$N+} begin end.

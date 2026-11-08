@@ -1,6 +1,0 @@
-# Hex digits may be lower case.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ INTEGER(255) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
-tpc: ok
-output: '255'
----
-program P; const C = $ff; begin Write(C) end.

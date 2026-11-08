@@ -1,0 +1,19 @@
+description: "A blank inside := splits it into : and =."
+source: |
+  program P; var I: Integer; begin I : = 1 end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: I
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: I
+  - COLON
+compile:
+  error: 91
+  line: 1
+  column: 36

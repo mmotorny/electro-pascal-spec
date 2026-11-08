@@ -1,0 +1,18 @@
+description: An unknown directive inside skipped text is not an error.
+source: |
+  program P;
+  {$IFDEF X} {$FOO} {$ENDIF}
+  begin Write(1) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - INTEGER: 1
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "1"

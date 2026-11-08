@@ -1,6 +1,0 @@
-# A quoted string.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING('TURBO') SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
-tpc: ok
-output: 'TURBO'
----
-program P; const S = 'TURBO'; begin Write(S) end.

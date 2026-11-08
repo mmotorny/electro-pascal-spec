@@ -1,0 +1,12 @@
+description: "(* *) don't nest: the comment ends at the first *), and the second *) is * then )."
+source: |
+  program P; (* (* *) *) begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - STAR
+compile:
+  error: 36
+  line: 1
+  column: 21

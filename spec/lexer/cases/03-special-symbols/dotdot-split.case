@@ -1,5 +1,0 @@
-# A blank inside .. splits it into two dots.
-tokens: PROGRAM IDENT(P) SEMI TYPE IDENT(T) EQ INTEGER(1) DOT
-tpc: error 121 at 1:23
----
-program P; type T = 1 . . 2; begin end.

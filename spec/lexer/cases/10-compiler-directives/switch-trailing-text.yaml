@@ -1,0 +1,12 @@
+description: Text after a switch, separated by a blank.
+source: |
+  program P; {$R+ this is ignored} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

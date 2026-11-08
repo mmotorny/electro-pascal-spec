@@ -1,5 +1,0 @@
-# In 2. ) the dot belongs to the number: 2. is a real, then ).
-tokens: PROGRAM IDENT(P) SEMI VAR IDENT(A) COLON ARRAY LBRACKET INTEGER(1) DOTDOT REAL(2.) RPAREN
-tpc: error 26 at 1:32
----
-program P; var A: array(.1..2. ) of Integer; begin end.

@@ -1,0 +1,15 @@
+description: A compiled {$IFDEF} still open at the program's final end.
+source: |
+  program P;
+  {$DEFINE X} {$IFDEF X} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile:
+  error: 129
+  line: 2
+  column: 33

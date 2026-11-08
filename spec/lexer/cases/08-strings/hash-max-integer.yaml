@@ -1,0 +1,21 @@
+description: "#2147483647 is allowed: its low 8 bits are 255."
+source: |
+  program P; const S = #2147483647; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: "\xff"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "\xff"

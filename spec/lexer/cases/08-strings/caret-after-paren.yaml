@@ -1,0 +1,35 @@
+description: ^ after a closing parenthesis dereferences a pointer.
+source: |
+  program P; var Q: ^Integer; begin New(Q); (Q)^ := 7; Write(Q^) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: Q
+  - COLON
+  - CARET
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: NEW
+  - LPAREN
+  - IDENT: Q
+  - RPAREN
+  - SEMI
+  - LPAREN
+  - IDENT: Q
+  - RPAREN
+  - CARET
+  - ASSIGN
+  - INTEGER: 7
+  - SEMI
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: Q
+  - CARET
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "7"

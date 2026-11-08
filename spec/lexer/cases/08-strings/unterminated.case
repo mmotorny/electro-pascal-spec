@@ -1,6 +1,0 @@
-# A string must end on its line.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ
-tpc: error 8 at 1:26
----
-program P; const S = 'abc
-; begin Write(S) end.

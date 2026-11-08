@@ -1,0 +1,13 @@
+description: "'mod' is a reserved word, so it can't be declared as a variable."
+source: |
+  program P; var mod: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - MOD
+compile:
+  error: 2
+  line: 1
+  column: 16

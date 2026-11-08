@@ -1,0 +1,21 @@
+description: "An exponent sign without digits: 1e- is a real."
+source: |
+  program P; const C = 1e-; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - REAL: 1e-
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: " 1.0000000000E+00"

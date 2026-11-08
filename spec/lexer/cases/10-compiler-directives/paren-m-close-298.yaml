@@ -1,0 +1,19 @@
+description: In (*$M 16384,0,4768), with 4768 bytes being 298 paragraphs
+  (256 + 42), the ) right after the number ends the comment.
+source: |
+  program P;
+  (*$M 16384,0,4768) begin Write(1) end. *)
+  begin Write(2) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - INTEGER: 1
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "1"

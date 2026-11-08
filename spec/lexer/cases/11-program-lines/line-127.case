@@ -1,6 +1,0 @@
-# A line of 127 characters is allowed.
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; begin end. {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}

@@ -1,6 +1,0 @@
-# { inside (* *) is ignored: the comment ends at the first *).
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; (* { *) begin end.

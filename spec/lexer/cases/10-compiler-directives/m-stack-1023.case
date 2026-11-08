@@ -1,6 +1,0 @@
-# A stack size of 1023.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 17 at 2:5
----
-program P;
-{$M 1023,0,655360} begin Write(SPtr) end.

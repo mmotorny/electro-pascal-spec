@@ -1,0 +1,13 @@
+description: "'inherited' is a reserved word, so it can't be declared as a variable."
+source: |
+  program P; var inherited: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - INHERITED
+compile:
+  error: 2
+  line: 1
+  column: 16

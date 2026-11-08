@@ -1,0 +1,10 @@
+description: Two words without a separator are one identifier.
+source: |
+  programP;
+  begin end.
+tokens:
+  - IDENT: PROGRAMP
+compile:
+  error: 36
+  line: 1
+  column: 1

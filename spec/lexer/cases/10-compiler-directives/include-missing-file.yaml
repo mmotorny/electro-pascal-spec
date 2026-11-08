@@ -1,0 +1,11 @@
+description: A parameter directive naming a missing file.
+source: |
+  program P; {$I NOFILE.INC} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 15
+  line: 1
+  column: 27

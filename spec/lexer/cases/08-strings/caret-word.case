@@ -1,5 +1,0 @@
-# In a constant, ^ takes only the next character: ^Integer is ^I followed by the identifier nteger.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#9) IDENT(NTEGER)
-tpc: error 85 at 1:24
----
-program P; const S = ^Integer; begin Write(S) end.

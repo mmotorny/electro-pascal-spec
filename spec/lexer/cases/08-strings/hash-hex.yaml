@@ -1,0 +1,21 @@
+description: "The number after # may be hexadecimal."
+source: |
+  program P; const S = #$0D; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: "\r"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "\r"

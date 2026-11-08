@@ -1,0 +1,24 @@
+description: ^{ (123, just above z) is not changed to upper case.
+source: |
+  program P; const C = ^{; begin Write(Ord(C)) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - STRING: ;
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: ORD
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "59"

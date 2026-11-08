@@ -1,6 +1,0 @@
-# ^z (122).
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ STRING(#26) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(ORD) LPAREN IDENT(C) RPAREN RPAREN END DOT
-tpc: ok
-output: '26'
----
-program P; const C = ^z; begin Write(Ord(C)) end.

@@ -1,0 +1,30 @@
+description: A caret character compared in a statement.
+source: |
+  program P; var C: Char; begin C := #9; if C = ^I then Write('y') end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: C
+  - COLON
+  - IDENT: CHAR
+  - SEMI
+  - BEGIN
+  - IDENT: C
+  - ASSIGN
+  - STRING: "\t"
+  - SEMI
+  - IF
+  - IDENT: C
+  - EQ
+  - STRING: "\t"
+  - THEN
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: y
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: y

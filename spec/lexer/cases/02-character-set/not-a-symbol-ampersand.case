@@ -1,6 +1,0 @@
-# & outside a string or comment.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 5 at 2:1
----
-program P;
-& begin end.

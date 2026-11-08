@@ -1,8 +1,0 @@
-# In skipped text, the ) right after (*$R ends the comment, so the {$ENDIF} after it counts.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN INTEGER(1) RPAREN END DOT
-tpc: ok
-output: '1'
----
-program P;
-{$IFDEF X} (*$R) {$ENDIF} begin Write(1) end. *)
-begin Write(2) end.

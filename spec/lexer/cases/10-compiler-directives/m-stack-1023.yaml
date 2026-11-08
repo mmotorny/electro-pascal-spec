@@ -1,0 +1,12 @@
+description: A stack size of 1023.
+source: |
+  program P;
+  {$M 1023,0,655360} begin Write(SPtr) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 17
+  line: 2
+  column: 5

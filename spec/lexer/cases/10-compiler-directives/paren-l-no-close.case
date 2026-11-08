@@ -1,7 +1,0 @@
-# (*$L B) does not end at its ); the missing B.OBJ is reported instead.
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: error 15 at 3:10
----
-program P;
-(*$L B) ! *)
-begin end.

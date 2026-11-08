@@ -1,0 +1,16 @@
+description: "{$N+} after a uses clause."
+source: |
+  program P;
+  uses Crt;
+  {$N+} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - USES
+  - IDENT: CRT
+  - SEMI
+compile:
+  error: 17
+  line: 3
+  column: 3

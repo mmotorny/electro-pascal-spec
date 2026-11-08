@@ -1,0 +1,18 @@
+description: A caret character in an expression.
+source: |
+  program P; begin Write(^G + 'x') end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - STRING: "\x07"
+  - PLUS
+  - STRING: x
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "\x07x"

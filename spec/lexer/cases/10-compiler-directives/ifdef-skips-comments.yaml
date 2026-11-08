@@ -1,0 +1,12 @@
+description: "Skipped text still respects comments: a {$ENDIF} inside a comment doesn't end the skipped part."
+source: |
+  program P; {$IFDEF NOTDEFINED} { {$ENDIF} } @@@ {$ENDIF} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

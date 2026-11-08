@@ -1,6 +1,0 @@
-# A symbol name can't start with a digit.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 2 at 2:10
----
-program P;
-{$DEFINE 1X} begin end.

@@ -1,6 +1,0 @@
-# Control characters before and after a quoted string.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#7#7'Wake up!'#7#7) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
-tpc: ok
-output: #7#7'Wake up!'#7#7
----
-program P; const S = #7#7'Wake up!'#7#7; begin Write(S) end.

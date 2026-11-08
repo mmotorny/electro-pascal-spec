@@ -1,6 +1,0 @@
-# {$I} inside a statement part, for a file that doesn't exist.
-tokens: PROGRAM IDENT(P) SEMI BEGIN
-tpc: error 118 at 2:22
----
-program P;
-begin {$I NOFILE.INC} end.

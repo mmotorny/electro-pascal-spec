@@ -1,5 +1,0 @@
-# A parameter directive's parameter must follow a blank: error 17 at the =.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 17 at 1:15
----
-program P; {$M=16384} begin end.

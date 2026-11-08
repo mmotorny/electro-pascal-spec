@@ -1,0 +1,21 @@
+description: "A line feed alone ends a line: the error is reported on line 4."
+source: |
+  program P;
+  begin
+    WriteLn(1)
+    WriteLn(2);
+  end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITELN
+  - LPAREN
+  - INTEGER: 1
+  - RPAREN
+  - IDENT: WRITELN
+compile:
+  error: 85
+  line: 4
+  column: 3

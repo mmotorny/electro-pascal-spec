@@ -1,0 +1,13 @@
+description: "'while' is a reserved word, so it can't be declared as a variable."
+source: |
+  program P; var while: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - WHILE
+compile:
+  error: 2
+  line: 1
+  column: 16

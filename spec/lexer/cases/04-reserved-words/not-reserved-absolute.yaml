@@ -1,0 +1,17 @@
+description: "'absolute' is not a reserved word in TPC, so it can be declared as a variable."
+source: |
+  program P; var absolute: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: ABSOLUTE
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

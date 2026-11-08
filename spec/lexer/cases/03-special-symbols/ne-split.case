@@ -1,5 +1,0 @@
-# A blank inside <> splits it into < and >.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IF INTEGER(1) LT GT
-tpc: error 42 at 1:25
----
-program P; begin if 1 < > 2 then end.

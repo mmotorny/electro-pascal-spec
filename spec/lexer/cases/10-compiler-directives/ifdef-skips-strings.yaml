@@ -1,0 +1,12 @@
+description: In skipped text an apostrophe starts a string that runs to the
+  end of the line, so the {$ENDIF} after it doesn't count.
+source: |
+  program P; {$IFDEF X} ' {$ENDIF} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 129
+  line: 2
+  column: 1

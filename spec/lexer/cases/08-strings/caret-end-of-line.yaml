@@ -1,0 +1,16 @@
+description: "^ at the end of a line, where an operand is expected: TPC delivers CARET, then reports error 8 as for an unterminated string."
+source: |
+  program P; const C = ^
+  M; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - CARET
+compile:
+  error: 8
+  line: 1
+  column: 23

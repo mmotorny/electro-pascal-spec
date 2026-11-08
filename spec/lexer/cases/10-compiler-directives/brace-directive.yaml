@@ -1,0 +1,12 @@
+description: "{$R+} is a directive, not a token."
+source: |
+  program P; {$R+} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

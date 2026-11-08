@@ -1,0 +1,19 @@
+description: 1..2 is an integer, .. and an integer, not a real.
+source: |
+  program P; type T = 1..2; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - TYPE
+  - IDENT: T
+  - EQ
+  - INTEGER: 1
+  - DOTDOT
+  - INTEGER: 2
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

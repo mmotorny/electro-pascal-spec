@@ -1,0 +1,24 @@
+description: A symbol removed by {$UNDEF} is no longer defined.
+source: |
+  program P;
+  {$DEFINE X} {$UNDEF X}
+  {$IFDEF X} const A = 1; {$ENDIF}
+  const A = 2; begin Write(A) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: A
+  - EQ
+  - INTEGER: 2
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: A
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "2"

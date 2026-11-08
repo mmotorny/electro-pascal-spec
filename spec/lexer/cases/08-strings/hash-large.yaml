@@ -1,0 +1,21 @@
+description: "Only the low 8 bits of the number after # count: #65601 is 'A'."
+source: |
+  program P; const S = #65601; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: A
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: A

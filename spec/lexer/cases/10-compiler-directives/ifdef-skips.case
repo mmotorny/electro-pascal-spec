@@ -1,7 +1,0 @@
-# Text between {$IFDEF} and {$ENDIF} for an undefined symbol is skipped without being scanned.
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; {$IFDEF NOTDEFINED} @@@ 'unterminated
-{$ENDIF} begin end.

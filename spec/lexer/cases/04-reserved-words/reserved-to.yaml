@@ -1,0 +1,13 @@
+description: "'to' is a reserved word, so it can't be declared as a variable."
+source: |
+  program P; var to: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - TO
+compile:
+  error: 2
+  line: 1
+  column: 16

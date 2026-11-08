@@ -1,0 +1,11 @@
+description: A } outside a comment.
+source: |
+  program P; } begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 5
+  line: 1
+  column: 12

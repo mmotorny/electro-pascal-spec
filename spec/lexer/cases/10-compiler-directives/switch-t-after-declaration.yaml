@@ -1,0 +1,18 @@
+description: "{$T+} after a declaration."
+source: |
+  program P;
+  var V: Integer;
+  {$T+} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: V
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+compile:
+  error: 17
+  line: 3
+  column: 3

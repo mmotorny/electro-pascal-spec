@@ -1,0 +1,23 @@
+description: After = in a type declaration, ^M is a pointer to type M, not a
+  character.
+source: |
+  program P; type M = Integer; T = ^M; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - TYPE
+  - IDENT: M
+  - EQ
+  - IDENT: INTEGER
+  - SEMI
+  - IDENT: T
+  - EQ
+  - CARET
+  - IDENT: M
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

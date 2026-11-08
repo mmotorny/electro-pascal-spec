@@ -1,0 +1,25 @@
+description: Symbols that differ in their 63rd character are different
+  symbols.
+source: |
+  program P;
+  {$DEFINE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB}
+  {$IFDEF AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC} const A = 1; {$ENDIF}
+  const A = 2; begin Write(A) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: A
+  - EQ
+  - INTEGER: 2
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: A
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "2"

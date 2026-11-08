@@ -1,0 +1,16 @@
+description: In a type, ^ followed by a digit is a caret and a number.
+source: |
+  program P; type T = ^1; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - TYPE
+  - IDENT: T
+  - EQ
+  - CARET
+  - INTEGER: 1
+compile:
+  error: 2
+  line: 1
+  column: 22

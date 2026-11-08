@@ -1,0 +1,23 @@
+description: ^ followed by character 233.
+source: "program P; const C = ^\xe9; begin Write(Ord(C)) end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - STRING: "\xa9"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: ORD
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "169"

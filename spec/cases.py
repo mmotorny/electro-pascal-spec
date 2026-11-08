@@ -1,134 +1,259 @@
-"""Reads and writes spec test cases (*.case).
+"""Reads and writes spec test cases (*.yaml).
 
-A case file is a header, a line holding only "---", and the source:
+A case is a YAML file holding one mapping (see spec/case.schema.json):
 
-    # Free text describing what the case shows.
-    tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-    tpc: ok
-    ---
-    program P; begin end.
+    description: Thirty leading zeros don't overflow.
+    source: |
+      program P;
+      const C = 0000000000000000000000000000007;
+      begin
+        Write(C)
+      end.
+    tokens:
+      - PROGRAM
+      - IDENT: P
+      ...
+    compile: ok
+    output: "7"
 
-The source is everything after the "---" line, byte for byte (the files are
-marked binary in .gitattributes so git never changes them).
+  description  what the input is and what it shows.
+  source       the program, byte for byte. Each character of the string is
+               one byte, U+0000 to U+00FF.
+  tokens       the tokens the spec says TPC's scanner delivers, up to the
+               end of the program or the error: a kind alone, or a mapping
+               from a kind to its value.
+  compile      what compiling the source with TPC gives, written only by
+               `bazel run //spec:record`:
+               "ok", or a mapping with "error" (the error number) and, when
+               TPC gives one, "line" and "column" (1-based).
+  output       what the compiled program writes, also written only by the
+               record tool; present only when the program compiles. One
+               character per byte, like source.
 
-Header fields:
-  tokens  the tokens the spec says TPC's scanner delivers, up to the end of
-          the file or the error, in the notation of spec/lexer.md. May
-          continue on following lines that start with whitespace.
-  tpc     TPC's verdict, written only by `bazel run //spec:record`:
-          "ok", or "error N at LINE:COLUMN" (1-based).
-  output  What the compiled program writes when run, also written only by
-          the record tool, in the string notation of spec/lexer.md.
-          Present only when the program compiles.
+Reading uses any YAML parser. Writing uses the emitter below, so that every
+case has the same layout: plain scalars where YAML reads them back as the
+same string, double-quoted ones with escapes otherwise, and the source as a
+literal block when it is plain text. Every file written is read back and
+must give the same data.
 """
 
 import os
+import re
 
-SEPARATOR = b"\n---\n"
+import yaml
+
+EXTENSION = ".yaml"
+FIELDS = ("description", "source", "tokens", "compile", "output")
+WIDTH = 76
 
 
 class Case:
-    def __init__(self, path):
+    def __init__(self, path, data=None):
         self.path = path
-        with open(path, "rb") as f:
-            data = f.read()
-        head, sep, self.source = data.partition(SEPARATOR)
-        if not sep:
-            raise ValueError(f"{path}: no '---' line")
-        self.comments = []
-        self.fields = {}
-        last = None
-        for line in head.decode("utf-8").split("\n"):
-            if line.startswith("#"):
-                self.comments.append(line)
-            elif line[:1].isspace() and last:
-                self.fields[last] += " " + line.strip()
-            elif line.strip():
-                key, _, value = line.partition(":")
-                last = key.strip()
-                self.fields[last] = value.strip()
+        if data is None:
+            with open(path, encoding="utf-8") as f:
+                data = yaml.safe_load(f)
+        self.data = data
 
     @property
     def name(self):
         return os.path.splitext(os.path.basename(self.path))[0]
 
+    @property
+    def description(self):
+        return self.data.get("description", "")
+
+    @property
+    def source(self):
+        """The program as bytes."""
+        return self.data["source"].encode("latin-1")
+
+    @source.setter
+    def source(self, value):
+        self.data["source"] = value.decode("latin-1")
+
+    @property
     def tokens(self):
-        return split_tokens(self.fields.get("tokens", ""))
+        """The token list as (kind, value) pairs, value None for a bare kind."""
+        out = []
+        for token in self.data.get("tokens") or []:
+            if isinstance(token, dict):
+                ((kind, value),) = token.items()
+                out.append((kind, value))
+            else:
+                out.append((token, None))
+        return out
+
+    @tokens.setter
+    def tokens(self, pairs):
+        self.data["tokens"] = [kind if value is None else {kind: value} for kind, value in pairs]
+
+    @property
+    def compile(self):
+        return self.data.get("compile")
+
+    @property
+    def output(self):
+        """What the program wrote, as bytes, or None."""
+        value = self.data.get("output")
+        return None if value is None else value.encode("latin-1")
 
     def save(self):
-        lines = list(self.comments)
-        for key in ("tokens", "tpc", "output"):
-            if key in self.fields:
-                lines.append(f"{key}: {self.fields[key]}")
-        for key, value in self.fields.items():
-            if key not in ("tokens", "tpc", "output"):
-                lines.append(f"{key}: {value}")
-        with open(self.path, "wb") as f:
-            f.write("\n".join(lines).encode("utf-8") + SEPARATOR + self.source)
-
-
-def split_tokens(text):
-    """Splits a token list, keeping each NAME(...) value whole, quotes included."""
-    tokens, i = [], 0
-    while i < len(text):
-        if text[i].isspace():
-            i += 1
-            continue
-        j = i
-        while j < len(text) and not text[j].isspace() and text[j] != "(":
-            j += 1
-        if j < len(text) and text[j] == "(":
-            depth, quoted = 0, False
-            while j < len(text):
-                c = text[j]
-                if c == "'":
-                    quoted = not quoted
-                elif not quoted and c == "(":
-                    depth += 1
-                elif not quoted and c == ")":
-                    depth -= 1
-                    if depth == 0:
-                        j += 1
-                        break
-                j += 1
-        tokens.append(text[i:j])
-        i = j
-    return tokens
+        text = dump(self.data)
+        with open(self.path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(text)
 
 
 def find(root):
-    """All cases under a directory, in file name order."""
+    """All cases under a directory, in path order."""
     paths = []
     for dirpath, _, files in os.walk(root):
-        paths += [os.path.join(dirpath, f) for f in files if f.endswith(".case")]
+        paths += [os.path.join(dirpath, f) for f in files if f.endswith(EXTENSION)]
     return [Case(p) for p in sorted(paths)]
 
 
-def verdict_text(result):
+def verdict(result):
+    """A probe result (see machine/probe.py) as a case's compile value."""
     if result["verdict"] == "ok":
         return "ok"
     if result["verdict"] == "error":
-        where = f" at {result['line']}:{result['column']}" if result["line"] else ""
-        return f"error {result['code']}{where}"
-    return result["verdict"]
+        out = {"error": result["code"]}
+        if result["line"]:
+            out.update(line=result["line"], column=result["column"])
+        return out
+    raise ValueError(f"TPC's verdict is {result['verdict']!r}")
 
 
-def pascal_string(data):
-    """Bytes in the spec's string notation: 'quoted' runs and #n for others."""
-    if not data:
-        return "''"
-    out, quoted = [], False
-    for byte in data:
-        if 32 <= byte < 127:
-            if not quoted:
-                out.append("'")
-                quoted = True
-            out.append("''" if byte == 39 else chr(byte))
+def verdict_text(value):
+    """A compile value (or a probe result) in one short line, for messages."""
+    if isinstance(value, dict) and "verdict" in value:
+        if value["verdict"] not in ("ok", "error"):
+            return value["verdict"]
+        value = verdict(value)
+    if value == "ok":
+        return "ok"
+    where = f" at {value['line']}:{value['column']}" if "line" in value else ""
+    return f"error {value['error']}{where}"
+
+
+def token_text(kind, value):
+    """One token in one short line, for messages."""
+    return kind if value is None else f"{kind}: {scalar(value)}"
+
+
+# --- Emitter -----------------------------------------------------------------
+
+# What YAML 1.2 core reads as something other than a string. PyYAML follows
+# YAML 1.1, which is checked separately by reading the scalar back.
+NOT_STRING_12 = re.compile(
+    r"true|True|TRUE|false|False|FALSE|null|Null|NULL|~"
+    r"|[-+]?[0-9]+|0o[0-7]+|0x[0-9a-fA-F]+"
+    r"|[-+]?(\.[0-9]+|[0-9]+(\.[0-9]*)?)([eE][-+]?[0-9]+)?"
+    r"|[-+]?\.(inf|Inf|INF)|\.nan|\.NaN|\.NAN"
+)
+ESCAPES = {0: "\\0", 9: "\\t", 10: "\\n", 13: "\\r", 34: '\\"', 92: "\\\\"}
+
+
+def plain_ok(text):
+    """Whether text can be written as a plain scalar and read back as itself."""
+    if not text or text != text.strip() or not all(" " <= c <= "~" for c in text):
+        return False
+    if text[0] in "-?:,[]{}#&*!|>'\"%@`" or ": " in text or " #" in text or text.endswith(":"):
+        return False
+    if NOT_STRING_12.fullmatch(text):
+        return False
+    return yaml.safe_load("x: " + text) == {"x": text}
+
+
+def quoted(text):
+    out = []
+    for c in text:
+        code = ord(c)
+        if code in ESCAPES:
+            out.append(ESCAPES[code])
+        elif code < 32 or code >= 127:
+            out.append(f"\\x{code:02x}")
         else:
-            if quoted:
-                out.append("'")
-                quoted = False
-            out.append(f"#{byte}")
-    if quoted:
-        out.append("'")
-    return "".join(out)
+            out.append(c)
+    return '"' + "".join(out) + '"'
+
+
+def scalar(value):
+    if isinstance(value, bool) or not isinstance(value, (int, str)):
+        raise TypeError(f"can't write {value!r}")
+    if isinstance(value, int):
+        return str(value)
+    return value if plain_ok(value) else quoted(value)
+
+
+def folded(key, text):
+    """key: text, as a plain scalar wrapped at WIDTH, or quoted on one line."""
+    if not plain_ok(text):
+        return [f"{key}: {quoted(text)}"]
+    lines, line = [], f"{key}:"
+    for word in text.split(" "):
+        if line != f"{key}:" and len(line) + 1 + len(word) > WIDTH and not word.startswith("#"):
+            lines.append(line)
+            line = "  " + word
+        else:
+            line += " " + word
+    lines.append(line)
+    return lines
+
+
+def block_ok(text):
+    """Whether text can be a literal block scalar, read back exactly."""
+    if not text or not all(c in "\t\n" or " " <= c <= "~" for c in text):
+        return False
+    lines = text.split("\n")
+    if lines[0][:1] in (" ", "\t"):
+        return False
+    return all(line == line.rstrip(" \t") for line in lines)
+
+
+def block(key, text):
+    if text.endswith("\n\n"):
+        indicator, body = "|+", text[:-1]
+    elif text.endswith("\n"):
+        indicator, body = "|", text[:-1]
+    else:
+        indicator, body = "|-", text
+    return [f"{key}: {indicator}"] + [("  " + line) if line else "" for line in body.split("\n")]
+
+
+def dump(data):
+    """The case's YAML text. Raises if it wouldn't read back as data."""
+    unknown = set(data) - set(FIELDS)
+    if unknown:
+        raise ValueError(f"unknown fields {sorted(unknown)}")
+    lines = []
+    for key in FIELDS:
+        if key not in data:
+            continue
+        value = data[key]
+        if key == "description":
+            lines += folded(key, value)
+        elif key == "source":
+            lines += block(key, value) if block_ok(value) else [f"{key}: {quoted(value)}"]
+        elif key == "tokens":
+            lines.append("tokens:" if value else "tokens: []")
+            for token in value:
+                if isinstance(token, dict):
+                    ((kind, v),) = token.items()
+                    lines.append(f"  - {kind}: {scalar(v)}")
+                else:
+                    if not plain_ok(token):
+                        raise ValueError(f"bad token kind {token!r}")
+                    lines.append(f"  - {token}")
+        elif key == "compile":
+            if value == "ok":
+                lines.append("compile: ok")
+            else:
+                lines.append("compile:")
+                lines += [f"  {k}: {value[k]}" for k in ("error", "line", "column") if k in value]
+        else:
+            lines.append(f"{key}: {scalar(value)}")
+    text = "\n".join(lines) + "\n"
+    if yaml.safe_load(text) != data:
+        raise ValueError("emitted YAML doesn't read back the same:\n" + text)
+    return text

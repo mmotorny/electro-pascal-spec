@@ -1,0 +1,14 @@
+description: (*$UNDEF X) for an X not defined does not end at its ).
+source: |
+  program P;
+  (*$UNDEF X) ! *)
+  begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

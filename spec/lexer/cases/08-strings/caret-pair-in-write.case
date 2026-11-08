@@ -1,6 +1,0 @@
-# Two caret characters in a row form one string.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN STRING(#13#10) RPAREN END DOT
-tpc: ok
-output: #13#10
----
-program P; begin Write(^M^J) end.

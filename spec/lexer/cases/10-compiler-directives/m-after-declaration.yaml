@@ -1,0 +1,19 @@
+description: "{$M} after a declaration."
+source: |
+  program P;
+  var V: Integer;
+  {$M 16384,0,655360} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: V
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

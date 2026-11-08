@@ -1,0 +1,13 @@
+description: "'else' is a reserved word, so it can't be declared as a variable."
+source: |
+  program P; var else: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - ELSE
+compile:
+  error: 2
+  line: 1
+  column: 16

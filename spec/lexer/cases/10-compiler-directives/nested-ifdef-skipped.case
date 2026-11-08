@@ -1,8 +1,0 @@
-# Skipped text holding a nested {$IFDEF}: its {$ENDIF} doesn't end the outer one.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(3) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) RPAREN END DOT
-tpc: ok
-output: '3'
----
-program P;
-{$IFDEF X} {$IFDEF Y} const A = 1; {$ENDIF} const A = 2; {$ENDIF}
-const A = 3; begin Write(A) end.

@@ -1,0 +1,21 @@
+description: $FFFFFFFF is allowed, and is -1 as a 32-bit signed value.
+source: |
+  program P; const C = $FFFFFFFF; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: -1
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "-1"

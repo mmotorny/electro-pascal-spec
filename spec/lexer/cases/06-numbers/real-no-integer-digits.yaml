@@ -1,0 +1,15 @@
+description: A number can't start with a dot.
+source: |
+  program P; const C = .5; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - DOT
+compile:
+  error: 42
+  line: 1
+  column: 22

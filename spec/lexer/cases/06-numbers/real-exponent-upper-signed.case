@@ -1,6 +1,0 @@
-# Exponent with E and a sign.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(12.25E+6) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
-tpc: ok
-output: ' 1.2250000000E+07'
----
-program P; const C = 12.25E+6; begin Write(C) end.

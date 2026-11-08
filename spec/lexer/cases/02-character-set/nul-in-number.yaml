@@ -1,0 +1,20 @@
+description: A NUL between two digits is dropped, leaving 12.
+source: "program P; const C = 1\02; begin Write(C) end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 12
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "12"

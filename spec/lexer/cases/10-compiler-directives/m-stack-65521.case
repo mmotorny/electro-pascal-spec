@@ -1,7 +1,0 @@
-# A stack size of 65521 is used as 65520.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(SPTR) RPAREN END DOT
-tpc: ok
-output: '65514'
----
-program P;
-{$M 65521,0,655360} begin Write(SPtr) end.

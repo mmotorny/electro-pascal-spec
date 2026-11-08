@@ -1,0 +1,11 @@
+description: Tab, ^A and ^_ (ASCII 9, 1, 31) separate tokens like a space.
+source: "program\tP;\x01begin\x1fend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

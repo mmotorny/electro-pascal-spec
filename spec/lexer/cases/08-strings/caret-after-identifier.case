@@ -1,6 +1,0 @@
-# After an identifier, ^ is the pointer operator even when a letter follows.
-tokens: PROGRAM IDENT(P) SEMI TYPE IDENT(R) EQ RECORD IDENT(F) COLON IDENT(INTEGER) END SEMI VAR IDENT(Q) COLON CARET IDENT(R) SEMI BEGIN IDENT(NEW) LPAREN IDENT(Q) RPAREN SEMI IDENT(Q) CARET DOT IDENT(F) ASSIGN INTEGER(5) SEMI IDENT(WRITE) LPAREN IDENT(Q) CARET DOT IDENT(F) RPAREN END DOT
-tpc: ok
-output: '5'
----
-program P; type R = record F: Integer end; var Q: ^R; begin New(Q); Q^.F := 5; Write(Q^.F) end.

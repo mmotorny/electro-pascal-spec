@@ -1,0 +1,12 @@
+description: Those characters, DEL and characters above 127 are allowed in a
+  comment.
+source: "program P; { ! \" % & ? \\ ` | ~ \x7f \xe9 } begin end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

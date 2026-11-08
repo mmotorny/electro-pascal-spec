@@ -1,0 +1,14 @@
+description: (*$M 16384,0,672) ends at its ), so the ! after it is a syntax
+  error.
+source: |
+  program P;
+  (*$M 16384,0,672) ! *)
+  begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 5
+  line: 2
+  column: 19

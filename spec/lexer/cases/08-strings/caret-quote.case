@@ -1,6 +1,0 @@
-# ^ followed by an apostrophe is a character, not the start of a string.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN STRING('g') RPAREN SEMI END DOT
-tpc: ok
-output: 'g'
----
-program P; begin Write(^'); end.

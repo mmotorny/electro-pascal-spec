@@ -1,0 +1,12 @@
+description: Words need no separator next to special symbols.
+source: |
+  program P;begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

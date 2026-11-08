@@ -1,0 +1,23 @@
+description: "A NUL inside a quoted string is dropped: the string has two characters."
+source: "program P; const S = 'a\0b'; begin Write(Length(S)) end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: ab
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: LENGTH
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "2"

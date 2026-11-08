@@ -1,0 +1,10 @@
+python_packages = use_repo_rule("//third_party/python:python_packages.bzl", "python_packages")
+
+# For reading the spec's cases (YAML) and checking them against their schema.
+python_packages(
+    name = "python_packages",
+    packages = [
+        "jsonschema",
+        "pyyaml",
+    ],
+)

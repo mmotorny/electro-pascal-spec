@@ -1,6 +1,0 @@
-# Two words without a separator are one identifier.
-tokens: IDENT(PROGRAMP)
-tpc: error 36 at 1:1
----
-programP;
-begin end.

@@ -1,0 +1,9 @@
+description: A line of 128 characters is too long; the error comes before
+  any token on the line.
+source: |
+  program P; begin end. {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}
+tokens: []
+compile:
+  error: 11
+  line: 1
+  column: 128

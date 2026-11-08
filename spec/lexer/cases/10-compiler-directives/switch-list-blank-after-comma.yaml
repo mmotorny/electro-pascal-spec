@@ -1,0 +1,11 @@
+description: A blank after the comma in a switch list.
+source: |
+  program P; {$R+, X+} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 17
+  line: 1
+  column: 17

@@ -1,6 +1,0 @@
-# {$M} without the heap maximum.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 17 at 2:12
----
-program P;
-{$M 16384,0} begin Write(SPtr) end.

@@ -1,0 +1,19 @@
+description: In skipped text, the ) right after (*$R ends the comment, so
+  the {$ENDIF} after it counts.
+source: |
+  program P;
+  {$IFDEF X} (*$R) {$ENDIF} begin Write(1) end. *)
+  begin Write(2) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - INTEGER: 1
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "1"

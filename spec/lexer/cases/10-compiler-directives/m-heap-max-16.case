@@ -1,7 +1,0 @@
-# A heap maximum of 16 bytes; the program prints MemAvail.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(MEMAVAIL) RPAREN END DOT
-tpc: ok
-output: '512'
----
-program P;
-{$M 16384,0,16} begin Write(MemAvail) end.

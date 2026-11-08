@@ -1,0 +1,13 @@
+description: "'until' is a reserved word, so it can't be declared as a variable."
+source: |
+  program P; var until: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - UNTIL
+compile:
+  error: 2
+  line: 1
+  column: 16

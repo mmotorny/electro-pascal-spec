@@ -1,6 +1,0 @@
-# A heap maximum of $FFFFFFF1.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 17 at 2:13
----
-program P;
-{$M 16384,0,$FFFFFFF1} begin Write(SPtr) end.

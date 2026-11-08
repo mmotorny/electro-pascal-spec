@@ -1,0 +1,12 @@
+description: Several switches separated by commas.
+source: |
+  program P; {$R+,X-,B+} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

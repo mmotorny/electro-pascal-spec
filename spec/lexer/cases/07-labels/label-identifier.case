@@ -1,6 +1,0 @@
-# An identifier can be a label.
-tokens: PROGRAM IDENT(P) SEMI LABEL IDENT(L) SEMI BEGIN IDENT(L) COLON END DOT
-tpc: ok
-output: ''
----
-program P; label L; begin L: end.

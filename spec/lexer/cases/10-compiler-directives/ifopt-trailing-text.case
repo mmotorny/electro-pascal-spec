@@ -1,8 +1,0 @@
-# Text after the sign in {$IFOPT R- junk} is ignored.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(1) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) RPAREN END DOT
-tpc: ok
-output: '1'
----
-program P;
-{$IFOPT R- junk} const A = 1; {$ENDIF}
-begin Write(A) end.

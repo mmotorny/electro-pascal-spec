@@ -1,0 +1,21 @@
+description: A real with 60 integer digits.
+source: |
+  program P; const C = 111111111111111111111111111111111111111111111111111111111111.0; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - REAL: "111111111111111111111111111111111111111111111111111111111111.0"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+compile:
+  error: 76
+  line: 1
+  column: 99

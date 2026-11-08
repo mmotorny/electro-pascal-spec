@@ -1,6 +1,0 @@
-# Text under a defined symbol is scanned.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ INTEGER(1) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; {$DEFINE X} {$IFDEF X} const C = 1; {$ENDIF} begin end.

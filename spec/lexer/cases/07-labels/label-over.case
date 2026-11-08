@@ -1,5 +1,0 @@
-# 10000 is delivered as a number, then rejected as a label: the range check is not the lexer's.
-tokens: PROGRAM IDENT(P) SEMI LABEL INTEGER(10000)
-tpc: error 2 at 1:18
----
-program P; label 10000; begin 10000: end.

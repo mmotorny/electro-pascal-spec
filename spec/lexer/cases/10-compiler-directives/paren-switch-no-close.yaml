@@ -1,0 +1,15 @@
+description: (*$R+) does not end at its ), so the ! after it stays inside
+  the comment.
+source: |
+  program P;
+  (*$R+) ! *)
+  begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

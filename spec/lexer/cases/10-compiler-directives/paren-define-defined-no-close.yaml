@@ -1,0 +1,15 @@
+description: (*$DEFINE X) for an X already defined does not end at its ).
+source: |
+  program P;
+  {$DEFINE X}
+  (*$DEFINE X) ! *)
+  begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

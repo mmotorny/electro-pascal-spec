@@ -1,0 +1,14 @@
+description: A comment may span lines.
+source: |
+  program P; { one
+  two
+  three } begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

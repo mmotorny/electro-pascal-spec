@@ -1,0 +1,17 @@
+description: "'interrupt' is not a reserved word in TPC, so it can be declared as a variable."
+source: |
+  program P; var interrupt: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: INTERRUPT
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

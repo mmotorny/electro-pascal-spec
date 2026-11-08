@@ -1,8 +1,0 @@
-# An unknown directive inside skipped text is not an error.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN INTEGER(1) RPAREN END DOT
-tpc: ok
-output: '1'
----
-program P;
-{$IFDEF X} {$FOO} {$ENDIF}
-begin Write(1) end.

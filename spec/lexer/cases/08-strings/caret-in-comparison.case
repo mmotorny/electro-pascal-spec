@@ -1,6 +1,0 @@
-# A caret character compared in a statement.
-tokens: PROGRAM IDENT(P) SEMI VAR IDENT(C) COLON IDENT(CHAR) SEMI BEGIN IDENT(C) ASSIGN STRING(#9) SEMI IF IDENT(C) EQ STRING(#9) THEN IDENT(WRITE) LPAREN STRING('y') RPAREN END DOT
-tpc: ok
-output: 'y'
----
-program P; var C: Char; begin C := #9; if C = ^I then Write('y') end.

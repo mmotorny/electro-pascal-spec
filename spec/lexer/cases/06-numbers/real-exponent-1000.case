@@ -1,6 +1,0 @@
-# An exponent of 1000.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ REAL(1e-1000) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(C) RPAREN END DOT
-tpc: ok
-output: ' 0.0000000000E+00'
----
-program P; const C = 1e-1000; begin Write(C) end.

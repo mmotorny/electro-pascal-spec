@@ -1,0 +1,21 @@
+description: An exponent of 1000.
+source: |
+  program P; const C = 1e-1000; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - REAL: "1e-1000"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: " 0.0000000000E+00"

@@ -1,0 +1,12 @@
+description: "{$IFOPT M+}: M is a parameter directive, not a switch."
+source: |
+  program P;
+  {$IFOPT M+} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 17
+  line: 2
+  column: 9

@@ -1,5 +1,0 @@
-# In a type, ^ followed by a digit is a caret and a number.
-tokens: PROGRAM IDENT(P) SEMI TYPE IDENT(T) EQ CARET INTEGER(1)
-tpc: error 2 at 1:22
----
-program P; type T = ^1; begin end.

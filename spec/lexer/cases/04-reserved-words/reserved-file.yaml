@@ -1,0 +1,13 @@
+description: "'file' is a reserved word, so it can't be declared as a variable."
+source: |
+  program P; var file: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - FILE
+compile:
+  error: 2
+  line: 1
+  column: 16

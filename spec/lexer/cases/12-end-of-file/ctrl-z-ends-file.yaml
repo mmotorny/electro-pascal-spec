@@ -1,0 +1,11 @@
+description: ^Z (ASCII 26) ends the source; nothing after it is read.
+source: "program P; begin end.\x1a @@@\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

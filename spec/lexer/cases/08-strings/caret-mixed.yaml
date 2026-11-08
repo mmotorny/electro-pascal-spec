@@ -1,0 +1,21 @@
+description: Caret characters join with quoted strings.
+source: |
+  program P; const S = 'a'^M^J'b'; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: "a\r\nb"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "a\r\nb"

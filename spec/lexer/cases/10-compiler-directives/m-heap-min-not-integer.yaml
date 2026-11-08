@@ -1,0 +1,12 @@
+description: A heap minimum too large to be an integer.
+source: |
+  program P;
+  {$M 16384,4294967295,655360} begin Write(SPtr) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 17
+  line: 2
+  column: 11

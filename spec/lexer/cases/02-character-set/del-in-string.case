@@ -1,6 +1,0 @@
-# DEL (127) is allowed in a quoted string.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#127) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(ORD) LPAREN IDENT(S) RPAREN RPAREN END DOT
-tpc: ok
-output: '127'
----
-program P; const S = ''; begin Write(Ord(S)) end.

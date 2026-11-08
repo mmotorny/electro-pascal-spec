@@ -1,0 +1,24 @@
+description: ^z (122).
+source: |
+  program P; const C = ^z; begin Write(Ord(C)) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - STRING: "\x1a"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: ORD
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "26"

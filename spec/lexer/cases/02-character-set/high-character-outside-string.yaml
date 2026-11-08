@@ -1,0 +1,12 @@
+description: A character above 127 outside a string is not part of any
+  token.
+source: "program P; var \x80: Integer; begin end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+compile:
+  error: 5
+  line: 1
+  column: 16

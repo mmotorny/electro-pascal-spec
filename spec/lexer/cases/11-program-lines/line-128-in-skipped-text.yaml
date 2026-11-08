@@ -1,0 +1,15 @@
+description: A 128-character line inside text skipped by {$IFDEF}.
+source: |
+  program P;
+  {$IFDEF X}
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  {$ENDIF}
+  begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 11
+  line: 3
+  column: 128

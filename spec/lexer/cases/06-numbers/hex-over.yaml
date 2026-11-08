@@ -1,0 +1,14 @@
+description: $100000000 is out of range.
+source: |
+  program P; const C = $100000000; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+compile:
+  error: 7
+  line: 1
+  column: 31

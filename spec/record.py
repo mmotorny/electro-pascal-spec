@@ -1,4 +1,4 @@
-"""Runs every spec case through TPC and writes its verdict into the case.
+"""Runs every spec case through TPC and writes its verdict and output into the case.
 
 Usage: bazel run //spec:record [-- case or directory ...]
 
@@ -30,20 +30,20 @@ def main():
     paths = [os.path.join(base, p) for p in args.paths] or [os.path.join(workspace, "spec")]
     selected = []
     for path in paths:
-        selected += [cases.Case(path)] if path.endswith(".case") else cases.find(path)
+        selected += [cases.Case(path)] if path.endswith(cases.EXTENSION) else cases.find(path)
 
     tools = probe.Tools(os.path.abspath(args.qemu), os.path.abspath(args.mtools))
     info, results = probe.run(tools, os.path.abspath(args.disk), [c.source for c in selected])
     changed = 0
     for case, result in zip(selected, results):
-        new = {"tpc": cases.verdict_text(result)}
+        new = {"compile": cases.verdict(result)}
         if "run_output" in result:
-            new["output"] = cases.pascal_string(result["run_output"].encode("latin-1"))
-        old = {k: case.fields.get(k) for k in ("tpc", "output")}
-        if {k: old[k] for k in new} != new or (old["output"] and "output" not in new):
+            new["output"] = result["run_output"]
+        old = {k: case.data.get(k) for k in ("compile", "output")}
+        if old != {"compile": new["compile"], "output": new.get("output")}:
             print(f"{os.path.relpath(case.path, workspace)}: {old} -> {new}")
-            case.fields.pop("output", None)
-            case.fields.update(new)
+            case.data.pop("output", None)
+            case.data.update(new)
             case.save()
             changed += 1
     with open(os.path.join(workspace, "spec", "MACHINE.json"), "w") as f:

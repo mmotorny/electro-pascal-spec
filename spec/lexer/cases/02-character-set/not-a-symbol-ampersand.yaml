@@ -1,0 +1,12 @@
+description: "& outside a string or comment."
+source: |
+  program P;
+  & begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 5
+  line: 2
+  column: 1

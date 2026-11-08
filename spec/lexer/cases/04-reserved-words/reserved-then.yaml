@@ -1,0 +1,13 @@
+description: "'then' is a reserved word, so it can't be declared as a variable."
+source: |
+  program P; var then: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - THEN
+compile:
+  error: 2
+  line: 1
+  column: 16

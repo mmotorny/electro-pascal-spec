@@ -1,6 +1,0 @@
-# (*) opens a comment; the ) is inside it.
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; (*) still a comment *) begin end.

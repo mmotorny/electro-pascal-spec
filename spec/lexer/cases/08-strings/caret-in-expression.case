@@ -1,6 +1,0 @@
-# A caret character in an expression.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITE) LPAREN STRING(#7) PLUS STRING('x') RPAREN END DOT
-tpc: ok
-output: #7'x'
----
-program P; begin Write(^G + 'x') end.

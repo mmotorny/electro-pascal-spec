@@ -1,0 +1,18 @@
+description: A subrange of caret characters directly in a variable
+  declaration.
+source: |
+  program P; var C: ^A..^Z; begin C := ^B; Write(Ord(C)) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: C
+  - COLON
+  - CARET
+  - IDENT: A
+  - DOTDOT
+compile:
+  error: 19
+  line: 1
+  column: 21

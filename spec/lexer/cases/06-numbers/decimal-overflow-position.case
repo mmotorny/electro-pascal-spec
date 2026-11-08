@@ -1,5 +1,0 @@
-# Twenty digits: the error is at the digit where the value overflows, the 11th.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ
-tpc: error 7 at 1:32
----
-program P; const C = 11111111111111111111; begin Write(C) end.

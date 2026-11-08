@@ -1,0 +1,15 @@
+description: A string must end on its line.
+source: |
+  program P; const S = 'abc
+  ; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+compile:
+  error: 8
+  line: 1
+  column: 26

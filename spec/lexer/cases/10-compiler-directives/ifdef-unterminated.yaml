@@ -1,0 +1,11 @@
+description: An {$IFDEF} without {$ENDIF}.
+source: |
+  program P; {$IFDEF X} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 129
+  line: 2
+  column: 1

@@ -1,0 +1,20 @@
+description: A blank inside .) splits it into a dot and ).
+source: |
+  program P; var A: array(.1..2 . ) of Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: A
+  - COLON
+  - ARRAY
+  - LBRACKET
+  - INTEGER: 1
+  - DOTDOT
+  - INTEGER: 2
+  - DOT
+compile:
+  error: 121
+  line: 1
+  column: 31

@@ -1,0 +1,17 @@
+description: (*$L B) does not end at its ); the missing B.OBJ is reported
+  instead.
+source: |
+  program P;
+  (*$L B) ! *)
+  begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile:
+  error: 15
+  line: 3
+  column: 10

@@ -1,0 +1,14 @@
+description: "Twelve hex digits: the error is at the 9th."
+source: |
+  program P; const C = $FFFFFFFFFFFF; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+compile:
+  error: 7
+  line: 1
+  column: 31

@@ -1,0 +1,12 @@
+description: "{$S} with nothing after it."
+source: |
+  program P; {$S} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

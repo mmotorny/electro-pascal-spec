@@ -1,6 +1,0 @@
-# {$N+} inside a statement part.
-tokens: PROGRAM IDENT(P) SEMI BEGIN
-tpc: error 17 at 2:9
----
-program P;
-begin {$N+} end.

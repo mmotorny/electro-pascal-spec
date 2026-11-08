@@ -1,6 +1,0 @@
-# A parameter directive with its parameter after a blank.
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; {$M 16384,0,655360} begin end.

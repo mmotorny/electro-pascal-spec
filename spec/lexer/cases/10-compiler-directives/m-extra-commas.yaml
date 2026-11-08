@@ -1,0 +1,17 @@
+description: Extra commas and blanks before and between the numbers.
+source: |
+  program P;
+  {$M ,16384,,0, ,655360} begin Write(SPtr) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: SPTR
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "16378"

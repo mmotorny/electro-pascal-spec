@@ -1,0 +1,21 @@
+description: An exponent of 9999 (negative, so the value underflows to 0).
+source: |
+  program P; const C = 1e-9999; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - REAL: "1e-9999"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: " 0.0000000000E+00"

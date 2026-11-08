@@ -1,0 +1,11 @@
+description: "{$IFNDEF} without a name."
+source: |
+  program P; {$IFNDEF} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 2
+  line: 1
+  column: 20

@@ -1,5 +1,0 @@
-# A dollar sign with no hex digit.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ
-tpc: error 7 at 1:23
----
-program P; const C = $; begin Write(C) end.

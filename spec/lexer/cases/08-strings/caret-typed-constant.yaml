@@ -1,0 +1,20 @@
+description: ^ after ':' in a typed constant is a pointer type.
+source: |
+  program P; const Q: ^Integer = nil; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: Q
+  - COLON
+  - CARET
+  - IDENT: INTEGER
+  - EQ
+  - NIL
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

@@ -1,0 +1,17 @@
+description: Text after the third number is ignored.
+source: |
+  program P;
+  {$M 16384,0,655360 junk} begin Write(SPtr) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: SPTR
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "16378"

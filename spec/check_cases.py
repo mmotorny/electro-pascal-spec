@@ -1,8 +1,7 @@
 """Checks the cases and how spec/lexer.md cites them, without running TPC.
 
-Every case must have a description, a token list that uses only the
-notation of spec/lexer.md, and a recorded verdict (run `bazel run
-//spec:record` after adding or changing a case).
+Every case must match spec/case.schema.json and have a recorded verdict
+(run `bazel run //spec:record` after adding or changing a case).
 
 Every link from spec/lexer.md into lexer/cases/ must name an existing case,
 or, for a link to a folder, have text that is a pattern matching at least
@@ -13,49 +12,29 @@ in 13-real-values (see check_real_values).
 """
 
 import fnmatch
+import json
 import os
 import re
 import sys
 from fractions import Fraction
 
+import jsonschema
+
 import cases
 
-RESERVED = set("""AND ARRAY ASM BEGIN CASE CONST CONSTRUCTOR DESTRUCTOR DIV DO DOWNTO
-ELSE END FILE FOR FUNCTION GOTO IF IMPLEMENTATION IN INHERITED INLINE INTERFACE
-LABEL MOD NIL NOT OBJECT OF OR PACKED PROCEDURE PROGRAM RECORD REPEAT SET SHL
-SHR STRING THEN TO TYPE UNIT UNTIL USES VAR WHILE WITH XOR""".split())
-SYMBOLS = set("""PLUS MINUS STAR SLASH EQ NE LT LE GT GE LPAREN RPAREN LBRACKET RBRACKET
-DOT DOTDOT COMMA COLON SEMI ASSIGN CARET AT""".split())
-STRING_VALUE = r"(?:'(?:[^']|'')*'|#\d+)+"
-VALUED = {
-    "IDENT": r"[A-Z_][A-Z0-9_]{0,62}",
-    "INTEGER": r"-?\d+",
-    "REAL": r"\d+(?:\.\d*)?(?:[eE][+-]?\d*)?",
-    "STRING": STRING_VALUE,
-}
+
+def schema_checker(root):
+    with open(os.path.join(root, "case.schema.json")) as f:
+        schema = json.load(f)
+    return jsonschema.Draft202012Validator(schema)
 
 
-def check(case):
-    problems = []
-    if not case.comments:
-        problems.append("no description")
-    if "tokens" not in case.fields:
-        problems.append("no tokens: line")
-    for token in case.tokens():
-        match = re.fullmatch(r"([A-Z]+)\((.*)\)", token)
-        if match:
-            kind, value = match.groups()
-            if kind not in VALUED or not re.fullmatch(VALUED[kind], value):
-                problems.append(f"bad token {token}")
-        elif token not in RESERVED and token not in SYMBOLS:
-            problems.append(f"unknown token {token}")
-    verdict = case.fields.get("tpc")
-    if not verdict or not re.fullmatch(r"ok|error \d+(?: at \d+:\d+)?", verdict):
+def check(case, checker):
+    """Problems with one case's form: the schema, and a recorded verdict."""
+    problems = [f"{'/'.join(map(str, e.absolute_path)) or 'case'}: {e.message}"
+                for e in checker.iter_errors(case.data)]
+    if case.data.get("compile") is None:
         problems.append("no recorded verdict; run bazel run //spec:record")
-    if verdict == "ok" and "output" not in case.fields:
-        problems.append("no recorded output; run bazel run //spec:record")
-    if "output" in case.fields and not re.fullmatch(STRING_VALUE, case.fields["output"]):
-        problems.append("bad output")
     return problems
 
 
@@ -67,7 +46,7 @@ def check_citations(spec_path, found):
     cited, problems = set(), []
     for label, target in re.findall(r"\[([^\]]+)\]\((lexer/cases/[^)]*)\)", text):
         path = os.path.normpath(os.path.join(spec_dir, target))
-        if target.endswith(".case"):
+        if target.endswith(cases.EXTENSION):
             if os.path.isfile(path):
                 cited.add(path)
             else:
@@ -149,11 +128,11 @@ def check_real_values(case):
         return ["no 'const C = <real>;' to check"]
     n, k = parsed
     value = n * Fraction(10) ** k
-    verdict, output = case.fields.get("tpc", ""), case.fields.get("output", "").strip("'")
+    tpc, output = case.compile, case.data.get("output", "")
     if value >= OVERFLOW:
-        return [] if verdict.startswith("error 6 ") else ["at or above the overflow edge but not error 6"]
-    if verdict != "ok":
-        return [f"within the Extended range but {verdict}"]
+        return [] if tpc != "ok" and tpc.get("error") == 6 else ["at or above the overflow edge but not error 6"]
+    if tpc != "ok":
+        return [f"within the Extended range but {cases.verdict_text(tpc)}"]
     got, got_unit = extended(output)
     if value < EXTENDED_MIN_NORMAL:
         return [] if got == 0 else ["below the smallest normal value but not 0"]
@@ -171,8 +150,9 @@ def main():
     root = os.path.join(os.path.dirname(os.path.abspath(__file__)))
     problems = []
     found = cases.find(root)
+    checker = schema_checker(root)
     for case in found:
-        problems += [(case.path, p) for p in check(case)]
+        problems += [(case.path, p) for p in check(case, checker)]
         if os.path.basename(os.path.dirname(case.path)) == "13-real-values":
             problems += [(case.path, p) for p in check_real_values(case)]
     problems += check_citations(os.path.join(root, "lexer.md"), found)

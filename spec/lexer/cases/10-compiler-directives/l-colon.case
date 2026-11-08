@@ -1,5 +1,0 @@
-# L directly followed by a colon.
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: error 15 at 1:32
----
-program P; {$L:X.OBJ} begin end.

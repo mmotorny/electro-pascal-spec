@@ -1,0 +1,13 @@
+description: "{$N+} inside a statement part."
+source: |
+  program P;
+  begin {$N+} end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+compile:
+  error: 17
+  line: 2
+  column: 9

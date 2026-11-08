@@ -1,8 +1,0 @@
-# (*$UNDEF X) for an X not defined does not end at its ).
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P;
-(*$UNDEF X) ! *)
-begin end.

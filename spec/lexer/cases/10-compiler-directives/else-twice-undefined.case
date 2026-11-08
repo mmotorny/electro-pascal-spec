@@ -1,8 +1,0 @@
-# X undefined: the part after the first {$ELSE} is compiled, the part after the second is skipped.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(A) EQ INTEGER(2) SEMI CONST IDENT(B) EQ INTEGER(4) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(A) COMMA IDENT(B) RPAREN END DOT
-tpc: ok
-output: '24'
----
-program P;
-{$IFDEF X} const A = 1; {$ELSE} const A = 2; {$ELSE} const B = 3; {$ENDIF}
-const B = 4; begin Write(A, B) end.

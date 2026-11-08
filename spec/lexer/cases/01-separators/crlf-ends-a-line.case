@@ -1,9 +1,0 @@
-# CR LF ends a line: the error is reported on line 4.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(WRITELN) LPAREN INTEGER(1) RPAREN IDENT(WRITELN)
-tpc: error 85 at 4:3
----
-program P;
-begin
-  WriteLn(1)
-  WriteLn(2);
-end.

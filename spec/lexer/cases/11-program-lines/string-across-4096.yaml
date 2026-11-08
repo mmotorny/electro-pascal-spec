@@ -1,0 +1,216 @@
+description: A string literal running from byte 4090 to byte 4130 of the
+  file.
+source: |
+  program P;
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+  {xxxxxxxxxxxxxxxxxx}
+                                      const S = 'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy';
+  begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy

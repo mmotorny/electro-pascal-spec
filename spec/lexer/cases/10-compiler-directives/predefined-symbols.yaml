@@ -1,0 +1,47 @@
+description: VER70, MSDOS, CPU86 and CPU87 are defined from the start.
+source: |
+  program P;
+  {$IFDEF VER70} const A = 1; {$ENDIF}
+  {$IFDEF MSDOS} const B = 2; {$ENDIF}
+  {$IFDEF CPU86} const C = 3; {$ENDIF}
+  {$IFDEF CPU87} const D = 4; {$ENDIF}
+  begin Write(A, B, C, D) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: A
+  - EQ
+  - INTEGER: 1
+  - SEMI
+  - CONST
+  - IDENT: B
+  - EQ
+  - INTEGER: 2
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - INTEGER: 3
+  - SEMI
+  - CONST
+  - IDENT: D
+  - EQ
+  - INTEGER: 4
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: A
+  - COMMA
+  - IDENT: B
+  - COMMA
+  - IDENT: C
+  - COMMA
+  - IDENT: D
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "1234"

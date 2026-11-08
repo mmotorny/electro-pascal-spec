@@ -1,0 +1,12 @@
+description: "{$IFOPT Z+}: Z is not a switch."
+source: |
+  program P;
+  {$IFOPT Z+} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 17
+  line: 2
+  column: 9

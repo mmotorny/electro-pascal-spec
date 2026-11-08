@@ -1,6 +1,0 @@
-# Quoted strings and control characters join into one string.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING('Line 1'#13'Line2') SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
-tpc: ok
-output: 'Line 1'#13'Line2'
----
-program P; const S = 'Line 1'#13'Line2'; begin Write(S) end.

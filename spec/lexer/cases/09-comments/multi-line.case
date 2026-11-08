@@ -1,8 +1,0 @@
-# A comment may span lines.
-tokens: PROGRAM IDENT(P) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; { one
-two
-three } begin end.

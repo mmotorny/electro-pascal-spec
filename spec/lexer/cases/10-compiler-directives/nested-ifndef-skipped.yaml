@@ -1,0 +1,23 @@
+description: Skipped text holding a nested {$IFNDEF}.
+source: |
+  program P;
+  {$IFDEF X} {$IFNDEF Y} const A = 1; {$ENDIF} const A = 2; {$ENDIF}
+  const A = 3; begin Write(A) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: A
+  - EQ
+  - INTEGER: 3
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: A
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "3"

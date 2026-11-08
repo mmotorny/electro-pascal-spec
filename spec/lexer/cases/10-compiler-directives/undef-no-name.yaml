@@ -1,0 +1,12 @@
+description: "{$UNDEF} without a name."
+source: |
+  program P;
+  {$UNDEF} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 2
+  line: 2
+  column: 8

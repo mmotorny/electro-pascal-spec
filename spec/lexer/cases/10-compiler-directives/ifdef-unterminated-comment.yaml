@@ -1,0 +1,11 @@
+description: An unterminated comment inside skipped text is error 10.
+source: |
+  program P; {$IFDEF X} (* begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 10
+  line: 2
+  column: 1

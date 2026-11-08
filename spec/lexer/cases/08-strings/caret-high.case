@@ -1,6 +1,0 @@
-# ^ followed by character 233.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(C) EQ STRING(#169) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(ORD) LPAREN IDENT(C) RPAREN RPAREN END DOT
-tpc: ok
-output: '169'
----
-program P; const C = ^é; begin Write(Ord(C)) end.

@@ -1,6 +1,0 @@
-# A qualified identifier is two identifiers and a dot.
-tokens: PROGRAM IDENT(P) SEMI BEGIN IDENT(SYSTEM) DOT IDENT(WRITELN) END DOT
-tpc: ok
-output: #13#10
----
-program P; begin System.WriteLn end.

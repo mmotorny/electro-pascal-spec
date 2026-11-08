@@ -1,0 +1,14 @@
+description: "A blank between # and the number."
+source: |
+  program P; const S = # 13; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+compile:
+  error: 7
+  line: 1
+  column: 23

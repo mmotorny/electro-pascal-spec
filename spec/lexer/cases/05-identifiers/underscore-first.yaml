@@ -1,0 +1,20 @@
+description: An identifier may start with an underscore.
+source: |
+  program P; var _x: Integer; begin _x := 1 end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - IDENT: _X
+  - COLON
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - IDENT: _X
+  - ASSIGN
+  - INTEGER: 1
+  - END
+  - DOT
+compile: ok
+output: ""

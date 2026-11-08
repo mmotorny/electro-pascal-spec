@@ -1,6 +1,0 @@
-# After : in a variable declaration, ^M is a pointer type.
-tokens: PROGRAM IDENT(P) SEMI TYPE IDENT(M) EQ IDENT(INTEGER) SEMI VAR IDENT(Q) COLON CARET IDENT(M) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; type M = Integer; var Q: ^M; begin end.

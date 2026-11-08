@@ -1,0 +1,21 @@
+description: Control characters before and after a quoted string.
+source: |
+  program P; const S = #7#7'Wake up!'#7#7; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: "\x07\x07Wake up!\x07\x07"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "\x07\x07Wake up!\x07\x07"

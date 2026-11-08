@@ -1,0 +1,21 @@
+description: Quoted strings and control characters join into one string.
+source: |
+  program P; const S = 'Line 1'#13'Line2'; begin Write(S) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: "Line 1\rLine2"
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: S
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "Line 1\rLine2"

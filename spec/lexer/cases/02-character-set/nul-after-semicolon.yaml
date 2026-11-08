@@ -1,0 +1,11 @@
+description: A NUL (ASCII 0) between ; and begin.
+source: "program P;\0begin end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

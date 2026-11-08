@@ -1,0 +1,13 @@
+description: The file ends before the final dot.
+source: |
+  program P; begin end
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+compile:
+  error: 10
+  line: 2
+  column: 1

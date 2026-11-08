@@ -1,5 +1,0 @@
-# M without a parameter.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 17 at 1:15
----
-program P; {$M} begin end.

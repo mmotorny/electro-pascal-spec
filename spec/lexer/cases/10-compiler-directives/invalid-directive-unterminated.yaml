@@ -1,0 +1,11 @@
+description: "An invalid directive that never ends: error 17, not 10."
+source: |
+  program P; {$T = begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 17
+  line: 1
+  column: 14

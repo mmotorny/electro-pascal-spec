@@ -1,7 +1,0 @@
-# {$N+} after a uses clause.
-tokens: PROGRAM IDENT(P) SEMI USES IDENT(CRT) SEMI
-tpc: error 17 at 3:3
----
-program P;
-uses Crt;
-{$N+} begin end.

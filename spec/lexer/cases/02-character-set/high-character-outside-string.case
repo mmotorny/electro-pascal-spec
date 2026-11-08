@@ -1,5 +1,0 @@
-# A character above 127 outside a string is not part of any token.
-tokens: PROGRAM IDENT(P) SEMI VAR
-tpc: error 5 at 1:16
----
-program P; var €: Integer; begin end.

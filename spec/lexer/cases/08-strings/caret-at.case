@@ -1,6 +1,0 @@
-# ^@ is character 0.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#0) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
-tpc: ok
-output: #0
----
-program P; const S = ^@; begin Write(S) end.

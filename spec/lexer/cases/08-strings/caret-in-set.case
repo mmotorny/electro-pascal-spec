@@ -1,6 +1,0 @@
-# Caret characters in a set constructor.
-tokens: PROGRAM IDENT(P) SEMI VAR IDENT(C) COLON IDENT(CHAR) SEMI BEGIN IDENT(C) ASSIGN STRING('x') SEMI IF IDENT(C) IN LBRACKET STRING(#13) COMMA STRING(#10) RBRACKET THEN IDENT(WRITE) LPAREN STRING('y') RPAREN ELSE IDENT(WRITE) LPAREN STRING('n') RPAREN END DOT
-tpc: ok
-output: 'n'
----
-program P; var C: Char; begin C := 'x'; if C in [^M, ^J] then Write('y') else Write('n') end.

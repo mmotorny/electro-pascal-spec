@@ -1,0 +1,16 @@
+description: "CR LF ends a line: the error is reported on line 4."
+source: "program P;\r\nbegin\r\n  WriteLn(1)\r\n  WriteLn(2);\r\nend.\r\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IDENT: WRITELN
+  - LPAREN
+  - INTEGER: 1
+  - RPAREN
+  - IDENT: WRITELN
+compile:
+  error: 85
+  line: 4
+  column: 3

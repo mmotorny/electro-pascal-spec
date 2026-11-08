@@ -1,0 +1,49 @@
+description: = <> < <= > >=.
+source: |
+  program P; begin if (1 = 1) and (1 <> 2) and (1 < 2) and (1 <= 2) and (2 > 1) and (2 >= 1) then end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - IF
+  - LPAREN
+  - INTEGER: 1
+  - EQ
+  - INTEGER: 1
+  - RPAREN
+  - AND
+  - LPAREN
+  - INTEGER: 1
+  - NE
+  - INTEGER: 2
+  - RPAREN
+  - AND
+  - LPAREN
+  - INTEGER: 1
+  - LT
+  - INTEGER: 2
+  - RPAREN
+  - AND
+  - LPAREN
+  - INTEGER: 1
+  - LE
+  - INTEGER: 2
+  - RPAREN
+  - AND
+  - LPAREN
+  - INTEGER: 2
+  - GT
+  - INTEGER: 1
+  - RPAREN
+  - AND
+  - LPAREN
+  - INTEGER: 2
+  - GE
+  - INTEGER: 1
+  - RPAREN
+  - THEN
+  - END
+  - DOT
+compile: ok
+output: ""

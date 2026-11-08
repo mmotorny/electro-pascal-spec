@@ -1,0 +1,10 @@
+description: ^Z before the program is complete.
+source: "program P;\x1a begin end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 10
+  line: 2
+  column: 1

@@ -1,0 +1,16 @@
+description: Characters above 127 are allowed in a string.
+source: "program P; const S = '\x80\xff'; begin end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: S
+  - EQ
+  - STRING: "\x80\xff"
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

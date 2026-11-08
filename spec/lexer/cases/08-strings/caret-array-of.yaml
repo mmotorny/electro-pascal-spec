@@ -1,0 +1,25 @@
+description: ^ after 'of' in an array type is a pointer type.
+source: |
+  program P; type A = array[1..2] of ^Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - TYPE
+  - IDENT: A
+  - EQ
+  - ARRAY
+  - LBRACKET
+  - INTEGER: 1
+  - DOTDOT
+  - INTEGER: 2
+  - RBRACKET
+  - OF
+  - CARET
+  - IDENT: INTEGER
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

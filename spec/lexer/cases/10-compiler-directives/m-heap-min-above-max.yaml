@@ -1,0 +1,12 @@
+description: A heap minimum above the maximum.
+source: |
+  program P;
+  {$M 16384,1024,1008} begin Write(SPtr) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 17
+  line: 2
+  column: 16

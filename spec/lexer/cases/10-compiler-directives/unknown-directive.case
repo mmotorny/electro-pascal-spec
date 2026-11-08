@@ -1,5 +1,0 @@
-# An unknown directive letter.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 17 at 1:14
----
-program P; {$Z+} begin end.

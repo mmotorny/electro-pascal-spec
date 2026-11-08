@@ -1,0 +1,13 @@
+description: "'record' is a reserved word, so it can't be declared as a variable."
+source: |
+  program P; var record: Integer; begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - VAR
+  - RECORD
+compile:
+  error: 2
+  line: 1
+  column: 16

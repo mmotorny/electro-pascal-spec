@@ -1,0 +1,10 @@
+description: DEL (127) outside a string or comment.
+source: "program P;\n\x7f begin end.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 5
+  line: 2
+  column: 1

@@ -1,6 +1,0 @@
-# ^ and @.
-tokens: PROGRAM IDENT(P) SEMI VAR IDENT(Q) COLON CARET IDENT(INTEGER) SEMI BEGIN IDENT(Q) ASSIGN AT IDENT(Q) SEMI IDENT(Q) CARET ASSIGN INTEGER(1) END DOT
-tpc: ok
-output: ''
----
-program P; var Q: ^Integer; begin Q := @Q; Q^ := 1 end.

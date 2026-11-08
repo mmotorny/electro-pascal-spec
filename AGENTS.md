@@ -30,16 +30,16 @@ build it.
 
 ## Spec cases
 
-- A case's `tpc:` and `output:` lines are written only by
+- A case's `compile` and `output` are written only by
   `bazel run //spec:record`, never by hand. Run it after adding or changing
   cases, and keep `bazel test //spec:cases_test` passing.
 - When a recorded result disagrees with the spec's text or a case's
-  `tokens:` line, the recorded result is right: fix the text or the tokens,
+  `tokens`, the recorded result is right: fix the text or the tokens,
   or record the behaviour as a quirk.
-- A case's `tokens:` line must match the token stream captured from `TPC`,
-  in the spec's token names. `spec/compare.py` checks the cases against such
-  a capture.
-- Describe what a case's input is and what it shows, never why `TPC` behaves
+- A case's `tokens` must match the token stream captured from `TPC`, in
+  the spec's token names. `bazel run //spec:compare` checks the cases
+  against such a capture.
+- Describe in a case's `description` what its input is and what it shows, never why `TPC` behaves
   that way inside.
 - Write cases as small, complete programs of our own. When a case shows a
   value, make the program print it so `output:` records it.

@@ -1,6 +1,0 @@
-# Characters above 127 are allowed in a string.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#128#255) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P; const S = '€ÿ'; begin end.

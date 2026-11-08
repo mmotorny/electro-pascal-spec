@@ -1,6 +1,0 @@
-# #255 is the largest character code.
-tokens: PROGRAM IDENT(P) SEMI CONST IDENT(S) EQ STRING(#255) SEMI BEGIN IDENT(WRITE) LPAREN IDENT(S) RPAREN END DOT
-tpc: ok
-output: #255
----
-program P; const S = #255; begin Write(S) end.

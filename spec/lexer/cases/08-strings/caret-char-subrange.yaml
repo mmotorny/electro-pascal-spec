@@ -1,0 +1,17 @@
+description: A subrange of caret characters in a type declaration.
+source: |
+  program P; type T = ^A..^Z; var C: T; begin C := ^B; Write(Ord(C)) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - TYPE
+  - IDENT: T
+  - EQ
+  - CARET
+  - IDENT: A
+  - DOTDOT
+compile:
+  error: 85
+  line: 1
+  column: 23

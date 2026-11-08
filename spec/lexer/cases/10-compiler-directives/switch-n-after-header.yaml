@@ -1,0 +1,13 @@
+description: "{$N+} right after the program header."
+source: |
+  program P;
+  {$N+} begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

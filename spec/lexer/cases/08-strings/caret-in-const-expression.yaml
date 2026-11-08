@@ -1,0 +1,26 @@
+description: A caret character in a constant expression.
+source: |
+  program P; const C = Ord(^A) + 1; begin Write(C) end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - CONST
+  - IDENT: C
+  - EQ
+  - IDENT: ORD
+  - LPAREN
+  - STRING: "\x01"
+  - RPAREN
+  - PLUS
+  - INTEGER: 1
+  - SEMI
+  - BEGIN
+  - IDENT: WRITE
+  - LPAREN
+  - IDENT: C
+  - RPAREN
+  - END
+  - DOT
+compile: ok
+output: "2"

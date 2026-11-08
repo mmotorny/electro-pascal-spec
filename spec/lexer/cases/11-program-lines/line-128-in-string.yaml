@@ -1,0 +1,13 @@
+description: "A 128-character line holding an unterminated string: the line is too long before the string is read."
+source: |
+  program P;
+  const S = 'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+  begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 11
+  line: 2
+  column: 128

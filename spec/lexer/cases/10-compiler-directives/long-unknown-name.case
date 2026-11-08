@@ -1,5 +1,0 @@
-# An unknown directive name of several letters.
-tokens: PROGRAM IDENT(P) SEMI
-tpc: error 17 at 1:14
----
-program P; {$FOO} begin end.

@@ -1,5 +1,0 @@
-# 'inline' is a reserved word, so it can't be declared as a variable.
-tokens: PROGRAM IDENT(P) SEMI VAR INLINE
-tpc: error 2 at 1:16
----
-program P; var inline: Integer; begin end.

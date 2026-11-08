@@ -1,0 +1,12 @@
+description: "{ inside (* *) is ignored: the comment ends at the first *)."
+source: |
+  program P; (* { *) begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+  - END
+  - DOT
+compile: ok
+output: ""

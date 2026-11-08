@@ -1,0 +1,11 @@
+description: ^Z on line 3.
+source: "program P;\nbegin\n\x1aend.\n"
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+  - BEGIN
+compile:
+  error: 10
+  line: 3
+  column: 1

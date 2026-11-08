@@ -1,8 +1,0 @@
-# Switches B F I P Q R S V W after a declaration.
-tokens: PROGRAM IDENT(P) SEMI VAR IDENT(V) COLON IDENT(INTEGER) SEMI BEGIN END DOT
-tpc: ok
-output: ''
----
-program P;
-var V: Integer;
-{$B+,F+,I+,P+,Q+,R+,S+,V+,W+} begin end.

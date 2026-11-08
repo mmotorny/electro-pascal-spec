@@ -1,0 +1,11 @@
+description: A (* comment that never ends.
+source: |
+  program P; (* begin end.
+tokens:
+  - PROGRAM
+  - IDENT: P
+  - SEMI
+compile:
+  error: 10
+  line: 2
+  column: 1
