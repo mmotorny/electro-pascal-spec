@@ -2,7 +2,9 @@ description: "{$N+} after a uses clause."
 source: |
   program P;
   uses Crt;
-  {$N+} begin end.
+  {$N+}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

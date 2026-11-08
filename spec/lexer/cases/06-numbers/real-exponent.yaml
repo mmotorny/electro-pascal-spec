@@ -1,6 +1,10 @@
 description: A real number with an exponent.
 source: |
-  program P; const C = 1e10; begin Write(C) end.
+  program P;
+  const C = 1e10;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -2,7 +2,10 @@ description: A stack size of 1024, the smallest; the program prints SPtr at
   its start.
 source: |
   program P;
-  {$M 1024,0,655360} begin Write(SPtr) end.
+  {$M 1024,0,655360}
+  begin
+    Write(SPtr)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

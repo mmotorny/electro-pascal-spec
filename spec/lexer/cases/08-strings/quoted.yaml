@@ -1,6 +1,10 @@
 description: A quoted string.
 source: |
-  program P; const S = 'TURBO'; begin Write(S) end.
+  program P;
+  const S = 'TURBO';
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

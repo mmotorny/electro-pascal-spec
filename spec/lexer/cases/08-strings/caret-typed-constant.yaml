@@ -1,6 +1,9 @@
 description: ^ after ':' in a typed constant is a pointer type.
 source: |
-  program P; const Q: ^Integer = nil; begin end.
+  program P;
+  const Q: ^Integer = nil;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

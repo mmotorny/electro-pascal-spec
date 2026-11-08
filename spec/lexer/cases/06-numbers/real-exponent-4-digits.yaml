@@ -1,6 +1,10 @@
 description: An exponent with four digits.
 source: |
-  program P; const C = 1e0001; begin Write(C) end.
+  program P;
+  const C = 1e0001;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

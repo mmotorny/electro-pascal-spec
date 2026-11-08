@@ -1,6 +1,10 @@
 description: "10000 is delivered as a number, then rejected as a label: the range check is not the lexer's."
 source: |
-  program P; label 10000; begin 10000: end.
+  program P;
+  label 10000;
+  begin
+    10000:
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -9,5 +13,5 @@ tokens:
   - INTEGER: 10000
 compile:
   error: 2
-  line: 1
-  column: 18
+  line: 2
+  column: 7

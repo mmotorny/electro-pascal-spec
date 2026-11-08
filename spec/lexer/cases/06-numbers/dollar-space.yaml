@@ -1,6 +1,10 @@
 description: A blank between $ and the digits.
 source: |
-  program P; const C = $ FF; begin Write(C) end.
+  program P;
+  const C = $ FF;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -10,5 +14,5 @@ tokens:
   - EQ
 compile:
   error: 7
-  line: 1
-  column: 23
+  line: 2
+  column: 12

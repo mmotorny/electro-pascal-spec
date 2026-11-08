@@ -1,6 +1,10 @@
 description: A real number with a fraction.
 source: |
-  program P; const C = 1.5; begin Write(C) end.
+  program P;
+  const C = 1.5;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

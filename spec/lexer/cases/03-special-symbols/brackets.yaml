@@ -1,6 +1,10 @@
 description: "[ ] , .. and :."
 source: |
-  program P; var A: array[1..2, 1..2] of Integer; begin A[1, 2] := 0 end.
+  program P;
+  var A: array[1..2, 1..2] of Integer;
+  begin
+    A[1, 2] := 0
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

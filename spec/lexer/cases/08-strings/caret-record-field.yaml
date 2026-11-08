@@ -1,6 +1,9 @@
 description: ^ after ':' in a record field is a pointer type.
 source: |
-  program P; type R = record F: ^Integer end; begin end.
+  program P;
+  type R = record F: ^Integer end;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

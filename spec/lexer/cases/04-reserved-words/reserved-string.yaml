@@ -1,6 +1,9 @@
 description: "'string' is a reserved word, so it can't be declared as a variable."
 source: |
-  program P; var string: Integer; begin end.
+  program P;
+  var string: Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -9,5 +12,5 @@ tokens:
   - STRING
 compile:
   error: 2
-  line: 1
-  column: 16
+  line: 2
+  column: 5

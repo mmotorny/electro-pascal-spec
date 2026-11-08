@@ -1,6 +1,10 @@
 description: 2147483648 is out of range.
 source: |
-  program P; const C = 2147483648; begin Write(C) end.
+  program P;
+  const C = 2147483648;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -10,5 +14,5 @@ tokens:
   - EQ
 compile:
   error: 7
-  line: 1
-  column: 31
+  line: 2
+  column: 20

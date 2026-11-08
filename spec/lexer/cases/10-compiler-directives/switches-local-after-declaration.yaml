@@ -2,7 +2,9 @@ description: Switches B F I P Q R S V W after a declaration.
 source: |
   program P;
   var V: Integer;
-  {$B+,F+,I+,P+,Q+,R+,S+,V+,W+} begin end.
+  {$B+,F+,I+,P+,Q+,R+,S+,V+,W+}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

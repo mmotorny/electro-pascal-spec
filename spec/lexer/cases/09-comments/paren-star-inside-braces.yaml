@@ -1,6 +1,9 @@
 description: "(* inside braces is ignored: the comment ends at the first }."
 source: |
-  program P; { (* } begin end.
+  program P;
+  { (* }
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

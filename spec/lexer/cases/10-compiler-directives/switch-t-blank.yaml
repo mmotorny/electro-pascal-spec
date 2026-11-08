@@ -1,11 +1,14 @@
 description: A switch-only letter followed by a blank.
 source: |
-  program P; {$T } begin end.
+  program P;
+  {$T }
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
   - SEMI
 compile:
   error: 17
-  line: 1
-  column: 14
+  line: 2
+  column: 3

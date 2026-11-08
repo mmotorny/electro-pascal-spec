@@ -1,6 +1,10 @@
 description: An identifier can be a label.
 source: |
-  program P; label L; begin L: end.
+  program P;
+  label L;
+  begin
+    L:
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -3,7 +3,8 @@ source: |
   program P;
   {$DEFINE X}
   (*$DEFINE X) ! *)
-  begin end.
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

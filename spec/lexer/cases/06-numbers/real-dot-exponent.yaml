@@ -1,6 +1,10 @@
 description: "A dot may be followed directly by an exponent: 1.e5 is a real."
 source: |
-  program P; const C = 1.e5; begin Write(C) end.
+  program P;
+  const C = 1.e5;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -1,6 +1,10 @@
 description: "Twelve hex digits: the error is at the 9th."
 source: |
-  program P; const C = $FFFFFFFFFFFF; begin Write(C) end.
+  program P;
+  const C = $FFFFFFFFFFFF;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -10,5 +14,5 @@ tokens:
   - EQ
 compile:
   error: 7
-  line: 1
-  column: 31
+  line: 2
+  column: 20

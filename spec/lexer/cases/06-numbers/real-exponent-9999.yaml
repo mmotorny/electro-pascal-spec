@@ -1,6 +1,10 @@
 description: An exponent of 9999 (negative, so the value underflows to 0).
 source: |
-  program P; const C = 1e-9999; begin Write(C) end.
+  program P;
+  const C = 1e-9999;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

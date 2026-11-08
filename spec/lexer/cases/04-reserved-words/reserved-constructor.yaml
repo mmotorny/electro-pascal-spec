@@ -1,6 +1,9 @@
 description: "'constructor' is a reserved word, so it can't be declared as a variable."
 source: |
-  program P; var constructor: Integer; begin end.
+  program P;
+  var constructor: Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -9,5 +12,5 @@ tokens:
   - CONSTRUCTOR
 compile:
   error: 2
-  line: 1
-  column: 16
+  line: 2
+  column: 5

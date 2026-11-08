@@ -1,6 +1,10 @@
 description: An identifier may start with an underscore.
 source: |
-  program P; var _x: Integer; begin _x := 1 end.
+  program P;
+  var _x: Integer;
+  begin
+    _x := 1
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

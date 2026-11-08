@@ -1,11 +1,15 @@
 description: "Braces don't nest: the comment ends at the first }, leaving a stray }."
 source: |
-  program P; { { } } begin end.
+  program P;
+  { { }
+  }
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
   - SEMI
 compile:
   error: 5
-  line: 1
-  column: 18
+  line: 3
+  column: 1

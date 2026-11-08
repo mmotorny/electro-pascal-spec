@@ -5,8 +5,14 @@ source: |
   program P;
   const C = 1.2345678901234567895;
   const H: array[0..15] of Char = '0123456789ABCDEF';
-  var X: Extended; B: array[0..9] of Byte absolute X; I: Integer;
-  begin X := C; for I := 9 downto 0 do Write(H[B[I] shr 4], H[B[I] and 15]) end.
+  var
+    X: Extended;
+    B: array[0..9] of Byte absolute X;
+    I: Integer;
+  begin
+    X := C;
+    for I := 9 downto 0 do Write(H[B[I] shr 4], H[B[I] and 15])
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -3,7 +3,9 @@ description: In (*$M 16384,0,672), with 672 bytes being 42 paragraphs, the )
 source: |
   program P;
   (*$M 16384,0,672) begin Write(1) end. *)
-  begin Write(2) end.
+  begin
+    Write(2)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

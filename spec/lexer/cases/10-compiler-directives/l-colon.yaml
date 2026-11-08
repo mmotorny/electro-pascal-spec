@@ -1,6 +1,9 @@
 description: L directly followed by a colon.
 source: |
-  program P; {$L:X.OBJ} begin end.
+  program P;
+  {$L:X.OBJ}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -10,5 +13,5 @@ tokens:
   - DOT
 compile:
   error: 15
-  line: 1
-  column: 32
+  line: 4
+  column: 4

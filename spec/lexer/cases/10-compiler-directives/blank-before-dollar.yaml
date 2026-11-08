@@ -1,6 +1,9 @@
 description: "{ $R+} is an ordinary comment."
 source: |
-  program P; { $Z+} begin end.
+  program P;
+  { $Z+}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

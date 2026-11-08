@@ -1,6 +1,10 @@
 description: A caret character in a constant expression.
 source: |
-  program P; const C = Ord(^A) + 1; begin Write(C) end.
+  program P;
+  const C = Ord(^A) + 1;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

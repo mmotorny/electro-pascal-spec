@@ -1,6 +1,9 @@
 description: "{$D} with arbitrary text."
 source: |
-  program P; {$D any text, even !@#} begin end.
+  program P;
+  {$D any text, even !@#}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

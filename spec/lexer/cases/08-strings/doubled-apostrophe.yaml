@@ -1,6 +1,10 @@
 description: Two apostrophes stand for one.
 source: |
-  program P; const S = 'You''ll see'; begin Write(S) end.
+  program P;
+  const S = 'You''ll see';
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

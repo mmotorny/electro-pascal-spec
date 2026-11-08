@@ -1,7 +1,9 @@
 description: "{$I} inside a statement part, for a file that doesn't exist."
 source: |
   program P;
-  begin {$I NOFILE.INC} end.
+  begin
+    {$I NOFILE.INC}
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -9,5 +11,5 @@ tokens:
   - BEGIN
 compile:
   error: 118
-  line: 2
-  column: 22
+  line: 3
+  column: 18

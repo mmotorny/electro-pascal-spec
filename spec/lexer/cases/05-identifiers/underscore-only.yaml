@@ -1,6 +1,9 @@
 description: A single underscore is an identifier.
 source: |
-  program P; var _: Integer; begin end.
+  program P;
+  var _: Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

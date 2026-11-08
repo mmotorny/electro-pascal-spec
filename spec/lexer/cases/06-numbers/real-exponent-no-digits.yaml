@@ -1,6 +1,10 @@
 description: "An exponent may have no digits: 1e is a real, and the exponent counts as 0."
 source: |
-  program P; const C = 1e; begin Write(C) end.
+  program P;
+  const C = 1e;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

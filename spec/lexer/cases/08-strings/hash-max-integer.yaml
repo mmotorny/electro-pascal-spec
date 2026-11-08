@@ -1,6 +1,10 @@
 description: "#2147483647 is allowed: its low 8 bits are 255."
 source: |
-  program P; const S = #2147483647; begin Write(S) end.
+  program P;
+  const S = #2147483647;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -1,6 +1,9 @@
 description: "{$C} with nothing after it."
 source: |
-  program P; {$C} begin end.
+  program P;
+  {$C}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

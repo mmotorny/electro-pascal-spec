@@ -1,6 +1,10 @@
 description: "A blank inside := splits it into : and =."
 source: |
-  program P; var I: Integer; begin I : = 1 end.
+  program P;
+  var I: Integer;
+  begin
+    I : = 1
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -15,5 +19,5 @@ tokens:
   - COLON
 compile:
   error: 91
-  line: 1
-  column: 36
+  line: 4
+  column: 5

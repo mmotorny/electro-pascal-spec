@@ -1,6 +1,9 @@
 description: "'exports' is not a reserved word in TPC, so it can be declared as a variable."
 source: |
-  program P; var exports: Integer; begin end.
+  program P;
+  var exports: Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

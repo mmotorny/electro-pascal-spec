@@ -1,7 +1,9 @@
 description: "{$DEFINE} without a name."
 source: |
   program P;
-  {$DEFINE} begin end.
+  {$DEFINE}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

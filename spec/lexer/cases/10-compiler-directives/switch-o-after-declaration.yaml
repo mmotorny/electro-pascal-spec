@@ -2,7 +2,9 @@ description: "{$O+} after a declaration."
 source: |
   program P;
   var V: Integer;
-  {$O+} begin end.
+  {$O+}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

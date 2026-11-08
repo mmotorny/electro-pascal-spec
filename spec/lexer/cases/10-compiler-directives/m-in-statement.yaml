@@ -1,6 +1,9 @@
 description: "{$M} inside a statement part."
 source: |
-  program P; begin {$M 16384,0,655360} end.
+  program P;
+  begin
+    {$M 16384,0,655360}
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

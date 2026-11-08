@@ -1,6 +1,9 @@
 description: A blank inside .) splits it into a dot and ).
 source: |
-  program P; var A: array(.1..2 . ) of Integer; begin end.
+  program P;
+  var A: array(.1..2 . ) of Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -16,5 +19,5 @@ tokens:
   - DOT
 compile:
   error: 121
-  line: 1
-  column: 31
+  line: 2
+  column: 20

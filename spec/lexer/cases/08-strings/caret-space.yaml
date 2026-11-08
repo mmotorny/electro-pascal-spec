@@ -1,6 +1,10 @@
 description: "^ takes the next character even when it's a blank: ^ followed by a space is character 96 (`), and M is then an identifier."
 source: |
-  program P; const S = ^ M; begin Write(S) end.
+  program P;
+  const S = ^ M;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -12,5 +16,5 @@ tokens:
   - IDENT: M
 compile:
   error: 85
-  line: 1
-  column: 24
+  line: 2
+  column: 13

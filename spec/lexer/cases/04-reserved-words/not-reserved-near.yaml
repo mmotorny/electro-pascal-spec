@@ -1,6 +1,9 @@
 description: "'near' is not a reserved word in TPC, so it can be declared as a variable."
 source: |
-  program P; var near: Integer; begin end.
+  program P;
+  var near: Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

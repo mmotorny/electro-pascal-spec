@@ -1,6 +1,9 @@
 description: "'assembler' is not a reserved word in TPC, so it can be declared as a variable."
 source: |
-  program P; var assembler: Integer; begin end.
+  program P;
+  var assembler: Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

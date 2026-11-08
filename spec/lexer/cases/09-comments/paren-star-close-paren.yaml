@@ -1,6 +1,9 @@
 description: (*) opens a comment; the ) is inside it.
 source: |
-  program P; (*) still a comment *) begin end.
+  program P;
+  (*) still a comment *)
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -3,7 +3,9 @@ source: |
   program P;
   {$DEFINE UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU}
   (*$UNDEF UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU) begin Write(1) end. *)
-  begin Write(2) end.
+  begin
+    Write(2)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

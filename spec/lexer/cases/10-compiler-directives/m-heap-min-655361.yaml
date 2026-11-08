@@ -1,7 +1,10 @@
 description: A heap minimum of 655361.
 source: |
   program P;
-  {$M 16384,655361,655360} begin Write(SPtr) end.
+  {$M 16384,655361,655360}
+  begin
+    Write(SPtr)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

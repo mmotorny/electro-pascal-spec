@@ -1,7 +1,9 @@
 description: A symbol name can't start with a digit.
 source: |
   program P;
-  {$DEFINE 1X} begin end.
+  {$DEFINE 1X}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

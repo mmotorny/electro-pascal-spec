@@ -1,6 +1,10 @@
 description: Control characters before and after a quoted string.
 source: |
-  program P; const S = #7#7'Wake up!'#7#7; begin Write(S) end.
+  program P;
+  const S = #7#7'Wake up!'#7#7;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

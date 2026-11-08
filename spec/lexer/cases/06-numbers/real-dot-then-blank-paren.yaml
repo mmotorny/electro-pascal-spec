@@ -1,6 +1,9 @@
 description: "In 2. ) the dot belongs to the number: 2. is a real, then )."
 source: |
-  program P; var A: array(.1..2. ) of Integer; begin end.
+  program P;
+  var A: array(.1..2. ) of Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -16,5 +19,5 @@ tokens:
   - RPAREN
 compile:
   error: 26
-  line: 1
-  column: 32
+  line: 2
+  column: 21

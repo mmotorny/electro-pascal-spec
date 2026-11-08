@@ -1,6 +1,8 @@
 description: Reserved words are recognised in mixed case.
 source: |
-  PrOgRaM p; bEgIn eNd.
+  PrOgRaM p;
+  bEgIn
+  eNd.
 tokens:
   - PROGRAM
   - IDENT: P

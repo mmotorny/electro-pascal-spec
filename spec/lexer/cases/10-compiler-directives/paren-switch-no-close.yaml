@@ -3,7 +3,8 @@ description: (*$R+) does not end at its ), so the ! after it stays inside
 source: |
   program P;
   (*$R+) ! *)
-  begin end.
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

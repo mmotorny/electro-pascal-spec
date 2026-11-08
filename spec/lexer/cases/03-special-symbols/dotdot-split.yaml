@@ -1,6 +1,9 @@
 description: A blank inside .. splits it into two dots.
 source: |
-  program P; type T = 1 . . 2; begin end.
+  program P;
+  type T = 1 . . 2;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -12,5 +15,5 @@ tokens:
   - DOT
 compile:
   error: 121
-  line: 1
-  column: 23
+  line: 2
+  column: 12

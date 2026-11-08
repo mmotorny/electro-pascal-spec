@@ -1,7 +1,9 @@
 description: "{$UNDEF} without a name."
 source: |
   program P;
-  {$UNDEF} begin end.
+  {$UNDEF}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

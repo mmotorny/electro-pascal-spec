@@ -1,6 +1,9 @@
 description: A blank inside >= splits it into > and =.
 source: |
-  program P; begin if 1 > = 2 then end.
+  program P;
+  begin
+    if 1 > = 2 then
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -12,5 +15,5 @@ tokens:
   - EQ
 compile:
   error: 42
-  line: 1
-  column: 25
+  line: 3
+  column: 10

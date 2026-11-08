@@ -1,6 +1,10 @@
 description: A decimal integer.
 source: |
-  program P; const C = 123; begin Write(C) end.
+  program P;
+  const C = 123;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

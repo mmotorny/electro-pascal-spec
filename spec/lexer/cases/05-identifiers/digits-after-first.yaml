@@ -1,6 +1,9 @@
 description: Digits and underscores may follow the first character.
 source: |
-  program P; var a1_2B: Integer; begin end.
+  program P;
+  var a1_2B: Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

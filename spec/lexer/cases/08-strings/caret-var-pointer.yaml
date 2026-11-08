@@ -1,6 +1,10 @@
 description: "After : in a variable declaration, ^M is a pointer type."
 source: |
-  program P; type M = Integer; var Q: ^M; begin end.
+  program P;
+  type M = Integer;
+  var Q: ^M;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

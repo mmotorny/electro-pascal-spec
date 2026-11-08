@@ -1,6 +1,10 @@
 description: $80000000 is the most negative 32-bit value.
 source: |
-  program P; const C = $80000000; begin Write(C) end.
+  program P;
+  const C = $80000000;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

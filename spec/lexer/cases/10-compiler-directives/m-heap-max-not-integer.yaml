@@ -1,7 +1,10 @@
 description: A heap maximum too large to be an integer.
 source: |
   program P;
-  {$M 16384,0,4294967295} begin Write(SPtr) end.
+  {$M 16384,0,4294967295}
+  begin
+    Write(SPtr)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

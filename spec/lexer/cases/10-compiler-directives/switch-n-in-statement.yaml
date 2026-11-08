@@ -1,7 +1,9 @@
 description: "{$N+} inside a statement part."
 source: |
   program P;
-  begin {$N+} end.
+  begin
+    {$N+}
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -9,5 +11,5 @@ tokens:
   - BEGIN
 compile:
   error: 17
-  line: 2
-  column: 9
+  line: 3
+  column: 5

@@ -1,6 +1,9 @@
 description: R directly followed by =.
 source: |
-  program P; {$R=X} begin end.
+  program P;
+  {$R=X}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

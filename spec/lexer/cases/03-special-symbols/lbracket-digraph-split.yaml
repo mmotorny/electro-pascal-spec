@@ -1,6 +1,9 @@
 description: A blank inside (. splits it into ( and a dot.
 source: |
-  program P; var A: array( .1..2.) of Integer; begin end.
+  program P;
+  var A: array( .1..2.) of Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -12,5 +15,5 @@ tokens:
   - LPAREN
 compile:
   error: 92
-  line: 1
-  column: 24
+  line: 2
+  column: 13

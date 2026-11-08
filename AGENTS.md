@@ -41,8 +41,11 @@ build it.
   against such a capture.
 - Describe in a case's `description` what its input is and what it shows, never why `TPC` behaves
   that way inside.
-- Write cases as small, complete programs of our own. When a case shows a
-  value, make the program print it so `output:` records it.
+- Write cases as small, complete programs of our own, laid out over lines
+  the usual way: a line per declaration and statement, statements
+  indented. Keep a program on fewer lines only where its layout is what
+  the case shows (line lengths, line ends, positions on a line). When a
+  case shows a value, make the program print it so `output` records it.
 - Every rule in the spec ends with links to the cases that show it, and
   every case is linked from some rule; a link to a folder, with a pattern
   such as `reserved-*` as its text, cites the cases matching it.

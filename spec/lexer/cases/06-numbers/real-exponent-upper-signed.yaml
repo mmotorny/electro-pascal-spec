@@ -1,6 +1,10 @@
 description: Exponent with E and a sign.
 source: |
-  program P; const C = 12.25E+6; begin Write(C) end.
+  program P;
+  const C = 12.25E+6;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

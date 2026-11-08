@@ -1,7 +1,10 @@
 description: A stack size of 65536.
 source: |
   program P;
-  {$M 65536,0,655360} begin Write(SPtr) end.
+  {$M 65536,0,655360}
+  begin
+    Write(SPtr)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

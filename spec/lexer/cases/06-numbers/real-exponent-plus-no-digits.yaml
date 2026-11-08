@@ -1,6 +1,10 @@
 description: 1e+ is a real.
 source: |
-  program P; const C = 1e+; begin Write(C) end.
+  program P;
+  const C = 1e+;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -1,6 +1,11 @@
 description: A caret character compared in a statement.
 source: |
-  program P; var C: Char; begin C := #9; if C = ^I then Write('y') end.
+  program P;
+  var C: Char;
+  begin
+    C := #9;
+    if C = ^I then Write('y')
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

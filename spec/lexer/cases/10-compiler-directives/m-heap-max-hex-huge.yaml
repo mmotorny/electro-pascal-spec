@@ -1,7 +1,10 @@
 description: A heap maximum of $FFFFFFF1.
 source: |
   program P;
-  {$M 16384,0,$FFFFFFF1} begin Write(SPtr) end.
+  {$M 16384,0,$FFFFFFF1}
+  begin
+    Write(SPtr)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

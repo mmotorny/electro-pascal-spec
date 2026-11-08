@@ -1,6 +1,10 @@
 description: Quoted strings and control characters join into one string.
 source: |
-  program P; const S = 'Line 1'#13'Line2'; begin Write(S) end.
+  program P;
+  const S = 'Line 1'#13'Line2';
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

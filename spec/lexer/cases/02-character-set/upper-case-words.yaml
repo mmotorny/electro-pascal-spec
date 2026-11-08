@@ -1,6 +1,8 @@
 description: Reserved words are recognised in upper case.
 source: |
-  PROGRAM P; BEGIN END.
+  PROGRAM P;
+  BEGIN
+  END.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -1,6 +1,9 @@
 description: Several switches separated by commas.
 source: |
-  program P; {$R+,X-,B+} begin end.
+  program P;
+  {$R+,X-,B+}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

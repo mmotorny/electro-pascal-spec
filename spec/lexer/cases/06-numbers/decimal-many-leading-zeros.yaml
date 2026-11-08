@@ -1,6 +1,10 @@
 description: Thirty leading zeros don't overflow.
 source: |
-  program P; const C = 0000000000000000000000000000007; begin Write(C) end.
+  program P;
+  const C = 0000000000000000000000000000007;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

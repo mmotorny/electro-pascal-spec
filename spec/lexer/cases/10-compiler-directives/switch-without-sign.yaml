@@ -1,6 +1,9 @@
 description: A switch letter without + or -.
 source: |
-  program P; {$R} begin end.
+  program P;
+  {$R}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

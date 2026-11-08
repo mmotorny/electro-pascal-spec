@@ -1,6 +1,10 @@
 description: "#13#10 is a two-character string."
 source: |
-  program P; const S = #13#10; begin Write(S) end.
+  program P;
+  const S = #13#10;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

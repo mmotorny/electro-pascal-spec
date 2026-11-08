@@ -1,6 +1,12 @@
 description: A subrange of caret characters in a type declaration.
 source: |
-  program P; type T = ^A..^Z; var C: T; begin C := ^B; Write(Ord(C)) end.
+  program P;
+  type T = ^A..^Z;
+  var C: T;
+  begin
+    C := ^B;
+    Write(Ord(C))
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -13,5 +19,5 @@ tokens:
   - DOTDOT
 compile:
   error: 85
-  line: 1
-  column: 23
+  line: 2
+  column: 12

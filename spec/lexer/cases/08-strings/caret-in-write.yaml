@@ -1,6 +1,9 @@
 description: ^M as an argument.
 source: |
-  program P; begin Write(^M) end.
+  program P;
+  begin
+    Write(^M)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

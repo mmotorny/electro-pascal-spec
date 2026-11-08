@@ -1,6 +1,11 @@
 description: Caret characters in a set constructor.
 source: |
-  program P; var C: Char; begin C := 'x'; if C in [^M, ^J] then Write('y') else Write('n') end.
+  program P;
+  var C: Char;
+  begin
+    C := 'x';
+    if C in [^M, ^J] then Write('y') else Write('n')
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

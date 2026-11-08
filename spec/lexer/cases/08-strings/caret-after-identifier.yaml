@@ -1,7 +1,14 @@
 description: After an identifier, ^ is the pointer operator even when a
   letter follows.
 source: |
-  program P; type R = record F: Integer end; var Q: ^R; begin New(Q); Q^.F := 5; Write(Q^.F) end.
+  program P;
+  type R = record F: Integer end;
+  var Q: ^R;
+  begin
+    New(Q);
+    Q^.F := 5;
+    Write(Q^.F)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

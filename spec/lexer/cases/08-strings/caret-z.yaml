@@ -1,6 +1,10 @@
 description: ^z (122).
 source: |
-  program P; const C = ^z; begin Write(Ord(C)) end.
+  program P;
+  const C = ^z;
+  begin
+    Write(Ord(C))
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

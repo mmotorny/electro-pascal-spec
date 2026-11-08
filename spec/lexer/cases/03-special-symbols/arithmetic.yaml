@@ -1,6 +1,10 @@
 description: + - * / and parentheses.
 source: |
-  program P; var R: Real; begin R := (1 + 2) * 3 - 4 / 5 end.
+  program P;
+  var R: Real;
+  begin
+    R := (1 + 2) * 3 - 4 / 5
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

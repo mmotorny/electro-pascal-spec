@@ -1,6 +1,10 @@
 description: ^M stands for the control character 13.
 source: |
-  program P; const S = ^M; begin Write(S) end.
+  program P;
+  const S = ^M;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

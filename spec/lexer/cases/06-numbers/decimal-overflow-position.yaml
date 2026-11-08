@@ -1,6 +1,10 @@
 description: "Twenty digits: the error is at the digit where the value overflows, the 11th."
 source: |
-  program P; const C = 11111111111111111111; begin Write(C) end.
+  program P;
+  const C = 11111111111111111111;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -10,5 +14,5 @@ tokens:
   - EQ
 compile:
   error: 7
-  line: 1
-  column: 32
+  line: 2
+  column: 21

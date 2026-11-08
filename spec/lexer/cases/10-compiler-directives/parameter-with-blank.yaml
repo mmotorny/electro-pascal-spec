@@ -1,6 +1,9 @@
 description: A parameter directive with its parameter after a blank.
 source: |
-  program P; {$M 16384,0,655360} begin end.
+  program P;
+  {$M 16384,0,655360}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

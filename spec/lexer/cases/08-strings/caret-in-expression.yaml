@@ -1,6 +1,9 @@
 description: A caret character in an expression.
 source: |
-  program P; begin Write(^G + 'x') end.
+  program P;
+  begin
+    Write(^G + 'x')
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

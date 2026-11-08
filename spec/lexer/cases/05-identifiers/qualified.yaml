@@ -1,6 +1,9 @@
 description: A qualified identifier is two identifiers and a dot.
 source: |
-  program P; begin System.WriteLn end.
+  program P;
+  begin
+    System.WriteLn
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

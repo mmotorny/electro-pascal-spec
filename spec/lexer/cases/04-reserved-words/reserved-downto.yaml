@@ -1,6 +1,9 @@
 description: "'downto' is a reserved word, so it can't be declared as a variable."
 source: |
-  program P; var downto: Integer; begin end.
+  program P;
+  var downto: Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -9,5 +12,5 @@ tokens:
   - DOWNTO
 compile:
   error: 2
-  line: 1
-  column: 16
+  line: 2
+  column: 5

@@ -1,6 +1,10 @@
 description: "An exponent with five digits: only four are read."
 source: |
-  program P; const C = 1e00001; begin Write(C) end.
+  program P;
+  const C = 1e00001;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

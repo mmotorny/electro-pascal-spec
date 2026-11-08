@@ -2,7 +2,8 @@ description: (*$D text) does not end at its ).
 source: |
   program P;
   (*$D text) ! *)
-  begin end.
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

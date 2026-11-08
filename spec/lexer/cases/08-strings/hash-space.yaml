@@ -1,6 +1,10 @@
 description: "A blank between # and the number."
 source: |
-  program P; const S = # 13; begin Write(S) end.
+  program P;
+  const S = # 13;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -10,5 +14,5 @@ tokens:
   - EQ
 compile:
   error: 7
-  line: 1
-  column: 23
+  line: 2
+  column: 12

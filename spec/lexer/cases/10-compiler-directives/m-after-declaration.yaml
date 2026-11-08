@@ -2,7 +2,9 @@ description: "{$M} after a declaration."
 source: |
   program P;
   var V: Integer;
-  {$M 16384,0,655360} begin end.
+  {$M 16384,0,655360}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -1,6 +1,9 @@
 description: A lower-case switch with a sign.
 source: |
-  program P; {$r-} begin end.
+  program P;
+  {$r-}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

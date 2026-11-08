@@ -1,6 +1,10 @@
 description: ^` (96, just below a).
 source: |
-  program P; const C = ^`; begin Write(Ord(C)) end.
+  program P;
+  const C = ^`;
+  begin
+    Write(Ord(C))
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

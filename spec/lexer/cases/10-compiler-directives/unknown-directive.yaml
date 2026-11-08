@@ -1,11 +1,14 @@
 description: An unknown directive letter.
 source: |
-  program P; {$Z+} begin end.
+  program P;
+  {$Z+}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
   - SEMI
 compile:
   error: 17
-  line: 1
-  column: 14
+  line: 2
+  column: 3

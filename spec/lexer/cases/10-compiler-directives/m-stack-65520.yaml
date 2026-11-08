@@ -1,7 +1,10 @@
 description: A stack size of 65520, the largest.
 source: |
   program P;
-  {$M 65520,0,655360} begin Write(SPtr) end.
+  {$M 65520,0,655360}
+  begin
+    Write(SPtr)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

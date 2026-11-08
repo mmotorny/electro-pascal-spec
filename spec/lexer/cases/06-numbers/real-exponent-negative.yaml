@@ -1,6 +1,10 @@
 description: Negative exponent.
 source: |
-  program P; const C = 7E-2; begin Write(C) end.
+  program P;
+  const C = 7E-2;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -2,7 +2,10 @@ description: Heap minimum 1024 and maximum 1009 round up to the same number
   of 16-byte paragraphs.
 source: |
   program P;
-  {$M 16384,1024,1009} begin Write(MemAvail) end.
+  {$M 16384,1024,1009}
+  begin
+    Write(MemAvail)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

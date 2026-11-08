@@ -1,6 +1,10 @@
 description: ^{ (123, just above z) is not changed to upper case.
 source: |
-  program P; const C = ^{; begin Write(Ord(C)) end.
+  program P;
+  const C = ^{;
+  begin
+    Write(Ord(C))
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

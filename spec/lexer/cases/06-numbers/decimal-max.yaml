@@ -1,6 +1,10 @@
 description: The largest decimal integer, 2147483647.
 source: |
-  program P; const C = 2147483647; begin Write(C) end.
+  program P;
+  const C = 2147483647;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -1,6 +1,10 @@
 description: "(* *) don't nest: the comment ends at the first *), and the second *) is * then )."
 source: |
-  program P; (* (* *) *) begin end.
+  program P;
+  (* (* *)
+  *)
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -8,5 +12,5 @@ tokens:
   - STAR
 compile:
   error: 36
-  line: 1
-  column: 21
+  line: 3
+  column: 1

@@ -1,6 +1,10 @@
 description: ^[ is character 27.
 source: |
-  program P; const S = ^[; begin Write(S) end.
+  program P;
+  const S = ^[;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

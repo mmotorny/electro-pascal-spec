@@ -1,6 +1,10 @@
 description: "In a constant, ^ takes only the next character: ^Integer is ^I followed by the identifier nteger."
 source: |
-  program P; const S = ^Integer; begin Write(S) end.
+  program P;
+  const S = ^Integer;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -12,5 +16,5 @@ tokens:
   - IDENT: NTEGER
 compile:
   error: 85
-  line: 1
-  column: 24
+  line: 2
+  column: 13

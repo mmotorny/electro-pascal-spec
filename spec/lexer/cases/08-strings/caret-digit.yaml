@@ -1,6 +1,10 @@
 description: ^ followed by a digit.
 source: |
-  program P; const S = ^1; begin Write(S) end.
+  program P;
+  const S = ^1;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

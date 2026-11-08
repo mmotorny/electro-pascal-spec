@@ -3,7 +3,8 @@ description: (*$L B) does not end at its ); the missing B.OBJ is reported
 source: |
   program P;
   (*$L B) ! *)
-  begin end.
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -13,5 +14,5 @@ tokens:
   - DOT
 compile:
   error: 15
-  line: 3
-  column: 10
+  line: 4
+  column: 4

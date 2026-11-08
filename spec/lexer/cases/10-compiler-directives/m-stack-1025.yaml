@@ -1,7 +1,10 @@
 description: An odd stack size of 1025 is used as 1024.
 source: |
   program P;
-  {$M 1025,0,655360} begin Write(SPtr) end.
+  {$M 1025,0,655360}
+  begin
+    Write(SPtr)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

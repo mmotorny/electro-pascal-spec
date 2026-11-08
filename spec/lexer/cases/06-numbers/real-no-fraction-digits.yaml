@@ -1,6 +1,10 @@
 description: "A real may end with a dot and no digits: 1. is 1.0."
 source: |
-  program P; const C = 1.; begin Write(C) end.
+  program P;
+  const C = 1.;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

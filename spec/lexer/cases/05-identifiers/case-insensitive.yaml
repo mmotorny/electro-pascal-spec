@@ -1,6 +1,9 @@
 description: "Identifiers are not case sensitive: x and X are the same."
 source: |
-  program P; var x, X: Integer; begin end.
+  program P;
+  var x, X: Integer;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -11,5 +14,5 @@ tokens:
   - IDENT: X
 compile:
   error: 4
-  line: 1
-  column: 19
+  line: 2
+  column: 8

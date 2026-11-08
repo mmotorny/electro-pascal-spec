@@ -1,7 +1,10 @@
 description: A heap maximum of 1048576.
 source: |
   program P;
-  {$M 16384,0,1048576} begin Write(SPtr) end.
+  {$M 16384,0,1048576}
+  begin
+    Write(SPtr)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

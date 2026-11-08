@@ -1,7 +1,9 @@
 description: "{$N+} before the program header."
 source: |
   {$N+}
-  program P; begin end.
+  program P;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

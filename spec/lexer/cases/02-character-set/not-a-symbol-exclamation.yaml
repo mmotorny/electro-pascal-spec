@@ -1,7 +1,9 @@
 description: "! outside a string or comment."
 source: |
   program P;
-  ! begin end.
+  !
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

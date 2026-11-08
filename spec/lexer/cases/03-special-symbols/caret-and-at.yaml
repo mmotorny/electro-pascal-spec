@@ -1,6 +1,11 @@
 description: ^ and @.
 source: |
-  program P; var Q: ^Integer; begin Q := @Q; Q^ := 1 end.
+  program P;
+  var Q: ^Integer;
+  begin
+    Q := @Q;
+    Q^ := 1
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

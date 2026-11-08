@@ -1,6 +1,10 @@
 description: A blank between two parts of a string makes them two strings.
 source: |
-  program P; const S = 'a' #13; begin Write(S) end.
+  program P;
+  const S = 'a' #13;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -12,5 +16,5 @@ tokens:
   - STRING: "\r"
 compile:
   error: 85
-  line: 1
-  column: 26
+  line: 2
+  column: 15

@@ -1,6 +1,10 @@
 description: "Leading zeros in a label are not significant: 01 and 1 are the same label."
 source: |
-  program P; label 1, 01; begin 1: end.
+  program P;
+  label 1, 01;
+  begin
+    1:
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -11,5 +15,5 @@ tokens:
   - INTEGER: 1
 compile:
   error: 4
-  line: 1
-  column: 21
+  line: 2
+  column: 10

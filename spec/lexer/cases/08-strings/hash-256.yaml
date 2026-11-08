@@ -1,6 +1,10 @@
 description: "#256 is accepted; the output shows which character it is."
 source: |
-  program P; const S = #256; begin Write(S) end.
+  program P;
+  const S = #256;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

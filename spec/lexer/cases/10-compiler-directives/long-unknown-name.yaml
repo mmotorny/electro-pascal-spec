@@ -1,11 +1,14 @@
 description: An unknown directive name of several letters.
 source: |
-  program P; {$FOO} begin end.
+  program P;
+  {$FOO}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
   - SEMI
 compile:
   error: 17
-  line: 1
-  column: 14
+  line: 2
+  column: 3

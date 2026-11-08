@@ -1,6 +1,9 @@
 description: Two caret characters in a row form one string.
 source: |
-  program P; begin Write(^M^J) end.
+  program P;
+  begin
+    Write(^M^J)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

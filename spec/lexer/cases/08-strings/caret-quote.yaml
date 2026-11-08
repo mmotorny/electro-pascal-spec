@@ -1,7 +1,10 @@
 description: ^ followed by an apostrophe is a character, not the start of a
   string.
 source: |
-  program P; begin Write(^'); end.
+  program P;
+  begin
+    Write(^');
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

@@ -1,6 +1,10 @@
 description: "#255 is the largest character code."
 source: |
-  program P; const S = #255; begin Write(S) end.
+  program P;
+  const S = #255;
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

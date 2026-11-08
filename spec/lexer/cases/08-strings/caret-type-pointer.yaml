@@ -1,7 +1,12 @@
 description: After = in a type declaration, ^M is a pointer to type M, not a
   character.
 source: |
-  program P; type M = Integer; T = ^M; begin end.
+  program P;
+  type
+    M = Integer;
+    T = ^M;
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

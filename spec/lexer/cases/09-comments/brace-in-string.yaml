@@ -1,6 +1,10 @@
 description: A brace in a string is part of the string.
 source: |
-  program P; const S = '{'; begin Write(S) end.
+  program P;
+  const S = '{';
+  begin
+    Write(S)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

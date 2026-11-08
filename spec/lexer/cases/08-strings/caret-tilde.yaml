@@ -1,6 +1,10 @@
 description: ^~ (126).
 source: |
-  program P; const C = ^~; begin Write(Ord(C)) end.
+  program P;
+  const C = ^~;
+  begin
+    Write(Ord(C))
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

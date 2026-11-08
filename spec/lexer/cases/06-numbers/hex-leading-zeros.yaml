@@ -1,6 +1,10 @@
 description: Leading zeros in a hex number don't count against the range.
 source: |
-  program P; const C = $000000000FF; begin Write(C) end.
+  program P;
+  const C = $000000000FF;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

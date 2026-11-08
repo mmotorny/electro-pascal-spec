@@ -1,6 +1,10 @@
 description: "-2147483648 is a minus sign and a number that is out of range on its own."
 source: |
-  program P; const C = -2147483648; begin Write(C) end.
+  program P;
+  const C = -2147483648;
+  begin
+    Write(C)
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
@@ -11,5 +15,5 @@ tokens:
   - MINUS
 compile:
   error: 7
-  line: 1
-  column: 32
+  line: 2
+  column: 21

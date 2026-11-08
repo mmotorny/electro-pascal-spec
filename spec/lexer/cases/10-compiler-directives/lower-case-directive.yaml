@@ -1,6 +1,9 @@
 description: Directive names are not case sensitive.
 source: |
-  program P; {$r+} begin end.
+  program P;
+  {$r+}
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P

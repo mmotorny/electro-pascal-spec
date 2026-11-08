@@ -3,7 +3,8 @@ description: (*$M 16384,0,672) ends at its ), so the ! after it is a syntax
 source: |
   program P;
   (*$M 16384,0,672) ! *)
-  begin end.
+  begin
+  end.
 tokens:
   - PROGRAM
   - IDENT: P
